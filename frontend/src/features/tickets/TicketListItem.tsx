@@ -1,42 +1,30 @@
 import { ChevronRight } from "lucide-react";
+import { PriorityBadge } from "../../components/PriorityBadge";
 import { StatusBadge } from "../../components/StatusBadge";
+import { formatDate } from "../../lib/utils";
 import type { Ticket } from "../../types/ticket";
 
-interface TicketListItemProps {
-  ticket: Ticket;
-  selected: boolean;
-  onSelect: (ticket: Ticket) => void;
-}
-
-export function TicketListItem({ ticket, selected, onSelect }: TicketListItemProps) {
+export function TicketListItem({ ticket, selected, onSelect }: { ticket: Ticket; selected: boolean; onSelect: (ticket: Ticket) => void }) {
   return (
     <button
       type="button"
       onClick={() => onSelect(ticket)}
-      aria-pressed={selected}
-      className={`w-full border-b border-slate-200 px-4 py-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-slate-500 ${
-        selected ? "bg-slate-100" : "bg-white hover:bg-slate-50"
-      }`}
+      className={`w-full border-b border-slate-100 px-3.5 py-3 text-left transition ${selected ? "border-l-[3px] border-l-blue-600 bg-blue-50/70" : "bg-[#F7F9FC] hover:bg-white"}`}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <span className="font-mono text-xs font-semibold tracking-wide text-slate-500">
-              {ticket.id}
-            </span>
-            <StatusBadge status={ticket.status} />
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-mono text-[10px] font-bold text-slate-500">{ticket.issue_key}</span>
+            <PriorityBadge priority={ticket.priority} />
           </div>
-          <p className="line-clamp-2 text-sm font-semibold leading-5 text-slate-900">
-            {ticket.title}
-          </p>
-          {ticket.service ? (
-            <p className="mt-2 truncate text-xs text-slate-500">{ticket.service}</p>
-          ) : null}
+          <p className="mt-1.5 line-clamp-2 text-[12px] font-semibold leading-5 text-slate-900">{ticket.summary}</p>
+          <div className="mt-2 flex items-center gap-2">
+            <StatusBadge status={ticket.status} />
+            <span className="truncate text-[10px] text-slate-400">{ticket.service_teams[0] ?? "No team"}</span>
+          </div>
+          <p className="mt-1.5 text-[9px] text-slate-400">Created {formatDate(ticket.created_date)}</p>
         </div>
-        <ChevronRight
-          aria-hidden="true"
-          className={`mt-1 h-4 w-4 shrink-0 ${selected ? "text-slate-700" : "text-slate-400"}`}
-        />
+        <ChevronRight className={`mt-1 h-4 w-4 ${selected ? "text-blue-600" : "text-slate-300"}`} />
       </div>
     </button>
   );

@@ -1,27 +1,72 @@
-# Service Desk Copilot — Jira-aligned frontend
+# Service Desk Copilot — Jury Demo V4
 
-Frontend prototype for Swiss {ai} Weeks / Swiss Life.
+Frontend for the Swiss {ai} Weeks / Swiss Life **AI Support Agent for Operational Service Desks** challenge.
 
-## Core contract
+## Core layout
 
-The frontend now uses the shared **22-field Jira ticket model** agreed by the team. It deliberately keeps three layers separate:
+The workspace is intentionally split into three visually distinct zones:
 
-1. **Original ticket** — values received from Jira/API. `null` means *not recorded*.
-2. **AI proposal** — suggested classification, priority/team changes, reasons, sources and draft response.
-3. **Human review** — approve, edit or reject. The review is captured separately so the API can persist it.
+1. **Ticket Queue — 30%**: warm sand/orange family for incoming work and JSON import.
+2. **Ticket Detail — 50%**: clean white/soft blue reading workspace for the original Jira data.
+3. **AI Proposal — 20%**: soft mint/green family for AI recommendations, evidence and the human decision.
 
-This separation prevents the UI from silently replacing recorded values with AI suggestions.
+Desktop sizing uses `grid-template-columns: 3fr 5fr 2fr` so the proportions stay 30 / 50 / 20 across the usable workspace.
 
-## Jira fields represented
+The centered header explains the product flow at a glance:
 
-Issue ID, Issue Key, Work type, Request type, Summary, Description, Affected Business or IT Services, Business Entity, Business Critical for Entity, Service Team(s), Reporter, Assignee, Priority, Urgency, Impact, Severity, Created date, Status, Linked issues, Resolution, Due date and All Comments.
+`Ticket queue → Original case → Evidence-backed AI → Human decision`
 
-## Important semantics
+## What changed in V4
 
-- `Urgency: null` is rendered as **Not recorded**, not Low.
-- Status and Resolution are displayed independently.
-- Actions in comments are not treated as proof of resolution; observed results remain separate entries.
-- AI priority/team suggestions never overwrite the original Jira values until a human decision is saved.
+- stronger jury-first header and product story,
+- clearer 30 / 50 / 20 visual hierarchy,
+- large-queue controls designed around a ~20,000-ticket hackathon dataset,
+- search across key / summary / team / business entity,
+- priority + status filters,
+- priority/newest/oldest sorting,
+- queue counters for matching / critical / unassigned tickets,
+- only 50 ticket cards rendered per page,
+- confidence meter in the AI panel,
+- explicit **Why this recommendation?** section,
+- visible evidence / RAG sources,
+- missing-information warning when confidence is insufficient,
+- critical-case attention warning,
+- copyable draft response,
+- sticky Approve / Edit / Reject human decision bar,
+- visible feedback-loop state after a human decision,
+- original ticket, AI proposal and human review remain separate data layers.
+
+## JSON import
+
+Use **Upload ticket JSON** in the left panel. The parser accepts:
+
+- one ticket object,
+- an array of ticket objects,
+- wrapper objects containing `tickets`, `issues`, `data`, `items` or `results`.
+
+It supports the agreed Jira-style fields including Issue ID/Key, work/request type, summary, description, affected services, business context, teams, reporter/assignee, priority/urgency/impact/severity, dates, status, linked issues, resolution and all comments.
+
+`null` means **Not recorded**. It is never silently interpreted as low/no/false.
+
+A ready-to-use example is included at:
+
+```text
+public/demo-tickets.json
+```
+
+## AI behavior
+
+The frontend does **not** fabricate AI output. Existing mock proposals are shown only for matching demo ticket IDs/keys. Other imported tickets show an honest “Ready for AI analysis” state until the backend `/assist` endpoint returns a proposal.
+
+The intended production flow is:
+
+`selected ticket → classification → knowledge retrieval → proposal → human review → feedback API`
+
+## Large queue note
+
+For the hackathon JSON demo, the browser can parse the complete dataset but only 50 matching tickets are rendered per page. Search uses `useDeferredValue` to keep typing responsive.
+
+For production scale, search, filters, sorting and pagination should move server-side so the frontend does not download the full 20,000-ticket dataset on every load.
 
 ## Run locally
 

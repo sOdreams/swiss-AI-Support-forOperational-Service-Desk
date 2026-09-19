@@ -1,33 +1,88 @@
-import { ArrowRight, Database, ShieldCheck, Sparkles, UserRound } from "lucide-react";
+import { ArrowRight, Database, FileSearch2, ShieldCheck, Sparkles, UserCheck } from "lucide-react";
 import { useMemo, useState } from "react";
 import { mockAiProposals } from "./data/mockAiProposals";
-import { mockTickets } from "./data/mockTickets";
 import { AiProposalPanel } from "./features/ai/AiProposalPanel";
 import { TicketDetail } from "./features/tickets/TicketDetail";
 import { TicketQueue } from "./features/tickets/TicketQueue";
+import type { UploadState } from "./features/upload/TicketUpload";
 import type { HumanReview } from "./types/review";
+import type { Ticket } from "./types/ticket";
 
 export default function App() {
-  const [selectedTicketId, setSelectedTicketId] = useState(mockTickets[0]?.issue_id);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [selectedTicketId, setSelectedTicketId] = useState<string | undefined>(undefined);
   const [reviews, setReviews] = useState<Record<string, HumanReview>>({});
-  const selectedTicket = useMemo(() => mockTickets.find((ticket) => ticket.issue_id === selectedTicketId), [selectedTicketId]);
-  const proposal = selectedTicketId ? mockAiProposals[selectedTicketId] : undefined;
+  const [uploadState, setUploadState] = useState<UploadState>({ fileName: null, error: null });
+
+  const selectedTicket = useMemo(
+    () => tickets.find((ticket) => ticket.issue_id === selectedTicketId),
+    [tickets, selectedTicketId],
+  );
+
+  const proposal = useMemo(() => {
+    if (!selectedTicket) return undefined;
+    return mockAiProposals[selectedTicket.issue_id]
+      ?? Object.values(mockAiProposals).find((item) => item.issue_key === selectedTicket.issue_key);
+  }, [selectedTicket]);
+
+  const selectedReview = selectedTicketId ? reviews[selectedTicketId] : undefined;
+  const hasHumanDecision = Boolean(selectedReview && selectedReview.decision !== "pending");
+
+  const handleLoaded = (loadedTickets: Ticket[], fileName: string) => {
+    setTickets(loadedTickets);
+    setSelectedTicketId(loadedTickets[0]?.issue_id);
+    setReviews({});
+    setUploadState({ fileName, error: null });
+  };
+
+  const handleUploadError = (fileName: string, message: string) => {
+    setUploadState({ fileName, error: message });
+  };
 
   return (
-    <div className="flex h-screen min-h-[760px] min-w-[1280px] flex-col bg-[#EEF2F7] text-[#172033]">
-      <header className="shrink-0 border-b border-slate-200 bg-white">
-        <div className="flex h-[56px] items-center justify-between px-5">
-          <div className="flex items-center gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-md bg-blue-700 text-white"><ShieldCheck className="h-5 w-5" /></div><div><div className="flex items-center gap-2"><p className="text-sm font-bold text-slate-950">Service Desk Copilot</p><span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[9px] font-semibold text-blue-700">Jira + AI review</span></div><p className="text-[10px] text-slate-500">Original data stays separate from AI proposals and human decisions.</p></div></div>
-          <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 py-1 pl-1 pr-3"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-700 text-white"><UserRound className="h-3.5 w-3.5" /></span><span className="text-[10px] font-semibold text-slate-700">Razon · Analyst</span></div>
+    <div className="app-shell h-screen overflow-auto text-[#172033]">
+      <div className="flex min-h-[860px] min-w-[1500px] flex-col">
+        <header className="app-header shrink-0">
+          <div className="app-title-wrap">
+            <div className="app-title-row">
+              <span className="app-mark"><ShieldCheck className="h-6 w-6" /></span>
+              <div className="text-center">
+                <p className="app-kicker">SWISS {'{AI}'} WEEKS · SERVICE DESK PROTOTYPE</p>
+                <h1 className="app-title">Service Desk Copilot</h1>
+                <p className="app-subtitle">Evidence-backed triage with a human decision at the end of every recommendation</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="workflow-bar" aria-label="Copilot workflow">
+            <span className="workflow-caption">FLOW</span>
+            <span className="workflow-step workflow-step-active"><Database className="h-3.5 w-3.5" />Ticket queue</span>
+            <ArrowRight className="h-3.5 w-3.5 text-slate-300" />
+            <span className={selectedTicket ? "workflow-step workflow-step-active" : "workflow-step"}><FileSearch2 className="h-3.5 w-3.5" />Original case</span>
+            <ArrowRight className="h-3.5 w-3.5 text-slate-300" />
+            <span className={proposal ? "workflow-step workflow-step-active" : "workflow-step"}><Sparkles className="h-3.5 w-3.5" />Evidence-backed AI</span>
+            <ArrowRight className="h-3.5 w-3.5 text-slate-300" />
+            <span className={hasHumanDecision ? "workflow-step workflow-step-complete" : "workflow-step"}><UserCheck className="h-3.5 w-3.5" />Human decision</span>
+          </div>
+        </header>
+
+        <div className="workspace-grid min-h-0 flex-1">
+          <TicketQueue
+            tickets={tickets}
+            selectedTicketId={selectedTicket?.issue_id}
+            onSelectTicket={(ticket) => setSelectedTicketId(ticket.issue_id)}
+            onTicketsLoaded={handleLoaded}
+            onUploadError={handleUploadError}
+            uploadState={uploadState}
+          />
+          <TicketDetail ticket={selectedTicket} />
+          <AiProposalPanel
+            ticket={selectedTicket}
+            proposal={proposal}
+            review={selectedReview}
+            onReviewChange={(review) => setReviews((current) => ({ ...current, [review.ticket_id]: review }))}
+          />
         </div>
-        <div className="flex h-[36px] items-center justify-center gap-2 border-t border-slate-100 bg-slate-50 px-4 text-[10px] text-slate-500">
-          <span className="inline-flex items-center gap-1.5 font-semibold text-blue-700"><Database className="h-3 w-3" />1. Original ticket</span><ArrowRight className="h-3 w-3" /><span className="inline-flex items-center gap-1.5"><Sparkles className="h-3 w-3" />2. AI proposal</span><ArrowRight className="h-3 w-3" /><span>3. Approve, edit or reject</span>
-        </div>
-      </header>
-      <div className="grid min-h-0 flex-1 overflow-hidden" style={{ gridTemplateColumns: "270px minmax(650px, 1fr) 380px" }}>
-        <TicketQueue tickets={mockTickets} selectedTicketId={selectedTicket?.issue_id} onSelectTicket={(ticket) => setSelectedTicketId(ticket.issue_id)} />
-        <TicketDetail ticket={selectedTicket} />
-        <AiProposalPanel ticket={selectedTicket} proposal={proposal} review={selectedTicketId ? reviews[selectedTicketId] : undefined} onReviewChange={(review) => setReviews((current) => ({ ...current, [review.ticket_id]: review }))} />
       </div>
     </div>
   );

@@ -23,8 +23,8 @@ export interface JiraComment {
 
 /**
  * Shared ticket contract for Frontend, AI and API integration.
- * These are the 22 original Jira fields agreed by the team.
  * Null means "not recorded", never an inferred low/false value.
+ * raw keeps the imported source object available for the technical JSON view.
  */
 export interface Ticket {
   issue_id: string;
@@ -49,4 +49,5 @@ export interface Ticket {
   resolution: string | null;
   due_date: string | null;
   all_comments: JiraComment[];
+  raw?: Record<string, unknown>;
 }

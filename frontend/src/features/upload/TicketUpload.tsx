@@ -48,15 +48,15 @@ export function TicketUpload({
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="group flex w-full items-center justify-between rounded-xl border border-[#E9C39E] bg-white px-3.5 py-3.5 text-left shadow-[0_3px_10px_rgba(74,55,37,0.05)] transition-all duration-150 hover:-translate-y-0.5 hover:border-[#D9965B] hover:bg-[#FFFDFC] hover:shadow-[0_8px_18px_rgba(74,55,37,0.09)]"
+        className="group flex w-full items-center justify-between rounded-xl border border-[#E9C39E] bg-white px-3 py-2.5 text-left shadow-[0_3px_10px_rgba(74,55,37,0.05)] transition-all duration-150 hover:-translate-y-0.5 hover:border-[#D9965B] hover:bg-[#FFFDFC] hover:shadow-[0_8px_18px_rgba(74,55,37,0.09)]"
       >
         <span className="flex min-w-0 items-center gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D97735] text-white shadow-sm transition group-hover:bg-[#C7662C]">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#D97735] text-white shadow-sm transition group-hover:bg-[#C7662C]">
             <UploadCloud className="h-4 w-4" />
           </span>
           <span className="min-w-0">
-            <span className="block text-[14px] font-extrabold text-slate-900">Upload ticket JSON</span>
-            <span className="mt-0.5 block truncate text-[11px] text-slate-500">Choose a JSON file with one or more Jira tickets</span>
+            <span className="block text-[12.5px] font-extrabold text-slate-900">Upload ticket JSON</span>
+            <span className="mt-0.5 block truncate text-[10px] text-slate-500">Choose a JSON file with one or more Jira tickets</span>
           </span>
         </span>
         <FileJson className="h-4 w-4 shrink-0 text-[#B25D27]" />
@@ -66,8 +66,8 @@ export function TicketUpload({
         <div className="flex items-start gap-2 rounded-lg border border-[#F0D2B5] bg-white/75 px-2.5 py-2.5">
           {state.error ? <XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500" /> : <FileJson className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#B25D27]" />}
           <div className="min-w-0">
-            <p className="truncate text-[11px] font-semibold text-slate-700">{state.fileName}</p>
-            <p className={`mt-0.5 text-[11px] leading-4 ${state.error ? "text-red-600" : "text-slate-400"}`}>
+            <p className="truncate text-[10px] font-semibold text-slate-700">{state.fileName}</p>
+            <p className={`mt-0.5 text-[10px] leading-4 ${state.error ? "text-red-600" : "text-slate-400"}`}>
               {state.error ?? "JSON loaded successfully"}
             </p>
           </div>

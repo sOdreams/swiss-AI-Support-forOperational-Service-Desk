@@ -38,11 +38,23 @@ function DataSection({ title, description, children }: { title: string; descript
 export function TicketDetail({ ticket }: { ticket?: Ticket }) {
   if (!ticket) {
     return (
-      <main className="panel-center flex min-h-0 min-w-0 items-center justify-center overflow-auto p-8">
-        <div className="max-w-sm text-center">
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#DBEAFE] text-[#315F9E]"><FileText className="h-6 w-6" /></span>
-          <p className="mt-4 text-[15px] font-extrabold text-slate-900">Select a ticket to inspect the original data</p>
-          <p className="mt-2 text-[12px] leading-5 text-slate-500">This middle workspace always shows the Jira data exactly as imported from JSON.</p>
+      <main className="panel-center min-h-0 min-w-0 overflow-hidden">
+        <div className="panel-header panel-header-center">
+          <div className="flex items-center gap-2.5">
+            <span className="section-step section-step-center">02</span>
+            <span className="section-icon section-icon-center"><FileText className="h-4 w-4" /></span>
+            <div>
+              <h2 className="section-title">Ticket Detail</h2>
+              <p className="section-subtitle">Original ticket information</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto overflow-x-hidden p-6">
+          <div className="max-w-sm text-center">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#DBEAFE] text-[#315F9E]"><FileText className="h-5 w-5" /></span>
+            <p className="mt-3 text-[14px] font-extrabold text-slate-900">Select a ticket to inspect the original data</p>
+            <p className="mt-1.5 text-[11px] leading-5 text-slate-500">The middle workspace shows the Jira data exactly as imported from JSON.</p>
+          </div>
         </div>
       </main>
     );
@@ -61,40 +73,54 @@ export function TicketDetail({ ticket }: { ticket?: Ticket }) {
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-auto">
-        <div className="min-w-[760px] space-y-5 p-6">
-          <section className="rounded-2xl border border-[#C9D8EA] bg-gradient-to-br from-white to-[#F7FAFF] p-6 shadow-[0_10px_28px_rgba(49,95,158,0.08)]">
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
+        <div className="w-full min-w-0 space-y-4 p-4 lg:p-5">
+          <section className="rounded-2xl border border-[#C9D8EA] bg-gradient-to-br from-white to-[#F7FAFF] p-4 shadow-[0_10px_28px_rgba(49,95,158,0.08)]">
             <div className="flex flex-wrap items-center gap-2.5">
               <span className="rounded-md bg-[#EAF2FF] px-2.5 py-1 font-mono text-[12px] font-extrabold text-[#315F9E]">{ticket.issue_key}</span>
               <StatusBadge status={ticket.status} />
               <PriorityBadge priority={ticket.priority} />
             </div>
-            <h1 className="mt-4 text-[26px] font-extrabold tracking-tight text-slate-950">{ticket.summary}</h1>
-            <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Original description</p>
-            <p className="mt-2 max-w-4xl whitespace-pre-wrap text-[14px] leading-7 text-slate-700"><NullableValue value={ticket.description} /></p>
+            <h1 className="mt-3 text-[20px] font-extrabold tracking-tight text-slate-950">{ticket.summary}</h1>
+            <p className="mt-2 text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-400">Original description</p>
+            <p className="mt-1.5 max-w-4xl whitespace-pre-wrap text-[12px] leading-5.5 text-slate-700"><NullableValue value={ticket.description} /></p>
           </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_5px_18px_rgba(15,23,42,0.045)]">
-            <div className="mb-5 flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <section className="ticket-category-card">
+            <div className="ticket-category-heading">
               <div>
-                <h2 className="text-[15px] font-extrabold text-slate-900">Recorded ticket data</h2>
-                <p className="mt-1 text-[11px] text-slate-500">Missing fields stay missing — they are never interpreted as low, false or resolved.</p>
+                <p className="ticket-category-eyebrow">Ticket Category</p>
+                <h2>How this ticket is currently classified</h2>
               </div>
-              <span className="rounded-full bg-[#EFF6FF] px-3 py-1.5 text-[10px] font-bold text-[#315F9E]">Original Jira values</span>
+              <span>Original Jira values</span>
+            </div>
+            <div className="ticket-category-grid">
+              <Field label="Work type"><NullableValue value={ticket.work_type} /></Field>
+              <Field label="Request type"><NullableValue value={ticket.request_type} /></Field>
+              <Field label="Priority"><PriorityBadge priority={ticket.priority} /></Field>
+              <Field label="Status"><span className="inline-flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5 text-[#315F9E]" />{ticket.status}</span></Field>
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_5px_18px_rgba(15,23,42,0.045)]">
+            <div className="mb-4 flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
+              <div>
+                <h2 className="text-[14px] font-extrabold text-slate-900">Recorded ticket data</h2>
+                <p className="mt-1 text-[10px] text-slate-500">Missing fields stay missing — they are never interpreted as low, false or resolved.</p>
+              </div>
+              <span className="rounded-full bg-[#EFF6FF] px-2.5 py-1 text-[9px] font-bold text-[#315F9E]">Source data</span>
             </div>
 
             <div className="space-y-5">
-              <DataSection title="Work context" description="Status answers where the work is. Resolution answers how it ended.">
-                <div className="grid grid-cols-4 gap-x-6 gap-y-5">
-                  <Field label="Work type"><NullableValue value={ticket.work_type} /></Field>
-                  <Field label="Request type"><NullableValue value={ticket.request_type} /></Field>
+              <DataSection title="Workflow state" description="Status describes where the work is. Resolution describes how it ended.">
+                <div className="detail-field-grid">
                   <Field label="Status"><span className="inline-flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5 text-[#315F9E]" />{ticket.status}</span></Field>
                   <Field label="Resolution"><NullableValue value={ticket.resolution} /></Field>
                 </div>
               </DataSection>
 
               <DataSection title="Business & ownership">
-                <div className="grid grid-cols-4 gap-x-6 gap-y-5">
+                <div className="detail-field-grid">
                   <Field label="Affected services" wide><ListValue values={ticket.affected_business_or_it_services} /></Field>
                   <Field label="Business entity"><NullableValue value={ticket.business_entity} /></Field>
                   <Field label="Business critical">{displayBoolean(ticket.business_critical_for_entity)}</Field>
@@ -104,21 +130,20 @@ export function TicketDetail({ ticket }: { ticket?: Ticket }) {
                 </div>
               </DataSection>
 
-              <DataSection title="Priority, severity & dates">
-                <div className="grid grid-cols-4 gap-x-6 gap-y-5">
-                  <Field label="Priority"><PriorityBadge priority={ticket.priority} /></Field>
+              <DataSection title="Severity & dates">
+                <div className="detail-field-grid">
                   <Field label="Urgency"><NullableValue value={ticket.urgency} /></Field>
                   <Field label="Impact"><NullableValue value={ticket.impact} /></Field>
                   <Field label="Severity"><NullableValue value={ticket.severity} /></Field>
                   <Field label="Created date"><span className="inline-flex items-center gap-1.5"><CalendarClock className="h-3.5 w-3.5 text-slate-400" />{formatDate(ticket.created_date)}</span></Field>
                   <Field label="Due date"><NullableValue value={ticket.due_date ? formatDate(ticket.due_date) : null} /></Field>
-                  <Field label="Issue ID" wide>{ticket.issue_id}</Field>
+                  <Field label="Issue ID"><span className="break-all">{ticket.issue_id}</span></Field>
                 </div>
               </DataSection>
             </div>
           </section>
 
-          <section className="grid grid-cols-[0.9fr_1.1fr] gap-5">
+          <section className="grid grid-cols-1 gap-4 2xl:grid-cols-[0.9fr_1.1fr]">
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_14px_rgba(15,23,42,0.04)]">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div>

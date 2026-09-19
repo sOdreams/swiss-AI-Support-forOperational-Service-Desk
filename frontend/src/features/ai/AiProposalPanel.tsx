@@ -34,7 +34,7 @@ function CompareRow({
   return (
     <div className="ai-compare-row">
       <p className="ai-eyebrow">{label}</p>
-      <div className="mt-2 grid grid-cols-[1fr_18px_1fr] items-center gap-1.5">
+      <div className="ai-compare-values mt-2">
         <div className="ai-current-value">
           <p>Current</p>
           <strong title={displayNullable(current)}>{displayNullable(current)}</strong>
@@ -112,11 +112,20 @@ export function AiProposalPanel({
 
   if (!ticket) {
     return (
-      <aside className="panel-right flex min-h-0 min-w-0 items-center justify-center overflow-auto p-6">
-        <div className="max-w-[280px] text-center">
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D1FAE5] text-[#147A62]"><Sparkles className="h-6 w-6" /></span>
-          <p className="mt-4 text-[15px] font-extrabold text-slate-900">Select a ticket to review the AI proposal</p>
-          <p className="mt-2 text-[12px] leading-5 text-slate-500">Original Jira data and AI recommendations remain visually and logically separate.</p>
+      <aside className="panel-right min-h-0 min-w-0 overflow-hidden">
+        <div className="panel-header panel-header-right">
+          <div className="flex items-center gap-2.5">
+            <span className="section-step section-step-right">03</span>
+            <span className="section-icon section-icon-right"><Sparkles className="h-4 w-4" /></span>
+            <div><h2 className="section-title">AI Proposal</h2><p className="section-subtitle">Suggestion only · human review required</p></div>
+          </div>
+        </div>
+        <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto overflow-x-hidden p-5">
+          <div className="max-w-[280px] text-center">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#D1FAE5] text-[#147A62]"><Sparkles className="h-5 w-5" /></span>
+            <p className="mt-3 text-[14px] font-extrabold text-slate-900">Select a ticket to review the AI proposal</p>
+            <p className="mt-1.5 text-[11px] leading-5 text-slate-500">Original Jira data and AI recommendations remain separate.</p>
+          </div>
         </div>
       </aside>
     );
@@ -182,8 +191,8 @@ export function AiProposalPanel({
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-auto">
-        <div className="min-w-[330px] space-y-4 p-4 pb-32">
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
+        <div className="w-full min-w-0 space-y-4 p-4 pb-32">
           <section className="ai-hero-card">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">

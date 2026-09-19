@@ -25,18 +25,20 @@ function timeValue(value: string) {
 
 export function TicketQueue({
   tickets,
-  selectedTicketId,
-  onSelectTicket,
   onTicketsLoaded,
   onUploadError,
   uploadState,
+  onFilteredTicketsChange,
+  selectedTicketId,
+  onSelectTicket,
 }: {
   tickets: Ticket[];
-  selectedTicketId?: string;
-  onSelectTicket: (ticket: Ticket) => void;
   onTicketsLoaded: (tickets: Ticket[], fileName: string) => void;
   onUploadError: (fileName: string, message: string) => void;
   uploadState: UploadState;
+  onFilteredTicketsChange: (tickets: Ticket[]) => void;
+  selectedTicketId: string | null;
+  onSelectTicket: (ticket: Ticket) => void;
 }) {
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
@@ -82,12 +84,6 @@ export function TicketQueue({
     });
   }, [tickets, deferredQuery, status, priority, sortMode]);
 
-  const criticalCount = useMemo(
-    () => tickets.filter((ticket) => priorityRank(ticket.priority) === 0).length,
-    [tickets],
-  );
-  const unassignedCount = useMemo(() => tickets.filter((ticket) => !ticket.assignee).length, [tickets]);
-
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, pageCount);
   const start = (safePage - 1) * PAGE_SIZE;
@@ -97,6 +93,10 @@ export function TicketQueue({
     setPage(1);
   }, [deferredQuery, status, priority, sortMode, tickets]);
 
+  useEffect(() => {
+    onFilteredTicketsChange(filtered);
+  }, [filtered, onFilteredTicketsChange]);
+
   return (
     <aside className="panel-left min-h-0 min-w-0 overflow-hidden">
       <div className="panel-header panel-header-left">
@@ -105,19 +105,19 @@ export function TicketQueue({
           <span className="section-icon section-icon-left"><Inbox className="h-4 w-4" /></span>
           <div>
             <h2 className="section-title">Ticket Queue</h2>
-            <p className="section-subtitle">Find the next case that needs attention</p>
+            <p className="section-subtitle">Search and filter active tickets</p>
           </div>
         </div>
         {tickets.length > 0 ? (
-          <div className="queue-total" title="Total tickets loaded">
+          <div className="queue-total" title="Active tickets in the queue">
             <span className="queue-total-number">{tickets.length.toLocaleString()}</span>
-            <span className="queue-total-label">loaded</span>
+            <span className="queue-total-label">active</span>
           </div>
         ) : null}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-auto">
-        <div className="min-w-[410px]">
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
+        <div className="w-full min-w-0">
           <div className="queue-controls sticky top-0 z-10 space-y-3 border-b border-[#E4D8CC] p-4">
             <TicketUpload onLoaded={onTicketsLoaded} onError={onUploadError} state={uploadState} />
 
@@ -164,14 +164,8 @@ export function TicketQueue({
                   </label>
                 </div>
 
-                <div className="queue-health-grid">
-                  <div><strong>{filtered.length.toLocaleString()}</strong><span>matching</span></div>
-                  <div><strong>{criticalCount.toLocaleString()}</strong><span>critical</span></div>
-                  <div><strong>{unassignedCount.toLocaleString()}</strong><span>unassigned</span></div>
-                </div>
-
-                <div className="flex items-center justify-between gap-3 text-[11px]">
-                  <span className="font-semibold text-[#8A6C51]">Only 50 tickets render per page</span>
+                <div className="flex items-center justify-between gap-3 border-t border-[#E8DDD2] pt-2 text-[10px]">
+                  <span className="font-semibold text-[#8A6C51]">50 tickets per page</span>
                   <span className="text-slate-400">
                     {filtered.length ? start + 1 : 0}–{Math.min(start + PAGE_SIZE, filtered.length).toLocaleString()} of {filtered.length.toLocaleString()}
                   </span>
@@ -190,12 +184,7 @@ export function TicketQueue({
             <>
               <div className="pb-2 pt-3">
                 {visibleTickets.map((ticket) => (
-                  <TicketListItem
-                    key={ticket.issue_id}
-                    ticket={ticket}
-                    selected={ticket.issue_id === selectedTicketId}
-                    onSelect={onSelectTicket}
-                  />
+                  <TicketListItem key={ticket.issue_id} ticket={ticket} selected={ticket.issue_id === selectedTicketId} onClick={() => onSelectTicket(ticket)} />
                 ))}
                 {filtered.length === 0 ? (
                   <div className="p-8 text-center text-[12px] text-slate-400">No tickets match the current filters.</div>

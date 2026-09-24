@@ -2,6 +2,7 @@ import asyncio
 from dataclasses import replace
 import json
 from types import SimpleNamespace
+import pytest
 
 from fastapi.testclient import TestClient
 
@@ -10,6 +11,7 @@ from service_desk.analysis.evidence import current_facts, prepare_evidence
 from service_desk.analysis.contracts import validate_filter
 from service_desk.api import create_app
 from service_desk.retrieval.types import RetrievalHit
+from service_desk.retrieval import TicketQuery
 from test_retrieval import artifact  # shared synthetic artifact fixture
 
 
@@ -190,7 +192,8 @@ def test_facts_and_templates_preserve_literal_source_text():
     facts = current_facts(TICKET)
     assert facts["Q3"] == {"source": "description", "text": "There is no outage."}
     retriever = Retriever()
-    model, originals, comments = prepare_evidence(retriever, retriever.search(TICKET, 50))
+    hits = retriever.search(TICKET, 50)
+    model, originals, comments = prepare_evidence({h.document_id: retriever.describe(h.document_id) for h in hits}, hits)
     assert len(model["templates"]) == 2 and len(comments) == 1
     assert originals["G2"]["document_id"] == "remove"
     assert "sources" not in model["comments"][0]
@@ -230,3 +233,43 @@ def test_condition_cannot_override_a_different_or_unknown_failure_stage():
     value["observed_stage"] = "unknown"
     value["comment_choices"][0]["status"] = "reference"
     assert validate_filter(value, groups, comments)
+
+
+def test_standalone_stages_allow_filter_before_clean_without_a_retriever():
+    async def run():
+        retriever, retrieval_provider = Retriever(), Provider()
+        source = TicketAnalysis(retriever, client=retrieval_provider)
+        snapshot = await source.retrieve(TicketQuery(TICKET.summary, TICKET.description, TICKET.comments))
+        assert not retrieval_provider.calls
+        serialized = json.dumps(snapshot, sort_keys=True)
+        provider = Provider()
+        worker = TicketAnalysis(service_catalog=["Archive", "Payments"], client=provider)
+        try:
+            filtered = await worker.filter(TICKET, json.loads(serialized))
+            cleaned = await worker.clean(TICKET)
+            assert filtered["filter"]["primary_document_ids"] == ["grant"]
+            assert cleaned["clean"]["fields"][0]["suggested"] == ["Archive"]
+            assert [c["text"]["format"]["name"] for c in provider.calls] == ["candidate_filter", "ticket_clean"]
+            assert json.dumps(snapshot, sort_keys=True) == serialized
+            assert len(retriever.queries) == 1
+            with pytest.raises(ValueError, match="requires a retriever"):
+                await worker.retrieve(TicketQuery("query"))
+        finally:
+            await worker.close()
+            await source.close()
+    asyncio.run(run())
+
+
+def test_standalone_filter_rejects_duplicate_candidates_before_model_call():
+    async def run():
+        provider = Provider()
+        pipeline = TicketAnalysis(Retriever(), client=provider)
+        try:
+            snapshot = await pipeline.retrieve(TicketQuery("query"))
+            snapshot["retrieval"]["hits"].append(snapshot["retrieval"]["hits"][0])
+            with pytest.raises(ValueError, match="unique IDs"):
+                await pipeline.filter(TICKET, snapshot)
+            assert not provider.calls
+        finally:
+            await pipeline.close()
+    asyncio.run(run())

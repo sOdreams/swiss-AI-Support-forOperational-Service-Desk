@@ -11,6 +11,7 @@ import jsonschema
 from openai import AsyncOpenAI
 
 from ..retrieval import TicketQuery
+from ..retrieval.types import RetrievalHit
 from .contracts import clean_result, clean_schema, filter_result, filter_schema, validate_clean, validate_filter
 from .evidence import current_facts, prepare_evidence
 from .prompts import CLEAN_PROMPT, FILTER_PROMPT
@@ -47,10 +48,12 @@ def _safe_error(exc):
 
 
 class TicketAnalysis:
-    def __init__(self, retriever, *, api_key=None, config=None, client=None):
+    def __init__(self, retriever=None, *, service_catalog=None, api_key=None, config=None, client=None):
         self.retriever = retriever
         self.config = config or AnalysisConfig()
-        self.catalog = retriever.service_catalog()
+        if service_catalog is None and retriever is None:
+            raise ValueError("Provide a retriever or an explicit service_catalog")
+        self.catalog = list(service_catalog) if service_catalog is not None else retriever.service_catalog()
         self.client = client or AsyncOpenAI(api_key=api_key, base_url="https://api.openai.com/v1",
                                             timeout=self.config.stage_timeout_seconds, max_retries=0)
         self._semaphore = asyncio.Semaphore(self.config.max_concurrent_calls)
@@ -65,6 +68,8 @@ class TicketAnalysis:
         await self.client.close()
 
     async def analyze(self, ticket: TicketInput):
+        if self.retriever is None:
+            raise ValueError("analyze requires a retriever; clean/filter can run independently")
         if not any(s.strip() for s in (ticket.summary, ticket.description, *ticket.comments)):
             raise ValueError("Provide a title, description or comment")
         started = time.perf_counter()
@@ -139,37 +144,68 @@ class TicketAnalysis:
                 "error": {"type": "ValidationFailed"} if errors else None,
                 "calls": calls, "seconds": time.perf_counter() - started}
 
-    async def _retrieve_and_filter(self, ticket, facts):
+    async def clean(self, ticket: TicketInput):
+        """Check current facts without retrieval; no implicit search or filtering."""
+        facts = current_facts(ticket)
+        if not facts:
+            raise ValueError("Provide a title, description or comment")
+        result = await self._generate("ticket_clean", CLEAN_PROMPT,
+            {"current_facts": facts, "service_catalog": self.catalog}, clean_schema(facts, self.catalog),
+            lambda value: validate_clean(value, facts))
+        cleaned = clean_result(ticket, result["value"], facts) if result["ok"] else {
+            "status": "unavailable", "fields": [], "questions": [], "reason": "Cleaning unavailable; current fields preserved."}
+        return {"clean": cleaned, "facts": facts, "model_result": result}
+
+    async def retrieve(self, query: TicketQuery):
+        """Search an explicit query and return a self-contained, JSON-safe snapshot."""
+        if self.retriever is None:
+            raise ValueError("retrieve requires a retriever")
         started = time.perf_counter()
-        try:
-            query = TicketQuery(ticket.summary, ticket.description, ticket.comments)
-            hits = await asyncio.to_thread(self.retriever.search, query, 50)
-            retrieval_ms = (time.perf_counter() - started) * 1000
-            packet, originals, comments = prepare_evidence(self.retriever, hits)
-        except Exception as exc:
-            return {"retrieval": None, "retrieval_ms": (time.perf_counter() - started) * 1000,
-                    "filter": None, "model_result": {"ok": False, "error": _safe_error(exc), "calls": []}}
-        payload = {"current_facts": facts, "service_catalog": self.catalog, **packet}
-        result = await self._generate("candidate_filter", FILTER_PROMPT, payload,
-            filter_schema(facts, self.catalog, originals, comments),
-            lambda value: validate_filter(value, originals, comments))
+        hits = await asyncio.to_thread(self.retriever.search, query, 50)
         return {"retrieval": {"index_version": self.retriever.manifest["index_version"],
                               "model": self.retriever.manifest["model"], "score_type": "cosine",
                               "hits": [asdict(hit) for hit in hits]},
-                "retrieval_ms": retrieval_ms, "model_result": result,
-                "filter": filter_result(result["value"] if result["ok"] else None, originals, comments, facts)}
+                "documents": {hit.document_id: self.retriever.describe(hit.document_id) for hit in hits},
+                "retrieval_ms": (time.perf_counter() - started) * 1000}
+
+    async def filter(self, ticket: TicketInput, candidates: dict):
+        """Filter supplied candidates without a retriever or prior clean call.
+
+        Use a snapshot returned by retrieve(), including its exact documents.
+        Neither the snapshot nor the current ticket is modified.
+        """
+        facts = current_facts(ticket)
+        if not facts:
+            raise ValueError("Provide a title, description or comment")
+        hits = [RetrievalHit(**hit) for hit in candidates["retrieval"]["hits"]]
+        ids, ranks = [hit.document_id for hit in hits], [hit.rank for hit in hits]
+        if (len(ids) > 50 or len(set(ids)) != len(ids) or len(set(ranks)) != len(ranks)
+                or any(type(rank) is not int or rank < 1 for rank in ranks) or ranks != sorted(ranks)):
+            raise ValueError("Candidates require at most 50 unique IDs in original rank order")
+        packet, originals, comments = prepare_evidence(candidates["documents"], hits)
+        result = await self._generate("candidate_filter", FILTER_PROMPT,
+            {"current_facts": facts, "service_catalog": self.catalog, **packet},
+            filter_schema(facts, self.catalog, originals, comments),
+            lambda value: validate_filter(value, originals, comments))
+        return {"filter": filter_result(result["value"] if result["ok"] else None, originals, comments, facts),
+                "model_result": result}
+
+    async def _retrieve_and_filter(self, ticket, query=None):
+        started = time.perf_counter()
+        try:
+            candidates = await self.retrieve(query or TicketQuery(ticket.summary, ticket.description, ticket.comments))
+            filtered = await self.filter(ticket, candidates)
+        except Exception as exc:
+            return {"retrieval": None, "retrieval_ms": (time.perf_counter() - started) * 1000,
+                    "filter": None, "model_result": {"ok": False, "error": _safe_error(exc), "calls": []}}
+        return {"retrieval": candidates["retrieval"], "retrieval_ms": candidates["retrieval_ms"], **filtered}
 
     async def _compute(self, ticket):
         started = time.perf_counter()
-        facts = current_facts(ticket)
         # Both branches receive the original narrative. Clean predictions never
         # gate retrieval, and filter does not wait for the cleaning call.
-        clean_task = self._generate("ticket_clean", CLEAN_PROMPT,
-            {"current_facts": facts, "service_catalog": self.catalog}, clean_schema(facts, self.catalog),
-            lambda value: validate_clean(value, facts))
-        clean, evidence = await asyncio.gather(clean_task, self._retrieve_and_filter(ticket, facts))
-        cleaned = clean_result(ticket, clean["value"], facts) if clean["ok"] else {
-            "status": "unavailable", "fields": [], "questions": [], "reason": "Cleaning unavailable; current fields preserved."}
+        cleaning, evidence = await asyncio.gather(self.clean(ticket), self._retrieve_and_filter(ticket))
+        clean, cleaned, facts = cleaning["model_result"], cleaning["clean"], cleaning["facts"]
         filtered = evidence["filter"]
         conflicts = []
         if clean["ok"] and evidence["model_result"]["ok"]:

@@ -15,12 +15,12 @@ def current_facts(ticket):
     return facts
 
 
-def prepare_evidence(retriever, hits):
+def prepare_evidence(documents, hits):
     """Deduplicate exact templates and comments; no research-corpus assumptions."""
     templates, template_ids, groups, comments, originals = {}, {}, [], {}, {}
     for hit in hits:
         alias = f"G{hit.rank}"
-        doc = retriever.describe(hit.document_id)
+        doc = documents[hit.document_id]
         summary, description = doc["summary"], doc["description"]
         if len(doc["services"]) == 1:
             summary = summary.replace(doc["services"][0], "{service}")

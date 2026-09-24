@@ -1,8 +1,12 @@
 # FAISS retrieval: build, run, call
 
-This backend retrieves **50 ranked, distinct evidence groups** by default. It does
-not choose a service, owner, resolution, or filter the candidate pool. The active
-frontend shows the results and records which evidence the reviewer used.
+The retrieval endpoint returns **50 ranked, distinct evidence groups** by default.
+A separate `POST /tickets/analyze` endpoint runs narrative cleaning concurrently
+with FAISS retrieval and candidate filtering, using GPT-5.5 with low reasoning.
+The frontend's **Clean & filter** button shows reviewable field corrections and
+selected evidence while preserving the original Top-50. See the complete English
+[analysis handoff](../docs/ANALYSIS_HANDOFF.md) for setup, contracts, measured
+latency and limitations. Routing and feedback remain separate.
 
 ## Quick start (from the repository root)
 

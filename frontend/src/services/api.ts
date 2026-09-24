@@ -3,6 +3,7 @@ import type { AiProposal } from "../types/ai";
 import type { ProcessTicketPayload } from "../types/processing";
 import type { HumanReview } from "../types/review";
 import type { Ticket } from "../types/ticket";
+import type { TicketAnalysisResponse } from "../types/analysis";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
 
@@ -35,4 +36,12 @@ export const retrieveEvidence = (ticket: Ticket, signal?: AbortSignal) => reques
   method: "POST",
   signal,
   body: JSON.stringify({ summary: ticket.summary, description: ticket.description, comments: ticket.all_comments.map((comment) => comment.body), top_k: 50 }),
+});
+
+export const cleanAndFilterTicket = (ticket: Ticket, signal?: AbortSignal) => request<TicketAnalysisResponse>("/tickets/analyze", {
+  method: "POST",
+  signal,
+  body: JSON.stringify({ summary: ticket.summary, description: ticket.description,
+    comments: ticket.all_comments.map((comment) => comment.body),
+    current_services: ticket.affected_business_or_it_services, current_work_type: ticket.work_type }),
 });

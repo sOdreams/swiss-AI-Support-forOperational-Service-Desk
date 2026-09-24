@@ -3,6 +3,8 @@
 Read `backend/README.md` before changing retrieval. It contains complete build/run
 commands, the HTTP/Python contracts, ranking semantics and verification steps.
 Read `docs/RETRIEVAL_HANDOFF.md` for filter/routing integration examples.
+Read `docs/ANALYSIS_HANDOFF.md` for the implemented parallel clean/filter pipeline,
+its API, English output contract, cache/failure behavior and evaluation limits.
 
 ## Architecture
 
@@ -17,6 +19,10 @@ Read `docs/RETRIEVAL_HANDOFF.md` for filter/routing integration examples.
   SQLite separately; feedback does not rebuild or mutate the search index.
 - Routing/filtering are downstream consumers. Do not put predicted service/team/
   assignee into search inputs or turn cosine similarity into confidence.
+- `analysis/` runs current-fact cleaning in parallel with original-narrative
+  retrieval followed by evidence filtering. Default: GPT-5.5 low reasoning.
+  `/tickets/analyze` never writes back to Jira or assigns an owner. Preserve all
+  original candidates and distinguish active comments from uncertain reserves.
 - `data-exploratory` is a separate remote branch with an older `TriageEngine`.
   It is not imported by this backend. Its lexical score weights and row indices
   are incompatible with cosine scores and grouped document IDs.

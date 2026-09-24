@@ -16,6 +16,8 @@ import { PriorityBadge } from "../../components/PriorityBadge";
 import { StatusBadge } from "../../components/StatusBadge";
 import { RetrievalEvidencePanel } from "../retrieval/RetrievalEvidencePanel";
 import { useRetrieval } from "../retrieval/useRetrieval";
+import { useTicketAnalysis } from "../analysis/useTicketAnalysis";
+import { TicketAnalysisPanel } from "../analysis/TicketAnalysisPanel";
 import { submitProcessedTicket } from "../../services/api";
 import type { ProcessedTicketRecord, ProcessTicketPayload } from "../../types/processing";
 import type { Ticket } from "../../types/ticket";
@@ -97,7 +99,9 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
   onBack: () => void;
   onProcessed: (ticket: Ticket, record: ProcessedTicketRecord) => void;
 }) {
-  const retrieval = useRetrieval(ticket);
+  const originalRetrieval = useRetrieval(ticket);
+  const analysis = useTicketAnalysis(ticket);
+  const retrieval = analysis.data?.retrieval ? { data: analysis.data.retrieval, loading: false, error: null } : originalRetrieval;
   const [selectedEvidenceIds, setSelectedEvidenceIds] = useState<string[]>([]);
   const solutions = useMemo(() => recommendedSolutions(ticket), [ticket]);
   const aspects = useMemo(() => businessAspects(ticket), [ticket]);
@@ -208,7 +212,8 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
         </div>
       </section>
 
-      <RetrievalEvidencePanel {...retrieval} selectedIds={selectedEvidenceIds} onToggle={(id) => {
+      <TicketAnalysisPanel ticket={ticket} data={analysis.data} loading={analysis.loading} error={analysis.error} onRun={analysis.run} />
+      <RetrievalEvidencePanel {...retrieval} filter={analysis.data?.filter} selectedIds={selectedEvidenceIds} onToggle={(id) => {
         setSelectedEvidenceIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
       }} />
 

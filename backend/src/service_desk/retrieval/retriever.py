@@ -94,3 +94,16 @@ class TicketRetriever:
         sources = [{"body": e["body"], **source} for e in doc["evidence"] for source in e["sources"]]
         return {"document_id": document_id, "total": len(sources),
                 "offset": offset, "sources": sources[offset:offset + limit]}
+
+    def describe(self, document_id: str):
+        """Exact group text and source services for downstream interpretation."""
+        doc = self._by_id[document_id]
+        return {"document_id": document_id, "summary": doc["summary"],
+                "description": doc["description"],
+                "services": sorted({s for e in doc["evidence"] for ref in e["sources"]
+                                    for s in ref["services"]})}
+
+    def service_catalog(self):
+        """Historical service names, with no team or assignee predictions."""
+        return sorted({s for doc in self._documents for e in doc["evidence"]
+                       for ref in e["sources"] for s in ref["services"]})

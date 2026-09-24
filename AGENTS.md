@@ -12,6 +12,28 @@ latency smoke results are in `backend/validation/lite-latency.json`.
 FAISS, clean and filter are implemented. Resolution generation and routing remain
 future work; do not describe the frontend's general review templates as generated fixes.
 
+## Agent entry points
+
+Use `from service_desk.analysis import TicketAnalysis, TicketInput` and
+`from service_desk.retrieval import TicketQuery, TicketRetriever`.
+
+| Task | Existing call |
+|---|---|
+| Full default workflow | `await pipeline.analyze(ticket)` |
+| Check ticket fields only | `await pipeline.clean(ticket)` |
+| Retrieve a reusable candidate snapshot | `await pipeline.retrieve(query)` |
+| Filter an existing snapshot only | `await pipeline.filter(ticket, candidates)` |
+| Full clean-first workflow | `await pipeline.analyze_clean_first(ticket)` |
+
+`ticket` is a `TicketInput`; `query` is a `TicketQuery`. Create one pipeline with
+the loaded retriever and reuse it; call `await pipeline.close()` at shutdown.
+The analysis handoff includes a runnable Python example and exact return fields.
+Clean may run before or after retrieval/filtering. Filter requires candidates,
+but never performs retrieval itself. Keep the complete Python retrieval snapshot,
+including `documents`; the HTTP `/retrieval/search` response alone is insufficient
+for the standalone Python filter. Direct stage calls do not perform cross-stage
+reconciliation or caching; use a complete workflow when those behaviors are needed.
+
 ## Architecture
 
 - The active frontend is `App → TicketOverview → TicketProcessor`.

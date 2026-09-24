@@ -69,21 +69,37 @@ into confidence, and `filter_rank` never replaces the original rank.
 ## Python entry point
 
 ```python
-from service_desk.analysis import AnalysisConfig, TicketAnalysis, TicketInput
+import asyncio
+import os
+
+from service_desk.analysis import TicketAnalysis, TicketInput
 from service_desk.retrieval import TicketRetriever
 
-retriever = TicketRetriever.load("artifacts/retrieval/minilm-sdc-v1")
-pipeline = TicketAnalysis(retriever, api_key=api_key)
-try:
-    result = await pipeline.analyze(TicketInput(
+async def main():
+    retriever = TicketRetriever.load("artifacts/retrieval/minilm-sdc-v1")
+    pipeline = TicketAnalysis(retriever, api_key=os.environ["OPENAI_API_KEY"])
+    ticket = TicketInput(
         summary="Shared mailbox request",
         description="Create a shared mailbox and distribution list; no outage.",
         current_services=("Outlook & Email",),
         current_work_type="Incident",
-    ))
-finally:
-    await pipeline.close()
+    )
+    try:
+        result = await pipeline.analyze(ticket)
+        print(result["status"])
+        print(result["clean"]["fields"])
+        if result["filter"] is not None:
+            print(result["filter"]["primary_document_ids"])
+    finally:
+        await pipeline.close()
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
+
+Run this script after installation and index construction, with `OPENAI_API_KEY`
+configured in the server environment. In an existing async application, await
+the methods directly instead of starting a nested event loop.
 
 Create one pipeline per server event loop and reuse it. Do not load an encoder or
 construct a new provider client per request. `AnalysisConfig` also supports model,
@@ -98,6 +114,9 @@ parallel workflow. There is no workflow engine or additional model call.
 
 ```python
 from service_desk.retrieval import TicketQuery
+
+# These alternatives belong inside an async function with pipeline and ticket
+# initialized as above. Choose one composition for the current request.
 
 # Original-text retrieval, then filtering. Clean can run before or after these.
 candidates = await pipeline.retrieve(TicketQuery(
@@ -131,6 +150,8 @@ use separate cache keys, so one workflow cannot return the other's cached result
 
 The retrieval envelope is JSON-serializable and contains everything filtering
 needs; do not discard `documents`. Filter does not call `search()` or `describe()`.
+The HTTP `/retrieval/search` response alone is not this envelope: use the Python
+`retrieve()` result when calling the standalone Python filter.
 Clean and filter can run without loading FAISS by constructing
 `TicketAnalysis(service_catalog=service_names, api_key=api_key)` and supplying an
 existing candidate envelope to `filter()`. An explicit catalog must describe the

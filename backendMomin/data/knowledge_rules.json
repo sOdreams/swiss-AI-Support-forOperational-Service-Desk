@@ -1,0 +1,12 @@
+[
+  {
+    "rule_id": "KR-001",
+    "topic": "SimCorp Dimension Crashes",
+    "directive": "Si el usuario reporta que SimCorp Dimension se cierra inesperadamente al ejecutar reportes, la prioridad debe ser 'High'. El equipo asignado debe ser 'AM/ASB/ASF'. Acción requerida: Limpiar la caché local del usuario en C:\\SimCorp\\Temp y reiniciar el servicio."
+  },
+  {
+    "rule_id": "KR-002",
+    "topic": "VPN Access and Identity",
+    "directive": "Cualquier problema relacionado con acceso VPN o gestión de identidad debe ser asignado a 'Identity Support'. Prioridad estándar: 'Medium'. Si afecta a un directivo, subir a 'Highest'."
+  }
+]

@@ -9,7 +9,9 @@ comparison favored low for quality; the lighter default prioritizes latency.
 
 ## Start and use
 
-From the repository root, with an existing retrieval artifact:
+For a fresh checkout, first download the training snapshot and build the index
+using [the root quick start](../README.md#run-locally). Generated artifacts are not
+committed. From the repository root, with an existing retrieval artifact:
 
 ```sh
 python -m pip install -e './backend[test]'
@@ -157,6 +159,23 @@ and conflicting results are not cached.
 
 ## Earlier measurements and their limits
 
+The current lightweight implementation (`2dde5ef`) was smoke-tested on the first
+three development tickets, one ticket at a time with both branches parallel:
+
+| Measurement | Recorded value |
+|---|---|
+| Complete pipeline times | 4.86s, 4.08s, 3.85s |
+| Median | 4.08s |
+| Validated completions | 3/3; six model calls, no retries |
+| Reasoning tokens | 0 |
+| Average visible output per ticket, both calls combined | 273 tokens |
+| Repeated-request cache probe | 42.8ms |
+
+All three retained the original 50 IDs and ranks. These are Python pipeline
+measurements excluding startup/model loading, HTTP and browser rendering.
+Completion status is not accuracy. See the aggregate-only record with source
+hashes in [lite-latency.json](../backend/validation/lite-latency.json).
+
 See [PARALLEL_ANALYSIS_BENCHMARK.md](PARALLEL_ANALYSIS_BENCHMARK.md). The earlier
 low-reasoning profile completed 20/20 development cases, with median 6.06s and maximum 12.17s
 for retrieval plus both model branches. A repeated-request cache probe was 35ms
@@ -175,6 +194,10 @@ disagreements. V1 used different prompts. The new one-call-per-branch default
 has passed local regression tests but has not been rerun on all 20 live examples;
 neither earlier timing nor quality result should be presented as its measurement.
 
+For a quick latency check of the current default, use the command below with
+`--models gpt-5.5-2026-04-23 --limit 3 --concurrency 1`. Use a fresh output
+directory so saved results cannot be mistaken for new calls.
+
 Reproduce calls on your own local challenge file:
 
 ```sh
@@ -190,6 +213,36 @@ The runner accepts a raw ticket array or `{"records": [...]}`, prompts for the
 key if needed, saves frozen input/code hashes, runs bounded concurrent tickets,
 and records actual response usage and timings. It reads no evaluation labels.
 Use a fresh output directory when changing code/prompts or model parameters.
+
+## Taking over and adding downstream consumers
+
+Use this module as the implementation, rather than recreating it from the
+historical benchmark report. Start with `api.py`, `analysis/pipeline.py`, and
+`analysis/contracts.py`; the module map above explains the remaining files.
+The application has no dependency on a research checkout or its evaluation labels.
+
+Resolution generation and routing were discussed but are not implemented here.
+A future consumer can select the supported evidence from an analysis response:
+
+```python
+filtered = result.get("filter")
+if filtered and filtered["status"] == "ready":
+    primary_ids = set(filtered["primary_document_ids"])
+    active_ids = set(filtered["active_comment_ids"])
+    primary_groups = [g for g in filtered["candidates"] if g["document_id"] in primary_ids]
+    active_comments = [c for c in filtered["comments"] if c["id"] in active_ids]
+else:
+    primary_groups, active_comments = [], []
+```
+
+Pass original current facts and these selections to a future consumer. Keep the
+comment conditions, evidence IDs and source relationships. A selected parent
+does not activate its other comments. Do not treat reserve/not-selected evidence
+as a supported fix, or an unfiltered fallback as a successful filter. Clean field
+suggestions are reviewable proposals, not verified updates to the current ticket.
+Historical remedies do not establish the current cause or completed resolution.
+The existing feedback endpoint records human review; adding a resolve stage must
+not silently mark the ticket resolved or change the retrieval/index contract.
 
 ## Checks
 

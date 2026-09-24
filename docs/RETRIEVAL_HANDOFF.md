@@ -1,19 +1,17 @@
-# 给下一位开发者 / GPT 的 FAISS 接入说明
+# FAISS retrieval handoff for developers and coding agents
 
-先阅读根目录 `AGENTS.md`，然后执行 `backend/README.md` 的 quick start。
-本分支已实现召回，不需要重新写 FAISS wrapper 或把实验脚本复制进来。
+Read the root [AGENTS.md](../AGENTS.md), then follow [backend/README.md](../backend/README.md). Retrieval, cleaning and filtering are implemented on this branch. Use [ANALYSIS_HANDOFF.md](ANALYSIS_HANDOFF.md) for the full pipeline; do not rebuild a separate FAISS wrapper or import research scripts.
 
-## 当前已经实现什么
+## Implemented behavior
 
-- 独立 Python package：`service_desk.retrieval`。
-- 固定 MiniLM + 标题/描述/评论（SDC）+ 精确 FAISS cosine 检索。
-- 默认 **Top-50 去重证据组**，每条有 **rank（1–50）**、score、document_id。
-- 原始评论与各自作者、工单行号、service/team 一一关联；不是把聚合组的
-  第一个作者当成整组作者。
-- HTTP 检索接口、完整来源分页、前端证据展示/选择和 SQLite 反馈保存。
-- 离线建索引、启动加载一次，反馈不会直接改索引。
+- Python package: `service_desk.retrieval`.
+- Pinned MiniLM model, title/description/comments (SDC), exact normalized FAISS cosine search.
+- Default Top-50 distinct evidence groups, each with a 1-based `rank`, raw `score` and stable `document_id`.
+- Individual historical comments retain their own authors, source rows, service/team metadata and source relationships.
+- HTTP retrieval, complete source pagination, frontend evidence selection and SQLite human feedback.
+- Offline index construction; one retriever loaded at startup. Feedback never mutates the index automatically.
 
-## 下一步接 filter / routing 的位置
+## Existing entry points
 
 ```python
 from service_desk.retrieval import TicketQuery, TicketRetriever
@@ -24,60 +22,50 @@ candidates = retriever.search(TicketQuery(
     description=ticket_description,
     comments=tuple(comment_bodies),
 ), top_k=50)
-
-# 以下两个函数属于你后续实现的业务逻辑，不是本仓库已有 API：
-# filtered = filter_evidence(query, candidates)
-# routing = propose_routing(query, filtered)
 ```
 
-输入只用当前已知的叙述内容。不要依赖“先预测 service，再按 service 搜索”。
-原始票据上的 service/work type 也可能填错，当前召回不使用它们来加分或过滤。
-filter 可以读取候选内容和来源 metadata，但保留原始 `rank`，需要重排时另加
-`rerank_rank` / `rerank_score`，不要覆盖 cosine 或把它解释成置信度。
+For cleaning and filtering, use the existing `TicketAnalysis.analyze(TicketInput(...))` Python API or `POST /tickets/analyze`. It returns `clean`, `retrieval` and `filter` together. Filtering already exists; routing and resolution generation remain downstream work.
 
-50 条候选的单位是 **title+description 分组**，不是50个原始工单，也不是50种
-解决方案。同组历史评论可能描述不同事件，filter 应挑选具体评论并保留其
-source provenance。缺少合适证据时允许返回空，不要强制编造解决方案。
+Search uses only the currently known narrative. Current service/work-type fields can be wrong and do not boost or restrict retrieval. Preserve original ranks and raw cosine values through subsequent processing. If adding a reranker, introduce separate ranking fields; cosine is not confidence.
 
-routing 可以参考选中评论的作者、历史 service/team；历史 Assignee 是另一个
-字段，不等于真正解决问题的人。不要只凭聚合组里多数作者直接指定负责人。
+## Evidence units and source relationships
 
-## 两个不能直接替换的旧接口
+A candidate is a title/description group, not one historical incident or one unique solution. The Top-50 is therefore 50 groups when enough groups exist. Comments within a group can describe different events.
 
-`data-exploratory` 分支的 `TriageEngine.retrieve()` 返回 `(training row index,
-lexical score)`。本实现返回 `(group document_id, cosine score, evidence)`。
+The filter evaluates group relevance and individual comment applicability independently. A selected group does not make all its comments relevant. A useful comment can survive an unsuitable parent title. Consume `filter.active_comment_ids` and retain each comment's conditions and sources. Empty selections are valid.
 
-1. **不能**用 `training_records[hit.document_id]`。要读取 hit.evidence 内对应
-   source，必要时调用 `retriever.sources(document_id, offset, limit)`。
-2. **不能**把 cosine 填进原来的词法评分公式。旧代码含
-   `min(score, 8) * .12`、score 求和及 resolution bonus；应在下游另行评估
-   rank 权重或校准方案。
-3. 旧 `best_resolution_example()` 会从整份 service catalogue 额外找证据；
-   若保留它，必须明确记录是“额外 fallback”，不能冒充 Top-50 内的结果。
+Each returned comment includes up to three source examples. Retrieve complete provenance with `retriever.sources(document_id, offset, limit)` or the paginated HTTP source endpoint. Use the same index version while paging.
 
-本分支没有改写或合并旧 routing pipeline。独立召回可以先接入新的 filter，
-再逐步适配旧 pipeline，避免把检索迁移和路由规则变化混成一次改动。
+A future routing consumer may inspect historical author/service/team metadata. Historical assignee and comment author are different fields; neither alone establishes the appropriate current owner. Keep routing output out of the retrieval query.
 
-## 前端接入位置
+## Legacy interfaces are not interchangeable
 
-实际页面：`App.tsx → TicketOverview.tsx → TicketProcessor`。
-`useRetrieval.ts` 请求 `/retrieval/search`；会取消过期请求并屏蔽切票后的旧响应。
-`RetrievalEvidencePanel.tsx` 展示50条候选，勾选表示本次人工review使用的证据。
-`AiProposalPanel.tsx` 是旧组件，不是当前应用入口。
+The older `TriageEngine.retrieve()` on `data-exploratory` returns training-row indices and lexical scores. This implementation returns grouped document IDs, cosine scores and evidence.
 
-上传的 ticket 只存在浏览器状态里，因此传 summary/description/comments，
-不要只传 issue ID 让服务端查不存在的工单记录。
+1. Do not use `training_records[hit.document_id]`. Read the hit's evidence sources or use the provenance endpoint.
+2. Do not substitute cosine into legacy formulas such as `min(score, 8) * .12`, score sums or resolution bonuses. Evaluate downstream ranking or calibration separately.
+3. The legacy `best_resolution_example()` may search outside the retrieved pool. If retained, label that evidence as an additional fallback rather than a Top-50 result.
 
-`POST /tickets/process` 把本次 model/index version、展示ID、使用ID与人工反馈
-一起保存；没有已实现的在线学习、自动更新 FAISS 或 Jira 写回。
+The older routing pipeline has not been merged into this backend.
 
-## 测试与评价边界
+## Frontend and feedback
 
-运行 `python -m pytest backend/tests -q` 和前端 typecheck/lint/build。
-迁移复现脚本是 `backend/scripts/verify_baseline.py`，结果在
-`backend/validation/baseline-parity.json`。细小浮点误差可能让近乎并列候选交换
-位置；报告要保留这种差异，不可写成全部严格一致。
+The active page is `App.tsx → TicketOverview.tsx → TicketProcessor`.
 
-之前20条例子的比较是开发集上的 qualitative analysis，不是官方 GT。
-FAISS 迁移一致性也不是新的模型准确率。更换 embedding、分组粒度或文本组合后，
-应重新比较召回，并独立评估 filter/routing，不能沿用之前指标作为新方案成绩。
+- `useRetrieval.ts` requests `/retrieval/search` and isolates stale responses after ticket switches.
+- `useTicketAnalysis.ts` requests `/tickets/analyze` when the analyst clicks **Clean & filter**.
+- `TicketAnalysisPanel.tsx` displays corrections and clarification questions.
+- `RetrievalEvidencePanel.tsx` displays primary selections, independent historical comments and all original candidates.
+- `AiProposalPanel.tsx` is a legacy component, not the current application entry point.
+
+Uploads live in browser state, so send summary, description and comment bodies rather than expecting the backend to look up a ticket by issue ID.
+
+`POST /tickets/process` saves the shown/used document IDs, model/index version and human review. There is no implemented online learning, automatic FAISS update or Jira writeback.
+
+## Verification and evaluation limits
+
+Run backend tests and frontend typecheck/lint/build/browser tests using the commands in [backend/README.md](../backend/README.md).
+
+`backend/scripts/verify_baseline.py` records migration parity in `backend/validation/baseline-parity.json`. Near-tied candidates can exchange order because of floating-point differences; parity reports must preserve those differences.
+
+Earlier 20-ticket comparisons are development diagnostics against assistant review, not official ground-truth accuracy. Migration parity is not model accuracy. Re-evaluate after changing the embedding, grouping or text recipe, and evaluate filtering/routing separately. The latest lightweight latency smoke results are in [lite-latency.json](../backend/validation/lite-latency.json).

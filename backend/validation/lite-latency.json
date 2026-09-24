@@ -1,0 +1,60 @@
+{
+  "implementation_commit": "2dde5ef",
+  "model": "gpt-5.5-2026-04-23",
+  "reasoning_effort": "none",
+  "max_output_tokens_per_call": 1500,
+  "automatic_retries": 0,
+  "created_at_utc": "2026-09-24T18:41:19Z",
+  "index_version": "afa533f71d666da9f11d",
+  "concurrent_tickets": 1,
+  "schedule": "clean(current narrative) || [FAISS(original narrative) -> filter]",
+  "measurement": "Python pipeline elapsed time; excludes process startup, model loading, HTTP and browser rendering.",
+  "evaluation": "Latency smoke check on the first three development tickets; no ground-truth accuracy evaluation and no 20-case quality rerun.",
+  "code_sha256": {
+    "backend/src/service_desk/analysis/__init__.py": "92bc3f5fc6abaea87bb7212fa67b782793c303d5675a6a8af0628a4c7e9e7768",
+    "backend/src/service_desk/analysis/evidence.py": "e0f629d61c8fbc63d3ddbae57ecc37184762dc4da13296c2aa6c748e1566196e",
+    "backend/src/service_desk/analysis/prompts.py": "df51cb69a8c377d4c023d4b50419fc7ac3fbafb686bf7c43c5b0118805dfaf2b",
+    "backend/src/service_desk/analysis/contracts.py": "371699fde5d9134afa0b0f4f0cba9a92a6371b41636581e1b351b1a953af5f61",
+    "backend/src/service_desk/analysis/pipeline.py": "6191945103e10282518c7b7a97edec45536283fb1efe417c5fab05b9832afe6a"
+  },
+  "summary": {
+    "cases": 3,
+    "ready": 3,
+    "partial": 0,
+    "needs_review": 0,
+    "recorded_calls": 6,
+    "usage": {
+      "input_tokens": 14627,
+      "cached_input_tokens": 0,
+      "output_tokens": 820,
+      "reasoning_tokens": 0
+    },
+    "median_elapsed_ms": 4080.817979061976,
+    "max_elapsed_ms": 4862.158898031339,
+    "median_serial_stage_sum_ms": 6769.855770049617,
+    "warm_cache_probe": {
+      "cache_hit": true,
+      "elapsed_ms": 42.760564014315605
+    }
+  },
+  "per_case": [
+    {
+      "case": 1,
+      "elapsed_ms": 4862.158898031339,
+      "status": "ready",
+      "original_top50_preserved": true
+    },
+    {
+      "case": 2,
+      "elapsed_ms": 4080.817979061976,
+      "status": "ready",
+      "original_top50_preserved": true
+    },
+    {
+      "case": 3,
+      "elapsed_ms": 3847.131300950423,
+      "status": "ready",
+      "original_top50_preserved": true
+    }
+  ]
+}

@@ -1,195 +1,83 @@
-> **FAISS retrieval is implemented on this branch.** Start with [backend/README.md](backend/README.md) for install/build/API/Python usage. It returns **Top-50 distinct evidence groups with rank**, independently of routing. AI coding agents should read [AGENTS.md](AGENTS.md) and the [integration handoff](docs/RETRIEVAL_HANDOFF.md). The older frontend prototype description below predates this backend.
-
 # Service Desk Copilot
 
-Aplicación frontend para revisar tickets de soporte con asistencia de IA. La interfaz permite comparar el ticket original con una propuesta generada por IA, evaluar la recomendación y registrar la decisión del analista humano.
+This branch implements the complete **FAISS retrieval + ticket cleaning + candidate filtering** pipeline, with a React review interface and a Python API.
 
-## Descripción del proyecto
+For a new developer or coding agent, read [AGENTS.md](AGENTS.md), then [the analysis handoff](docs/ANALYSIS_HANDOFF.md). The handoff describes the implemented API, Python entry point, output contract, failure handling and extension boundaries. All code, documentation, UI copy and generated explanations should be in English; preserve original source quotations.
 
-Este proyecto simula un panel de trabajo para un equipo de soporte/IT Service Desk. La idea principal es separar tres capas:
-
-1. El ticket original (fuente de verdad)
-2. La propuesta sugerida por IA
-3. La decisión final del analista (aprobar, editar o rechazar)
-
-La app muestra:
-
-- una cola de tickets con búsqueda y filtro,
-- el detalle del ticket y sus comentarios,
-- la comparación entre datos reales y propuesta de IA,
-- el borrador de respuesta,
-- las fuentes utilizadas por la IA,
-- y la revisión humana final.
-
-## Stack tecnológico
-
-- React 19
-- TypeScript
-- Vite
-- Tailwind CSS
-- Lucide React
-
-## Requisitos previos
-
-Asegúrate de tener instalado:
-
-- Node.js 18 o superior
-- npm 9 o superior
-
-Puedes verificarlo con:
-
-```bash
-node -v
-npm -v
-```
-
-## Estructura del proyecto
+## Current implementation
 
 ```text
-SwissAITest-AI-Support-Agent/
-├── README.md
-├── frontend/
-│   ├── package.json
-│   ├── vite.config.ts
-│   ├── tsconfig.json
-│   ├── index.html
-│   ├── eslint.config.js
-│   └── src/
-│       ├── App.tsx
-│       ├── components/
-│       ├── data/
-│       ├── features/
-│       ├── lib/
-│       ├── services/
-│       ├── types/
-│       ├── index.css
-│       └── main.tsx
-└── .gitignore
+Original ticket ──→ Clean current facts ────────────┐
+                └→ FAISS Top-50 → Filter evidence ─┴→ Field suggestions + evidence
 ```
 
-## Instalación
+- Retrieval uses pinned MiniLM embeddings and FAISS cosine search, returning up to **50 distinct document groups with original ranks and provenance**.
+- Cleaning and retrieval/filtering run in parallel. Cleaning never rewrites or prefilters the search query.
+- The default model is **GPT-5.5 (`gpt-5.5-2026-04-23`), reasoning disabled**, with one model call per branch, a 1,500-token ceiling per call and no automatic retries.
+- The UI shows field suggestions, selected historical references and the original Top-50. A correction preview can be downloaded as a separate copy.
+- Human reviews are stored through `POST /tickets/process` in SQLite. Uploaded tickets remain browser-local.
 
-Desde la raíz del proyecto:
+Resolution generation and automated routing are future work. The existing general review templates are not generated resolutions. There is no Jira writeback or online model/index training.
 
-```bash
-cd frontend
-npm install
+## Run locally
+
+Use Python 3.10+ and Node 22.16+.
+
+```sh
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e './backend[test]'
+
+# Download the pinned training snapshot and build the index once.
+python backend/scripts/download_training.py --output data/training.json
+OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 service-desk-build-index \
+  --training data/training.json --output artifacts/retrieval/minilm-sdc-v1
+
+# Uses OPENAI_API_KEY or prompts for it without echo.
+OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 python backend/scripts/serve.py \
+  --artifact artifacts/retrieval/minilm-sdc-v1
 ```
 
-## Ejecución local
+Skip download/build when the artifact already exists. Data, model downloads and generated indexes are not committed. Leaving the key blank starts retrieval only.
 
-Inicia el servidor de desarrollo:
+In a second terminal:
 
-```bash
+```sh
 cd frontend
+npm ci
+cp .env.example .env.local
 npm run dev
 ```
 
-Luego abre la URL que indique Vite, normalmente algo como:
+Open the frontend, upload a Jira-style ticket JSON file, select a ticket and click **Clean & filter**. A demo file is available at `frontend/public/swisslife_20_tickets.json`. API documentation is at `http://localhost:8000/docs`.
 
-```text
-http://localhost:5173
-```
+## Entry points
 
-## Build de producción
+| Purpose | Entry point |
+|---|---|
+| Full analysis over HTTP | `POST /tickets/analyze` |
+| Retrieval only | `POST /retrieval/search` |
+| Complete source pagination | `GET /retrieval/documents/{document_id}/sources` |
+| Full analysis in Python | `service_desk.analysis.TicketAnalysis.analyze()` |
+| Retrieval in Python | `service_desk.retrieval.TicketRetriever.search()` |
+| Active frontend | `App → TicketOverview → TicketProcessor` |
+| Human feedback | `POST /tickets/process` |
 
-Para compilar la aplicación para producción:
+The API accepts ticket text directly; an issue ID alone is insufficient. Both model branches receive the original narrative. Current service/work-type metadata is used only to compare suggestions with the input.
 
-```bash
-cd frontend
-npm run build
-```
+## Measurements and checks
 
-El resultado se generará en la carpeta:
+The latest lightweight configuration completed three live development tickets in **4.86s, 4.08s and 3.85s** (median **4.08s**), including retrieval and both model branches. It used zero reasoning tokens and averaged 273 output tokens per ticket. A repeated-request cache probe took 43ms. These Python-level measurements exclude startup/model loading, HTTP and browser rendering; they do not establish accuracy.
 
-```text
-frontend/dist/
-```
+See [the recorded smoke results](backend/validation/lite-latency.json). The [earlier 20-ticket comparison](docs/PARALLEL_ANALYSIS_BENCHMARK.md) used different configurations and is not the current default's quality score.
 
-## Variables de entorno
+Backend checks: 23 tests passed. Frontend integration checks: six browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
 
-La aplicación intenta usar una API si está configurada. Por defecto, el cliente usa:
+## Handoff map
 
-```text
-http://localhost:8000
-```
+- [Analysis handoff](docs/ANALYSIS_HANDOFF.md): full pipeline contract, defaults, scheduling, failure behavior and downstream use.
+- [Retrieval handoff](docs/RETRIEVAL_HANDOFF.md): grouping, ranks, comment provenance and legacy integration differences.
+- [Backend guide](backend/README.md): artifact build, HTTP/Python contracts and tests.
+- [Frontend guide](frontend/README.md): review workflow and local setup.
 
-Puedes definir una variable de entorno en un archivo `.env` dentro de `frontend`:
-
-```env
-VITE_API_BASE_URL=http://localhost:8000
-```
-
-Si no existe backend, la app sigue funcionando con datos mock dentro del frontend.
-
-## Datos actuales del proyecto
-
-La aplicación usa datos de ejemplo en:
-
-- [frontend/src/data/mockTickets.ts](frontend/src/data/mockTickets.ts)
-- [frontend/src/data/mockAiProposals.ts](frontend/src/data/mockAiProposals.ts)
-
-Esto permite ejecutar la interfaz sin depender de una base de datos o servicio real.
-
-## Flujo funcional principal
-
-1. El usuario selecciona un ticket desde la cola.
-2. Se muestra el detalle original del ticket.
-3. La IA propone valores para campos como prioridad, equipo de servicio, tipo de solicitud, etc.
-4. El analista puede:
-   - aprobar,
-   - corregir manualmente,
-   - o rechazar la propuesta.
-5. La decisión se guarda en el estado local de la interfaz.
-
-## Puntos importantes para replicar o adaptar
-
-- La lógica principal vive en [frontend/src/App.tsx](frontend/src/App.tsx)
-- Los componentes de IU se agrupan por dominio en [frontend/src/features](frontend/src/features)
-- Los tipos están en [frontend/src/types](frontend/src/types)
-- La integración con API está pensada en [frontend/src/services/api.ts](frontend/src/services/api.ts)
-
-## Nota sobre backend
-
-Este repositorio actualmente contiene una interfaz frontend funcional con mocks, pero no incluye un backend real ni una base de datos. Si se quiere conectar con un servicio real, se debe implementar una API que exponga endpoints tipo:
-
-- `GET /tickets`
-- `GET /tickets/:issueId`
-- `POST /tickets/:issueId/assist`
-- `POST /feedback`
-
-La interfaz ya está preparada para consumir esos endpoints a través del servicio `api.ts`.
-
-## Comandos útiles
-
-```bash
-cd frontend
-npm install
-npm run dev
-npm run build
-npm run lint
-```
-
-## Resumen
-
-Este proyecto es un prototipo de panel para revisión asistida por IA en soporte técnico, pensado para validar propuestas de clasificación y respuesta antes de aplicarlas. Está listo para ejecutarse localmente con datos mock y puede evolucionar hacia una integración real con un backend y una API de IA.
-
-## Recomendación para IA o colaboradores
-
-Si vas a reutilizar este proyecto con una IA o con un agente, usa este flujo:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Y luego revisa:
-
-- [frontend/src/App.tsx](frontend/src/App.tsx)
-- [frontend/src/features/tickets/TicketDetail.tsx](frontend/src/features/tickets/TicketDetail.tsx)
-- [frontend/src/features/ai/AiProposalPanel.tsx](frontend/src/features/ai/AiProposalPanel.tsx)
-- [frontend/src/services/api.ts](frontend/src/services/api.ts)
-
-Eso te permitirá entender rápidamente cómo funciona el flujo de tickets, la IA y la revisión humana.
-
+Use the existing package and endpoints. Research scripts, private local paths and evaluation annotations are not required to run the application.

@@ -1,4 +1,4 @@
-> This branch includes a Python FAISS backend and a Top-50 historical evidence panel. Follow [backend/README.md](../backend/README.md) to build the index and start the API. Set `VITE_API_BASE_URL` (not `VITE_API_URL`). The three general review templates below are separate from retrieved evidence.
+> This branch includes the complete FAISS + clean + filter pipeline. Follow [backend/README.md](../backend/README.md) to build the index and start the API, then read [ANALYSIS_HANDOFF.md](../docs/ANALYSIS_HANDOFF.md) for its contract. Set `VITE_API_BASE_URL` (not `VITE_API_URL`). General review templates are separate from retrieved evidence and are not generated resolutions.
 
 # Service Desk Copilot — Ticket Processing Workflow V6
 
@@ -11,6 +11,8 @@ React + Vite + TypeScript + Tailwind CSS frontend for the Swiss {ai} Weeks / Swi
 3. Browse **Ticket Categories** horizontally (Work type, Request type, Priority, Status, Service team, Business entity).
 4. Click a ticket from either the queue or a category card.
 5. Review ticket information and complete:
+   - **Clean & filter** — run ticket checks and evidence filtering in parallel, inspect the primary candidates or all original Top-50, and review selected historical comments and their conditions.
+   - **Download correction preview** — export suggested changes to a separate copy; the imported ticket is not modified.
    - **Recommended Solutions** — select one of 3 recommendations, OR write the **Real solution**.
    - **Affected Business Aspect** — select one of 3 structured impact options.
 6. **Send** is enabled only when the required information is complete.
@@ -34,7 +36,7 @@ Each panel has independent vertical scrolling. Category cards scroll horizontall
 ## Run locally
 
 ```bash
-npm install
+npm ci
 npm run typecheck
 npm run lint
 npm run build

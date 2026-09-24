@@ -6,6 +6,12 @@ Read `docs/RETRIEVAL_HANDOFF.md` for filter/routing integration examples.
 Read `docs/ANALYSIS_HANDOFF.md` for the implemented parallel clean/filter pipeline,
 its API, English output contract, cache/failure behavior and evaluation limits.
 
+Use English for code comments, documentation, UI text and generated explanations.
+Preserve original ticket text and literal evidence quotations. The latest lightweight
+latency smoke results are in `backend/validation/lite-latency.json`.
+FAISS, clean and filter are implemented. Resolution generation and routing remain
+future work; do not describe the frontend's general review templates as generated fixes.
+
 ## Architecture
 
 - The active frontend is `App → TicketOverview → TicketProcessor`.

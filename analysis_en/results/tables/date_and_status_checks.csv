@@ -1,0 +1,9 @@
+﻿check,tickets,ticket_pct
+Supplied creation date has an unrecognized format,0,0.0
+Supplied closure date has an unrecognized format,0,0.0
+Missing creation date,0,0.0
+Closure precedes creation,0,0.0
+Status done without Resolution,0,0.0
+Status done without a valid closure date,0,0.0
+Status other than done with Resolution,0,0.0
+Status other than done with a closure date,0,0.0

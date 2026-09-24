@@ -1,0 +1,6 @@
+# Core analysis dependencies; exact tested versions are recorded in results/manifest.json.
+pandas>=2.2
+numpy>=1.26
+matplotlib>=3.8
+seaborn>=0.13
+jupyterlab>=4

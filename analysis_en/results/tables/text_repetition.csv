@@ -1,0 +1,6 @@
+﻿metric,tickets_or_templates
+Complete duplicates beyond the first occurrence,0
+Distinct raw title-description pairs,173
+Distinct normalized text templates,173
+Rows beyond the first example of each template,19827
+Tickets in templates that appear more than once,20000

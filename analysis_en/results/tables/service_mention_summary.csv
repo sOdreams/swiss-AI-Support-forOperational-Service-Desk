@@ -1,0 +1,5 @@
+﻿metric,tickets
+Tickets with one literal mention and one recorded service,20000
+Candidate discrepancies,0
+Tickets without a literal catalog service mention,0
+Tickets with multiple literal service mentions,0

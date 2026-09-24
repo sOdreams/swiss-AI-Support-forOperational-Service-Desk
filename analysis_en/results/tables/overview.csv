@@ -1,0 +1,12 @@
+﻿metric,value
+Tickets,20000
+Original fields,16
+Closed: Status = done,16969
+Open or in progress,3031
+Recorded resolution = done,4236
+Distinct recorded services,20
+Distinct entities,5
+Distinct teams,11
+Distinct assignees,30
+Distinct reporters,92
+Comments,52845

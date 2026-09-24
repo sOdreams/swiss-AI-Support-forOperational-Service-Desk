@@ -1,0 +1,17 @@
+﻿field,example_1,example_2,example_3
+Work type,Service Request,Incident,No further distinct value
+Summary,New license requested for Tax Reporting,New license requested for Outlook & Email,Incorrect incident title for service request in Portfolio Accounting
+Description,A new user requires a license for Tax Reporting to support an operational activity. The reques…,A new user requires a license for Outlook & Email to support an operational activity. The requ…,"The submitted title suggests an incident affecting Portfolio Accounting, but the actual reques…"
+Affected Business or IT Services,"[""Tax Reporting""]","[""Outlook & Email""]","[""Portfolio Accounting""]"
+Business Entity,"[""Nordics""]","[""Switzerland""]","[""Germany""]"
+Service Team(s),"[""Tax & Reporting""]","[""Enterprise Applications""]","[""Investment Operations""]"
+Reporter,luca.rinaldi@intcom.com,maia.berg@intcom.com,info@extcom_19.com
+Assignee,oliver.varga@intcom.com,jack.martin@intcom.com,tania.gupta@intcom.com
+Priority,low,lowest,medium
+Urgency,low,medium,lowest
+Impact,low,lowest,medium
+Created date,2026-03-03 19:36,2026-06-07 07:38,2026-06-23 14:00
+Status,done,in progress,open
+Resolution,done,cannot reproduce,clarification
+Resolution date,2026-03-16 11:51,2026-06-09 13:30,2026-06-28 09:07
+All Comments,"[""nina.baker@intcom.com: Initial triage assigned to Tax & Reporting and reviewed against the s…","[""louis.belov@intcom.com: Initial triage assigned to Enterprise Applications and reviewed agai…","[""marta.marchand@intcom.com: Initial triage assigned to Investment Operations and reviewed aga…"

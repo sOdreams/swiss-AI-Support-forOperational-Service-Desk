@@ -1,0 +1,50 @@
+{
+  "input_file": "jira_first_20000_requested_fields_synthetic.json",
+  "input_sha256": "6f3ad42cbe5095d6541c47095258c233554c1da46fbc47c529735667876f8844",
+  "execution_time_utc": "2026-09-24T14:13:32.650281+00:00",
+  "tickets": 20000,
+  "original_fields": [
+    "Work type",
+    "Summary",
+    "Description",
+    "Affected Business or IT Services",
+    "Business Entity",
+    "Service Team(s)",
+    "Reporter",
+    "Assignee",
+    "Priority",
+    "Urgency",
+    "Impact",
+    "Created date",
+    "Status",
+    "Resolution",
+    "Resolution date",
+    "All Comments"
+  ],
+  "comments": 52845,
+  "closed_tickets": 16969,
+  "normalized_text_templates": 173,
+  "additional_complete_duplicates": 0,
+  "python": "3.12.14",
+  "packages": {
+    "pandas": "2.2.3",
+    "numpy": "2.3.5",
+    "matplotlib": "3.10.8",
+    "seaborn": "0.13.2"
+  },
+  "data_time_zone": "Unspecified; naive dates, without conversion to UTC",
+  "synthetic_data": true,
+  "all_records_used": true,
+  "trains_models": false,
+  "sources": [
+    "jira_first_20000_requested_fields_synthetic.json",
+    "challenge_guidance.md (supplied challenge README)"
+  ],
+  "limitations": [
+    "Priority, Urgency, and Impact are random according to the challenge guidance.",
+    "Recorded services and historical routes are not ground truth.",
+    "Time to closure uses calendar days and only closed tickets with valid dates.",
+    "No Jira keys, extraction date, SLA rules, status history, or comment timestamps.",
+    "The separate 20-ticket challenge file is not included."
+  ]
+}

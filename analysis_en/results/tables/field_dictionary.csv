@@ -1,0 +1,17 @@
+﻿field,meaning,agent_relationship
+Work type,Work category: Incident or Service Request.,Initial classification that the agent can suggest.
+Summary,Short ticket title.,Text input interpreted together with Description.
+Description,Explanation of the issue or request.,Main input for classification and retrieval of similar cases.
+Affected Business or IT Services,List of services recorded as affected.,Related to team and catalog criticality; the label may be incorrect.
+Business Entity,List of affected business entities or regions.,Geographic context; not equivalent to impact or urgency.
+Service Team(s),List of teams assigned to the ticket.,Observed routing history; not necessarily the correct assignment.
+Reporter,Person or address that submitted the request.,Describes the source; not necessarily the affected person.
+Assignee,Person assigned responsibility for the ticket.,Related to the team; ticket count does not measure productivity.
+Priority,Recorded ticket priority.,Random in this dataset; not a valid severity training label.
+Urgency,Recorded urgency: how much delay could be tolerated.,Random in this dataset and independent of the ticket text.
+Impact,Recorded impact: the scope of the consequences.,Random here; distinct from service criticality.
+Created date,Ticket creation date and time.,Start of the elapsed interval to closure; no time zone is supplied.
+Status,"Observed current state: open, in progress, or done.",Separates open and closed tickets in this snapshot.
+Resolution,"Closing outcome: done, cancelled, clarification, or cannot reproduce.",Interpret with Status and Resolution date; this is not detailed solution text.
+Resolution date,Recorded closure or resolution date and time.,"Together with Created date, measures elapsed calendar time."
+All Comments,"List of comments, usually prefixed with the author.","May contain solution steps, generic statements, or information added after intake."

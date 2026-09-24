@@ -1,0 +1,80 @@
+﻿text,comments,comment_pct
+problem fixed.,5851,11.072003027722586
+we validated the issue against emailed support tickets and checked whether it matched the expected operating conditions.,3850,7.285457469959315
+initial triage assigned to service desk and reviewed against the service catalogue.,3850,7.285457469959315
+initial triage assigned to enterprise applications and reviewed against the service catalogue.,2231,4.221780679345255
+impact assessment confirmed the issue affected the operational workflow for emailed support tickets.,2052,3.8830542151575362
+initial triage assigned to investment operations and reviewed against the service catalogue.,1696,3.2093859400132465
+initial triage assigned to securities operations and reviewed against the service catalogue.,1110,2.1004825432869714
+initial triage assigned to valuation & pricing and reviewed against the service catalogue.,1080,2.043712744819756
+initial triage assigned to client services and reviewed against the service catalogue.,1079,2.041820418204182
+initial triage assigned to risk & controls and reviewed against the service catalogue.,1076,2.0361434383574606
+resolution recorded: service restored.,1000,1.892326615573848
+resolution recorded: access updated.,970,1.8355568171066325
+resolution recorded: alert closed after validation.,969,1.8336644904910588
+resolution recorded: ticket resolved via workaround.,949,1.795817958179582
+resolution recorded: issue confirmed as non-urgent.,935,1.7693253855615478
+we validated the issue against trading platform and checked whether it matched the expected operating conditions.,579,1.095657110417258
+we validated the issue against simcorp dimension and checked whether it matched the expected operating conditions.,573,1.084303150723815
+we validated the issue against outlook & email and checked whether it matched the expected operating conditions.,565,1.069164537799224
+we validated the issue against trade matching and checked whether it matched the expected operating conditions.,565,1.069164537799224
+we validated the issue against securities settlement and checked whether it matched the expected operating conditions.,564,1.0672722111836503
+we validated the issue against fund pricing and checked whether it matched the expected operating conditions.,561,1.0615952313369288
+we validated the issue against portfolio accounting and checked whether it matched the expected operating conditions.,552,1.0445642917967641
+we validated the issue against sharepoint & file storage and checked whether it matched the expected operating conditions.,549,1.0388873119500426
+we validated the issue against corporate actions and checked whether it matched the expected operating conditions.,546,1.033210332103321
+we validated the issue against identity & access management and checked whether it matched the expected operating conditions.,544,1.0294256788721734
+we validated the issue against crm & client portal and checked whether it matched the expected operating conditions.,544,1.0294256788721734
+we validated the issue against regulatory reporting and checked whether it matched the expected operating conditions.,539,1.019964045794304
+we validated the issue against risk & compliance monitoring and checked whether it matched the expected operating conditions.,537,1.0161793925631564
+we validated the issue against client reporting and checked whether it matched the expected operating conditions.,535,1.0123947393320087
+we validated the issue against order management and checked whether it matched the expected operating conditions.,520,0.984009840098401
+initial triage assigned to trading support and reviewed against the service catalogue.,520,0.984009840098401
+initial triage assigned to market data services and reviewed against the service catalogue.,519,0.9821175134828272
+we validated the issue against rimes data feed and checked whether it matched the expected operating conditions.,519,0.9821175134828272
+we validated the issue against nav calculation and checked whether it matched the expected operating conditions.,519,0.9821175134828272
+initial triage assigned to tax & reporting and reviewed against the service catalogue.,514,0.9726558804049579
+we validated the issue against tax reporting and checked whether it matched the expected operating conditions.,514,0.9726558804049579
+follow-up review completed and the case is being monitored for recurrence.,511,0.9669789005582363
+we validated the issue against cash management and checked whether it matched the expected operating conditions.,474,0.896962815782004
+initial triage assigned to treasury & cash and reviewed against the service catalogue.,474,0.896962815782004
+"resolution: adapter was rejecting allocations due to an incomplete broker account setup. corrected the setup, reprocessed the batch, and validated matching status for all affected trades.",323,0.6112214968303529
+"resolution: diagnosed a timeout on the position sync job caused by a locked staging table; cleared the session and reran the sync, confirming holdings matched afterward.",315,0.5960828839057621
+"resolution: reclassified the ticket as a service request, then provisioned the requested shared mailbox and distribution list with the correct access permissions.",313,0.5922982306746144
+impact assessment confirmed the issue affected the operational workflow for outlook & email.,310,0.5866212508278928
+impact assessment confirmed the issue affected the operational workflow for client reporting.,308,0.5828365975967452
+impact assessment confirmed the issue affected the operational workflow for simcorp dimension.,305,0.5771596177500237
+impact assessment confirmed the issue affected the operational workflow for trading platform.,303,0.5733749645188759
+impact assessment confirmed the issue affected the operational workflow for portfolio accounting.,303,0.5733749645188759
+"resolution: several events were missing option code mappings after ingestion. updated the mapping table, reprocessed the feed, and confirmed elections displayed correctly.",303,0.5733749645188759
+impact assessment confirmed the issue affected the operational workflow for sharepoint & file storage.,303,0.5733749645188759
+"resolution: set up the shared mailbox and dl as requested, granted the team the necessary send/access rights, and confirmed visibility in outlook.",301,0.5695903112877283
+impact assessment confirmed the issue affected the operational workflow for trade matching.,298,0.5639133314410067
+"resolution: submission was rejected due to missing classification data on new entity records. updated the master data, regenerated the file, and resubmitted successfully.",295,0.5582363515942852
+impact assessment confirmed the issue affected the operational workflow for identity & access management.,294,0.5563440249787113
+impact assessment confirmed the issue affected the operational workflow for risk & compliance monitoring.,292,0.5525593717475636
+"resolution: root cause was an incomplete option-code mapping for a batch of events; corrected the mapping and reprocessed, verifying elections appeared on the dashboard.",291,0.5506670451319898
+impact assessment confirmed the issue affected the operational workflow for crm & client portal.,291,0.5506670451319898
+resolution: diagnosed a broken broker routing link after the account switch; updated the routing table and confirmed subsequent orders flowed through without manual intervention.,289,0.5468823919008421
+impact assessment confirmed the issue affected the operational workflow for corporate actions.,289,0.5468823919008421
+"resolution: traced the defect to a template rendering condition that evaluated incorrectly in production. corrected the template logic, reran the affected batch, and spot-checked output pdfs before release.",288,0.5449900652852683
+impact assessment confirmed the issue affected the operational workflow for securities settlement.,287,0.5430977386696944
+"resolution: reviewed the request with the tax team lead, granted the standard processing entitlement, and verified access to the output workspace.",287,0.5430977386696944
+"resolution: traced the gateway rejection to incomplete counterparty classification; corrected the records, regenerated the submission, and confirmed acceptance.",284,0.5374207588229728
+impact assessment confirmed the issue affected the operational workflow for order management.,284,0.5374207588229728
+impact assessment confirmed the issue affected the operational workflow for fund pricing.,283,0.535528432207399
+"resolution: the fee section was suppressed by a broken conditional in the report template; fixed the condition, regenerated the client batch, and confirmed the fee table now renders correctly.",281,0.5317437789762512
+"resolution: replication job had stalled due to a temporary database lock. cleared the lock, restarted the job from its last checkpoint, and reconciled positions against downstream reporting.",281,0.5317437789762512
+"resolution: found a missing broker ssi mapping causing allocation rejections. added the mapping, replayed the rejected messages, and confirmed the trades matched successfully.",280,0.5298514523606774
+resolution: reconciled the cash ledger against the bank statement and found the sweep missed the prior day's cutoff; booked a value-dated adjustment and confirmed the balance with the desk.,274,0.5184974926672343
+impact assessment confirmed the issue affected the operational workflow for nav calculation.,273,0.5166051660516605
+impact assessment confirmed the issue affected the operational workflow for tax reporting.,272,0.5147128394360867
+resolution: traced the shortfall to a missed banking cutoff on the margin sweep; corrected with an intraday adjustment and confirmed with treasury.,272,0.5147128394360867
+"resolution: a stale clearing account mapping from a recent broker change was blocking order routing. corrected the mapping, tested with one order, then released the remaining held orders.",270,0.510928186204939
+resolution: confirmed the withholding tax workflow license was provisioned and validated the user could access the quarterly extract tool.,270,0.510928186204939
+impact assessment confirmed the issue affected the operational workflow for regulatory reporting.,268,0.5071435329737912
+impact assessment confirmed the issue affected the operational workflow for cash management.,267,0.5052512063582174
+impact assessment confirmed the issue affected the operational workflow for rimes data feed.,266,0.5033588797426436
+"resolution: reviewed the settlement message queue, cleared several stuck acknowledgements, and replayed the pending confirmations so custody statuses synced back to the dashboard.",210,0.3973885892705081
+"resolution: root cause was a stalled consumer on the settlement queue. restarted the listener, replayed the backlog, and confirmed downstream custody records caught up.",194,0.3671113634213265
+"resolution: custodian was late sending status updates; paused automated fail-chasing while we waited, then matched statements and reconciled the backlog once messages came through.",193,0.3652190368057527

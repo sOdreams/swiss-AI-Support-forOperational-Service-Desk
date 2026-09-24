@@ -1,0 +1,17 @@
+﻿campo,tipos,claves_ausentes,null,texto_vacio,contenedor_vacio,informados,pct_completitud,valores_distintos_incluye_null
+Work type,str,0,0,0,0,20000,100.0,2
+Summary,str,0,0,0,0,20000,100.0,173
+Description,str,0,0,0,0,20000,100.0,173
+Affected Business or IT Services,list,0,0,0,0,20000,100.0,20
+Business Entity,list,0,0,0,0,20000,100.0,5
+Service Team(s),list,0,0,0,0,20000,100.0,11
+Reporter,str,0,0,0,0,20000,100.0,92
+Assignee,str,0,0,0,0,20000,100.0,30
+Priority,str,0,0,0,0,20000,100.0,5
+Urgency,str,0,0,0,0,20000,100.0,5
+Impact,str,0,0,0,0,20000,100.0,5
+Created date,str,0,0,0,0,20000,100.0,19370
+Status,str,0,0,0,0,20000,100.0,3
+Resolution,"NoneType, str",0,3031,0,0,16969,84.845,5
+Resolution date,"NoneType, str",0,3031,0,0,16969,84.845,16573
+All Comments,list,0,0,0,0,20000,100.0,13874

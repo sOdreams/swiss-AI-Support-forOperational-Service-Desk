@@ -1,0 +1,50 @@
+{
+  "archivo_entrada": "jira_first_20000_requested_fields_synthetic.json",
+  "sha256_entrada": "6f3ad42cbe5095d6541c47095258c233554c1da46fbc47c529735667876f8844",
+  "fecha_ejecucion_utc": "2026-09-24T13:34:35.180002+00:00",
+  "tickets": 20000,
+  "campos_originales": [
+    "Work type",
+    "Summary",
+    "Description",
+    "Affected Business or IT Services",
+    "Business Entity",
+    "Service Team(s)",
+    "Reporter",
+    "Assignee",
+    "Priority",
+    "Urgency",
+    "Impact",
+    "Created date",
+    "Status",
+    "Resolution",
+    "Resolution date",
+    "All Comments"
+  ],
+  "comentarios": 52845,
+  "tickets_cerrados": 16969,
+  "plantillas_textuales_normalizadas": 173,
+  "duplicados_completos_adicionales": 0,
+  "python": "3.9.6",
+  "paquetes": {
+    "pandas": "2.3.3",
+    "numpy": "2.0.2",
+    "matplotlib": "3.9.4",
+    "seaborn": "0.13.2"
+  },
+  "zona_horaria_datos": "No especificada; fechas naive, sin conversión a UTC",
+  "datos_sinteticos": true,
+  "se_utilizan_todos_los_registros": true,
+  "entrena_modelos": false,
+  "fuentes": [
+    "jira_first_20000_requested_fields_synthetic.json",
+    "README.md adjunto al challenge"
+  ],
+  "limitaciones": [
+    "Priority, Urgency e Impact son aleatorios según el README.",
+    "Servicio declarado y rutas históricas no son verdad de referencia.",
+    "Tiempo hasta cierre en días naturales, solo entre cerrados con fechas válidas.",
+    "Sin claves Jira, fecha de extracción, SLA, historial o fechas de comentarios.",
+    "El archivo separado del reto de 20 tickets no se ha incluido."
+  ]
+}

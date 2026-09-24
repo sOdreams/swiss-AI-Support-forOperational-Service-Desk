@@ -1,0 +1,17 @@
+﻿campo,significado,relacion_con_el_agente
+Work type,Tipo de trabajo: Incident o Service Request.,Clasificación inicial que el agente puede proponer.
+Summary,Título breve del ticket.,Entrada textual; se complementa con Description.
+Description,Explicación del problema o de la petición.,Entrada principal para clasificar y recuperar casos similares.
+Affected Business or IT Services,Lista de servicios declarados como afectados.,Se relaciona con equipo y criticidad; puede estar mal etiquetada.
+Business Entity,Lista de entidades o regiones afectadas.,Da contexto geográfico; no equivale a impacto o urgencia.
+Service Team(s),Lista de equipos a los que se asignó el ticket.,Histórico de enrutamiento; no garantiza la asignación correcta.
+Reporter,Persona o dirección que comunicó la petición.,Permite describir el origen; no es necesariamente la persona afectada.
+Assignee,Persona responsable asignada al ticket.,Se relaciona con el equipo; contar tickets no mide productividad.
+Priority,Prioridad registrada del ticket.,En este dataset es aleatoria: no usar como etiqueta de gravedad válida.
+Urgency,Urgencia registrada: cuánta demora se toleraría.,En este dataset es aleatoria y no se deduce del texto.
+Impact,Impacto registrado: alcance de las consecuencias.,En este dataset es aleatorio; no confundir con criticidad del servicio.
+Created date,Fecha y hora de creación.,Inicio del intervalo hasta el cierre; el archivo no indica zona horaria.
+Status,"Estado actual observado: open, in progress o done.",Permite separar tickets abiertos de cerrados en esta instantánea.
+Resolution,"Resultado de cierre: done, cancelled, clarification o cannot reproduce.",Se analiza junto con Status y Resolution date; no contiene una solución detallada.
+Resolution date,Fecha y hora de cierre o resolución registrada.,Con Created date permite medir tiempo natural transcurrido.
+All Comments,"Lista de comentarios, normalmente con el autor como prefijo.","Puede contener pasos de solución, respuestas genéricas o información posterior al ingreso."

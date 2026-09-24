@@ -1,3 +1,5 @@
+import type { RetrievalProvenance } from "./retrieval";
+
 export interface ProcessedTicketRecord {
   issue_id: string;
   issue_key: string;
@@ -17,4 +19,5 @@ export interface ProcessTicketPayload {
   affected_business_aspect: string;
   processed_at: string;
   source: "human_resolution_workflow";
+  retrieval?: RetrievalProvenance;
 }

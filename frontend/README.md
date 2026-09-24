@@ -1,3 +1,5 @@
+> This branch includes a Python FAISS backend and a Top-50 historical evidence panel. Follow [backend/README.md](../backend/README.md) to build the index and start the API. Set `VITE_API_BASE_URL` (not `VITE_API_URL`). The three general review templates below are separate from retrieved evidence.
+
 # Service Desk Copilot — Ticket Processing Workflow V6
 
 React + Vite + TypeScript + Tailwind CSS frontend for the Swiss {ai} Weeks / Swiss Life service-desk prototype.

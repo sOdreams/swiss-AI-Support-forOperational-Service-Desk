@@ -1,3 +1,5 @@
+> **FAISS retrieval is implemented on this branch.** Start with [backend/README.md](backend/README.md) for install/build/API/Python usage. It returns **Top-50 distinct evidence groups with rank**, independently of routing. AI coding agents should read [AGENTS.md](AGENTS.md) and the [integration handoff](docs/RETRIEVAL_HANDOFF.md). The older frontend prototype description below predates this backend.
+
 # Service Desk Copilot
 
 Aplicación frontend para revisar tickets de soporte con asistencia de IA. La interfaz permite comparar el ticket original con una propuesta generada por IA, evaluar la recomendación y registrar la decisión del analista humano.
@@ -115,7 +117,7 @@ http://localhost:8000
 Puedes definir una variable de entorno en un archivo `.env` dentro de `frontend`:
 
 ```env
-VITE_API_URL=http://localhost:8000
+VITE_API_BASE_URL=http://localhost:8000
 ```
 
 Si no existe backend, la app sigue funcionando con datos mock dentro del frontend.

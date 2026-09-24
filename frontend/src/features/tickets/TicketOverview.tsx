@@ -14,6 +14,8 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PriorityBadge } from "../../components/PriorityBadge";
 import { StatusBadge } from "../../components/StatusBadge";
+import { RetrievalEvidencePanel } from "../retrieval/RetrievalEvidencePanel";
+import { useRetrieval } from "../retrieval/useRetrieval";
 import { submitProcessedTicket } from "../../services/api";
 import type { ProcessedTicketRecord, ProcessTicketPayload } from "../../types/processing";
 import type { Ticket } from "../../types/ticket";
@@ -95,6 +97,8 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
   onBack: () => void;
   onProcessed: (ticket: Ticket, record: ProcessedTicketRecord) => void;
 }) {
+  const retrieval = useRetrieval(ticket);
+  const [selectedEvidenceIds, setSelectedEvidenceIds] = useState<string[]>([]);
   const solutions = useMemo(() => recommendedSolutions(ticket), [ticket]);
   const aspects = useMemo(() => businessAspects(ticket), [ticket]);
   const [selectedSolution, setSelectedSolution] = useState<string | null>(null);
@@ -104,6 +108,7 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setSelectedEvidenceIds([]);
     setSelectedSolution(null);
     setRealSolution("");
     setSelectedAspect(null);
@@ -135,6 +140,12 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
       affected_business_aspect: selectedAspect,
       processed_at: processedAt,
       source: "human_resolution_workflow",
+      ...(retrieval.data ? { retrieval: {
+        index_version: retrieval.data.index_version,
+        model: retrieval.data.model,
+        shown_document_ids: retrieval.data.hits.map((hit) => hit.document_id),
+        selected_document_ids: selectedEvidenceIds,
+      } } : {}),
     };
 
     let syncStatus: ProcessedTicketRecord["sync_status"] = "api";
@@ -197,10 +208,14 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
         </div>
       </section>
 
+      <RetrievalEvidencePanel {...retrieval} selectedIds={selectedEvidenceIds} onToggle={(id) => {
+        setSelectedEvidenceIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
+      }} />
+
       <section className="processor-section">
         <div className="processor-section-heading">
           <span className="processor-section-icon"><Wrench className="h-4 w-4" /></span>
-          <div><h3>1. Recommended Solutions</h3><p>Select one recommendation, or write the real solution below.</p></div>
+          <div><h3>1. Suggested review steps</h3><p>These are general templates. Review the evidence above, or write the actual solution below.</p></div>
         </div>
         <div className="recommendation-scroll">
           {solutions.map((solution, index) => {
@@ -298,7 +313,7 @@ export function TicketOverview({
             <div className="min-w-0"><h2 className="section-title">Process Ticket</h2><p className="section-subtitle">Review, resolve and capture structured human feedback</p></div>
           </div>
         </div>
-        <TicketProcessor ticket={selectedTicket} onBack={() => onSelectTicket(null)} onProcessed={onProcessed} />
+        <TicketProcessor key={selectedTicket.issue_id} ticket={selectedTicket} onBack={() => onSelectTicket(null)} onProcessed={onProcessed} />
       </section>
     );
   }

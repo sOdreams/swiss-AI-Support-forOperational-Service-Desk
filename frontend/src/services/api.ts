@@ -1,3 +1,4 @@
+import type { RetrievalResponse } from "../types/retrieval";
 import type { AiProposal } from "../types/ai";
 import type { ProcessTicketPayload } from "../types/processing";
 import type { HumanReview } from "../types/review";
@@ -7,8 +8,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
     ...init,
+    headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
   });
   if (!response.ok) throw new Error(`API request failed: ${response.status} ${response.statusText}`);
   if (response.status === 204) return undefined as T;
@@ -29,3 +30,9 @@ export const analyzeTicket = (issueId: string) => request<AiProposal>(`/tickets/
 export const saveHumanReview = (review: HumanReview) => request<void>("/feedback", { method: "POST", body: JSON.stringify(review) });
 export const submitLearningFeedback = (payload: LearningFeedbackPayload) => request<void>("/feedback/learning", { method: "POST", body: JSON.stringify(payload) });
 export const submitProcessedTicket = (payload: ProcessTicketPayload) => request<void>("/tickets/process", { method: "POST", body: JSON.stringify(payload) });
+
+export const retrieveEvidence = (ticket: Ticket, signal?: AbortSignal) => request<RetrievalResponse>("/retrieval/search", {
+  method: "POST",
+  signal,
+  body: JSON.stringify({ summary: ticket.summary, description: ticket.description, comments: ticket.all_comments.map((comment) => comment.body), top_k: 50 }),
+});

@@ -1,4 +1,4 @@
-# Parallel clean + filter integration
+# Modular clean, retrieval and filter integration
 
 This module checks ticket fields and filters FAISS candidates through two
 concurrent branches. The lightweight default is **`gpt-5.5-2026-04-23`, reasoning
@@ -90,6 +90,88 @@ construct a new provider client per request. `AnalysisConfig` also supports mode
 reasoning effort, concurrent-call limit, stage deadline and cache bounds. Server
 environment overrides are `ANALYSIS_MODEL` and `ANALYSIS_REASONING_EFFORT`.
 
+## Independent stage calls and explicit ordering
+
+The same reusable client exposes three independently callable stages. These are
+Python interfaces; the frontend and `/tickets/analyze` still use the default
+parallel workflow. There is no workflow engine or additional model call.
+
+```python
+from service_desk.retrieval import TicketQuery
+
+# Original-text retrieval, then filtering. Clean can run before or after these.
+candidates = await pipeline.retrieve(TicketQuery(
+    ticket.summary, ticket.description, ticket.comments,
+))
+filtering = await pipeline.filter(ticket, candidates)
+cleaning = await pipeline.clean(ticket)
+
+# Explicit clean-first composition; pass original facts to the filter.
+cleaning = await pipeline.clean(ticket)
+query = pipeline.query_after_clean(ticket, cleaning)
+candidates = await pipeline.retrieve(query)
+filtering = await pipeline.filter(ticket, candidates)
+
+# Complete workflows, including reconciliation, bounded cache and shared work:
+parallel = await pipeline.analyze(ticket)
+clean_first = await pipeline.analyze_clean_first(ticket)
+```
+
+The snippets above show alternative usages; do not execute all alternatives for
+each request. Each `clean()` or `filter()` call makes one model request; `retrieve()`
+makes none. Direct stage calls are not cached or automatically reconciled.
+The complete workflows preserve the existing disagreement/failure handling and
+use separate cache keys, so one workflow cannot return the other's cached result.
+
+| Method | Input | Returned plain-data envelope |
+|---|---|---|
+| `clean(ticket)` | Original `TicketInput` | `clean`, exact `facts`, provider `model_result` |
+| `retrieve(query)` | Explicit `TicketQuery` | `retrieval` response, exact `documents` keyed by ID, `query`, `retrieval_ms` |
+| `filter(ticket, candidates)` | Original facts and a saved retrieval envelope | `filter`, provider `model_result` |
+
+The retrieval envelope is JSON-serializable and contains everything filtering
+needs; do not discard `documents`. Filter does not call `search()` or `describe()`.
+Clean and filter can run without loading FAISS by constructing
+`TicketAnalysis(service_catalog=service_names, api_key=api_key)` and supplying an
+existing candidate envelope to `filter()`. An explicit catalog must describe the
+same service vocabulary as those candidates. Retrieval by itself also remains
+available through `TicketRetriever.search()` without an API key.
+
+Empty narratives or invalid candidate IDs/ranks fail before a model call.
+Provider failures return the documented unavailable/unfiltered stage results.
+Keep the candidate envelope's index/model version beside standalone filter output;
+do not mix documents or source records from different index snapshots. Python
+stage diagnostics contain raw provider output; the existing HTTP endpoint strips
+those diagnostics from its response.
+
+The only required order is that candidates exist before filtering. Clean can run
+before retrieval, in parallel, or after filtering. It does not automatically
+change another stage's input.
+
+### Experimental clean-first policy
+
+`query_after_clean()` only applies a proposed title correction. It preserves the
+description and comments verbatim and never inserts predicted service/work-type,
+team or assignee fields. It rejects a saved clean result whose original facts do
+not match the ticket. Failed cleaning or no title correction retains the original
+query. `analyze_clean_first()` also falls back to the original query when the
+corrected query violates retrieval validation, for example the encoder token limit.
+
+Filter still reads original facts; a generated title is not new evidence. The
+clean-first response adds `workflow`, actual `retrieval_query` and `query_fallback`.
+Original candidate ranks refer to that actual query's result, not the original-text
+baseline ranking. This workflow uses the same two model calls in sequence, so it
+can have higher latency; no full clean-first latency benchmark is reported yet.
+
+A retrieval-only replay of all 20 saved GPT-5.5 **low-reasoning** clean outputs
+changed one query. Its prior-review reference moved from rank 9 to 6; 39 of its
+Top-50 groups overlapped. Reference coverage stayed at 9/18 for Top-1 and 18/18
+for Top-10 and Top-50. The other 19 queries were unchanged. See
+[clean-first-retrieval.json](../backend/validation/clean-first-retrieval.json).
+This replay made zero new LLM calls and used earlier assistant references, not GT.
+It does not measure end-to-end filter quality or current `none` clean outputs.
+The default therefore remains the original-text parallel workflow.
+
 ## Scheduling and module boundaries
 
 ```mermaid
@@ -113,7 +195,7 @@ flowchart LR
 - `retrieval/retriever.py` supplies exact text and source services through
   `describe()` and `service_catalog()`. Index format and ranking are unchanged.
 
-Clean runs from original facts and the service catalog. The other branch searches
+In the default workflow, clean runs from original facts and the service catalog. The other branch searches
 the same original narrative, then filters its candidates. Clean output never
 gates retrieval. A comment can survive an unsuitable parent title, and an accepted
 parent does not make all its comments relevant.
@@ -258,7 +340,7 @@ npm run test:e2e
 Tests cover concurrent branch start, literal provenance, rejected-parent comment
 survival, in-flight deduplication, cache invalidation, deadlines/partial outputs,
 disagreement holds, stale frontend responses and copy-only preview export.
-The integration passed 23 backend tests, six browser tests, type checking, lint
+The integration passed 29 backend tests, six browser tests, type checking, lint
 and the production frontend build. A real `/tickets/analyze` call using the earlier
 low-reasoning default returned HTTP 200, corrected the mailbox-request title, and preserved all
 50 candidates, with the selected analogue retaining original rank 9.

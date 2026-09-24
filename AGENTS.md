@@ -30,6 +30,13 @@ future work; do not describe the frontend's general review templates as generate
   one call per branch, no automatic retries.
   `/tickets/analyze` never writes back to Jira or assigns an owner. Preserve all
   original candidates and distinguish active comments from uncertain reserves.
+- `TicketAnalysis.clean()`, `.retrieve()` and `.filter()` are independent Python
+  stage calls. Filter consumes a self-contained candidate snapshot; it never
+  triggers retrieval. An explicit `service_catalog` supports clean/filter without
+  loading FAISS. `.analyze_clean_first()` is an opt-in composition that uses only
+  proposed title corrections for search and preserves original facts for filtering.
+  The default HTTP/UI workflow remains parallel. Compare workflows before changing
+  defaults; a corrected title is not verified current evidence.
 - `data-exploratory` is a separate remote branch with an older `TriageEngine`.
   It is not imported by this backend. Its lexical score weights and row indices
   are incompatible with cosine scores and grouped document IDs.

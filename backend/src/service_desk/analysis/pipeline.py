@@ -68,12 +68,21 @@ class TicketAnalysis:
         await self.client.close()
 
     async def analyze(self, ticket: TicketInput):
+        """Default: clean in parallel with original-text retrieval and filtering."""
+        return await self._analyze(ticket, "parallel")
+
+    async def analyze_clean_first(self, ticket: TicketInput):
+        """Experimental: clean, retrieve with a proposed title, filter original facts."""
+        return await self._analyze(ticket, "clean_first")
+
+    async def _analyze(self, ticket, workflow):
         if self.retriever is None:
             raise ValueError("analyze requires a retriever; clean/filter can run independently")
         if not any(s.strip() for s in (ticket.summary, ticket.description, *ticket.comments)):
             raise ValueError("Provide a title, description or comment")
         started = time.perf_counter()
-        key = hashlib.sha256(json.dumps({"ticket": asdict(ticket), "config": asdict(self.config),
+        key = hashlib.sha256(json.dumps({"ticket": asdict(ticket), "config": asdict(self.config), "workflow": workflow,
+            "service_catalog": self.catalog,
             "index_version": self.retriever.manifest["index_version"],
             "prompts": [CLEAN_PROMPT, FILTER_PROMPT]}, sort_keys=True).encode()).hexdigest()
         cached = self._cache.get(key)
@@ -85,7 +94,8 @@ class TicketAnalysis:
             return result
         self._cache.pop(key, None)
         if key not in self._inflight:
-            task = asyncio.create_task(self._compute(ticket))
+            compute = self._compute if workflow == "parallel" else self._compute_clean_first
+            task = asyncio.create_task(compute(ticket))
             self._inflight[key] = task
             task.add_done_callback(lambda done: self._completed(key, done))
         result = deepcopy(await asyncio.shield(self._inflight[key]))
@@ -156,6 +166,24 @@ class TicketAnalysis:
             "status": "unavailable", "fields": [], "questions": [], "reason": "Cleaning unavailable; current fields preserved."}
         return {"clean": cleaned, "facts": facts, "model_result": result}
 
+    @staticmethod
+    def query_after_clean(ticket: TicketInput, cleaning: dict):
+        """Use only a proposed title correction; preserve body and comments verbatim.
+
+        Service/work-type suggestions never enter the retrieval query. A failed
+        clean or absent correction gives the original query. Original facts must
+        match to prevent a saved result from another ticket being reused.
+        """
+        if cleaning["facts"] != current_facts(ticket):
+            raise ValueError("Cleaning result does not belong to this ticket narrative")
+        summary = ticket.summary
+        if cleaning["model_result"]["ok"] and cleaning["clean"]["status"] == "ready":
+            for field in cleaning["clean"]["fields"]:
+                if (field["field"] == "summary" and field["state"] in {"propose_correction", "propose_completion"}
+                        and isinstance(field["suggested"], str) and field["suggested"].strip()):
+                    summary = field["suggested"]
+        return TicketQuery(summary, ticket.description, ticket.comments)
+
     async def retrieve(self, query: TicketQuery):
         """Search an explicit query and return a self-contained, JSON-safe snapshot."""
         if self.retriever is None:
@@ -166,6 +194,7 @@ class TicketAnalysis:
                               "model": self.retriever.manifest["model"], "score_type": "cosine",
                               "hits": [asdict(hit) for hit in hits]},
                 "documents": {hit.document_id: self.retriever.describe(hit.document_id) for hit in hits},
+                "query": asdict(query),
                 "retrieval_ms": (time.perf_counter() - started) * 1000}
 
     async def filter(self, ticket: TicketInput, candidates: dict):
@@ -192,19 +221,44 @@ class TicketAnalysis:
 
     async def _retrieve_and_filter(self, ticket, query=None):
         started = time.perf_counter()
+        original = TicketQuery(ticket.summary, ticket.description, ticket.comments)
+        query = query or original
+        fallback = None
         try:
-            candidates = await self.retrieve(query or TicketQuery(ticket.summary, ticket.description, ticket.comments))
+            try:
+                candidates = await self.retrieve(query)
+            except ValueError as exc:
+                if query == original:
+                    raise
+                # A generated title can exceed the encoder's query limit.
+                fallback = _safe_error(exc)
+                candidates = await self.retrieve(original)
+            retrieval_ms = (time.perf_counter() - started) * 1000
             filtered = await self.filter(ticket, candidates)
         except Exception as exc:
             return {"retrieval": None, "retrieval_ms": (time.perf_counter() - started) * 1000,
                     "filter": None, "model_result": {"ok": False, "error": _safe_error(exc), "calls": []}}
-        return {"retrieval": candidates["retrieval"], "retrieval_ms": candidates["retrieval_ms"], **filtered}
+        return {"retrieval": candidates["retrieval"], "retrieval_ms": retrieval_ms,
+                "query": candidates["query"], "query_fallback": fallback, **filtered}
 
     async def _compute(self, ticket):
         started = time.perf_counter()
         # Both branches receive the original narrative. Clean predictions never
         # gate retrieval, and filter does not wait for the cleaning call.
         cleaning, evidence = await asyncio.gather(self.clean(ticket), self._retrieve_and_filter(ticket))
+        return self._merge(cleaning, evidence, started)
+
+    async def _compute_clean_first(self, ticket):
+        started = time.perf_counter()
+        cleaning = await self.clean(ticket)
+        query = self.query_after_clean(ticket, cleaning)
+        evidence = await self._retrieve_and_filter(ticket, query)
+        result = self._merge(cleaning, evidence, started)
+        result.update(workflow="clean_first", retrieval_query=evidence.get("query"),
+                      query_fallback=evidence.get("query_fallback"))
+        return result
+
+    def _merge(self, cleaning, evidence, started):
         clean, cleaned, facts = cleaning["model_result"], cleaning["clean"], cleaning["facts"]
         filtered = evidence["filter"]
         conflicts = []

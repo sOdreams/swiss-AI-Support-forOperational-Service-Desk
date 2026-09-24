@@ -1,0 +1,208 @@
+{
+  "experiment": "Original query versus title correction from saved clean output",
+  "clean_source_model": "gpt-5.5-2026-04-23",
+  "clean_source_reasoning": "low",
+  "clean_source_run": "parallel_analysis_v2",
+  "new_llm_calls": 0,
+  "cases": 20,
+  "changed_queries": 1,
+  "judgeable_reference_cases": 18,
+  "index_version": "afa533f71d666da9f11d",
+  "saved_clean_results_sha256": "86f483c927d814ee27b07993e7577f9c06e302a909814e54fbcdd4064ed53d31",
+  "query_policy": "Only proposed title corrections; preserve description/comments; exclude service/work-type predictions.",
+  "evaluation": "Retrieval-only replay using saved low-reasoning clean outputs and earlier assistant review, not official GT or an end-to-end comparison of current workflows.",
+  "reference_coverage_at_k": {
+    "original": {
+      "1": 9,
+      "10": 18,
+      "50": 18
+    },
+    "cleaned": {
+      "1": 9,
+      "10": 18,
+      "50": 18
+    }
+  },
+  "per_case": [
+    {
+      "case": 1,
+      "query_changed": false,
+      "reference_group_count": 1,
+      "original_best_reference_rank": 1,
+      "cleaned_best_reference_rank": 1,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 2,
+      "query_changed": false,
+      "reference_group_count": 1,
+      "original_best_reference_rank": 1,
+      "cleaned_best_reference_rank": 1,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 3,
+      "query_changed": false,
+      "reference_group_count": 1,
+      "original_best_reference_rank": 1,
+      "cleaned_best_reference_rank": 1,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 4,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 3,
+      "cleaned_best_reference_rank": 3,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 5,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 2,
+      "cleaned_best_reference_rank": 2,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 6,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 3,
+      "cleaned_best_reference_rank": 3,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 7,
+      "query_changed": false,
+      "reference_group_count": 0,
+      "original_best_reference_rank": null,
+      "cleaned_best_reference_rank": null,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 8,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 3,
+      "cleaned_best_reference_rank": 3,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 9,
+      "query_changed": false,
+      "reference_group_count": 0,
+      "original_best_reference_rank": null,
+      "cleaned_best_reference_rank": null,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 10,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 4,
+      "cleaned_best_reference_rank": 4,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 11,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 1,
+      "cleaned_best_reference_rank": 1,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 12,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 1,
+      "cleaned_best_reference_rank": 1,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 13,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 1,
+      "cleaned_best_reference_rank": 1,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 14,
+      "query_changed": false,
+      "reference_group_count": 1,
+      "original_best_reference_rank": 1,
+      "cleaned_best_reference_rank": 1,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 15,
+      "query_changed": false,
+      "reference_group_count": 1,
+      "original_best_reference_rank": 1,
+      "cleaned_best_reference_rank": 1,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 16,
+      "query_changed": true,
+      "reference_group_count": 1,
+      "original_best_reference_rank": 9,
+      "cleaned_best_reference_rank": 6,
+      "top50_overlap": 39,
+      "top1_changed": false
+    },
+    {
+      "case": 17,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 6,
+      "cleaned_best_reference_rank": 6,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 18,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 2,
+      "cleaned_best_reference_rank": 2,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 19,
+      "query_changed": false,
+      "reference_group_count": 2,
+      "original_best_reference_rank": 2,
+      "cleaned_best_reference_rank": 2,
+      "top50_overlap": 50,
+      "top1_changed": false
+    },
+    {
+      "case": 20,
+      "query_changed": false,
+      "reference_group_count": 1,
+      "original_best_reference_rank": 1,
+      "cleaned_best_reference_rank": 1,
+      "top50_overlap": 50,
+      "top1_changed": false
+    }
+  ]
+}

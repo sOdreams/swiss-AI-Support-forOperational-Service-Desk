@@ -26,6 +26,12 @@ candidates = retriever.search(TicketQuery(
 
 For cleaning and filtering, use the existing `TicketAnalysis.analyze(TicketInput(...))` Python API or `POST /tickets/analyze`. It returns `clean`, `retrieval` and `filter` together. Filtering already exists; routing and resolution generation remain downstream work.
 
+For custom ordering, use `TicketAnalysis.clean()`, `.retrieve()` and `.filter()`.
+Retrieval returns a self-contained candidate snapshot that can be saved and passed
+to filtering without a live retriever. The optional `.analyze_clean_first()`
+workflow uses a proposed title correction for retrieval; the default remains
+parallel with the original narrative. See the stage contracts in the analysis handoff.
+
 Search uses only the currently known narrative. Current service/work-type fields can be wrong and do not boost or restrict retrieval. Preserve original ranks and raw cosine values through subsequent processing. If adding a reranker, introduce separate ranking fields; cosine is not confidence.
 
 ## Evidence units and source relationships

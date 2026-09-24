@@ -12,7 +12,8 @@ Original ticket ──→ Clean current facts ───────────�
 ```
 
 - Retrieval uses pinned MiniLM embeddings and FAISS cosine search, returning up to **50 distinct document groups with original ranks and provenance**.
-- Cleaning and retrieval/filtering run in parallel. Cleaning never rewrites or prefilters the search query.
+- By default, cleaning and retrieval/filtering run in parallel; cleaning does not rewrite or prefilter the search query.
+- Independent Python stage calls allow custom ordering. The optional `analyze_clean_first()` workflow searches a proposed corrected title while filtering against original facts; it does not insert predicted service/team labels. See the [stage interfaces](docs/ANALYSIS_HANDOFF.md#independent-stage-calls-and-explicit-ordering).
 - The default model is **GPT-5.5 (`gpt-5.5-2026-04-23`), reasoning disabled**, with one model call per branch, a 1,500-token ceiling per call and no automatic retries.
 - The UI shows field suggestions, selected historical references and the original Top-50. A correction preview can be downloaded as a separate copy.
 - Human reviews are stored through `POST /tickets/process` in SQLite. Uploaded tickets remain browser-local.
@@ -71,7 +72,7 @@ The latest lightweight configuration completed three live development tickets in
 
 See [the recorded smoke results](backend/validation/lite-latency.json). The [earlier 20-ticket comparison](docs/PARALLEL_ANALYSIS_BENCHMARK.md) used different configurations and is not the current default's quality score.
 
-Backend checks: 23 tests passed. Frontend integration checks: six browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
+Backend checks: 29 tests passed. Frontend integration checks: six browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
 
 ## Handoff map
 

@@ -20,7 +20,8 @@ its API, English output contract, cache/failure behavior and evaluation limits.
 - Routing/filtering are downstream consumers. Do not put predicted service/team/
   assignee into search inputs or turn cosine similarity into confidence.
 - `analysis/` runs current-fact cleaning in parallel with original-narrative
-  retrieval followed by evidence filtering. Default: GPT-5.5 low reasoning.
+  retrieval followed by evidence filtering. Default: GPT-5.5, reasoning disabled,
+  one call per branch, no automatic retries.
   `/tickets/analyze` never writes back to Jira or assigns an owner. Preserve all
   original candidates and distinguish active comments from uncertain reserves.
 - `data-exploratory` is a separate remote branch with an older `TriageEngine`.

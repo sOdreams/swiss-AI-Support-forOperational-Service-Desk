@@ -28,7 +28,7 @@ class TicketInput:
 @dataclass(frozen=True)
 class AnalysisConfig:
     model: str = "gpt-5.5-2026-04-23"
-    reasoning_effort: str = "low"
+    reasoning_effort: str = "none"
     max_concurrent_calls: int = 6
     stage_timeout_seconds: float = 45.0
     cache_ttl_seconds: float = 300.0
@@ -102,47 +102,41 @@ class TicketAnalysis:
         calls = []
         started = time.perf_counter()
         try:
-            # The total stage deadline includes admission waiting and any one
-            # validation retry. SDK retries cannot multiply the time budget.
-            return await asyncio.wait_for(self._attempts(stage, prompt, payload, schema, validate, calls),
+            # One call per branch; admission waiting is part of the deadline.
+            return await asyncio.wait_for(self._call(stage, prompt, payload, schema, validate, calls),
                                           timeout=self.config.stage_timeout_seconds)
         except Exception as exc:
             return {"ok": False, "value": None, "error": _safe_error(exc), "calls": calls,
                     "seconds": time.perf_counter() - started}
 
-    async def _attempts(self, stage, prompt, payload, schema, validate, calls):
+    async def _call(self, stage, prompt, payload, schema, validate, calls):
         started = time.perf_counter()
-        payload = deepcopy(payload)
-        for attempt in range(2):
-            async with self._semaphore:
-                call_started = time.perf_counter()
-                response = await self.client.responses.create(
-                    model=self.config.model, instructions=prompt,
-                    input=json.dumps(payload, ensure_ascii=False, separators=(",", ":")),
-                    reasoning={"effort": self.config.reasoning_effort}, max_output_tokens=3000,
-                    store=False, text={"verbosity": "low", "format": {"type": "json_schema", "name": stage,
-                                                                              "strict": True, "schema": schema}},
-                )
-            record = {"attempt": attempt + 1, "seconds": time.perf_counter() - call_started,
-                      "response_id": response.id, "model": response.model,
-                      "usage": response.usage.model_dump() if response.usage else {},
-                      "status": response.status, "output_text": response.output_text}
-            calls.append(record)
-            if response.status != "completed" or not response.output_text:
-                return {"ok": False, "value": None, "error": {"type": "IncompleteOrRefused"},
-                        "calls": calls, "seconds": time.perf_counter() - started}
-            try:
-                value = json.loads(response.output_text)
-                jsonschema.validate(value, schema)
-                errors = validate(value)
-            except (ValueError, jsonschema.ValidationError):
-                errors = ["Invalid JSON or schema"]
-            record["validation_errors"] = errors
-            if not errors:
-                return {"ok": True, "value": value, "calls": calls, "seconds": time.perf_counter() - started}
-            payload["previous_response"] = response.output_text
-            payload["validation_errors"] = errors
-        return {"ok": False, "value": None, "error": {"type": "ValidationFailed"},
+        async with self._semaphore:
+            call_started = time.perf_counter()
+            response = await self.client.responses.create(
+                model=self.config.model, instructions=prompt,
+                input=json.dumps(payload, ensure_ascii=False, separators=(",", ":")),
+                reasoning={"effort": self.config.reasoning_effort}, max_output_tokens=1500,
+                store=False, text={"verbosity": "low", "format": {"type": "json_schema", "name": stage,
+                                                                          "strict": True, "schema": schema}},
+            )
+        record = {"attempt": 1, "seconds": time.perf_counter() - call_started,
+                  "response_id": response.id, "model": response.model,
+                  "usage": response.usage.model_dump() if response.usage else {},
+                  "status": response.status, "output_text": response.output_text}
+        calls.append(record)
+        if response.status != "completed" or not response.output_text:
+            return {"ok": False, "value": None, "error": {"type": "IncompleteOrRefused"},
+                    "calls": calls, "seconds": time.perf_counter() - started}
+        try:
+            value = json.loads(response.output_text)
+            jsonschema.validate(value, schema)
+            errors = validate(value)
+        except (ValueError, jsonschema.ValidationError):
+            errors = ["Invalid JSON or schema"]
+        record["validation_errors"] = errors
+        return {"ok": not errors, "value": value if not errors else None,
+                "error": {"type": "ValidationFailed"} if errors else None,
                 "calls": calls, "seconds": time.perf_counter() - started}
 
     async def _retrieve_and_filter(self, ticket, facts):

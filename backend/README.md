@@ -2,7 +2,7 @@
 
 The retrieval endpoint returns **50 ranked, distinct evidence groups** by default.
 A separate `POST /tickets/analyze` endpoint runs narrative cleaning concurrently
-with FAISS retrieval and candidate filtering, using GPT-5.5 with low reasoning.
+with FAISS retrieval and candidate filtering, using GPT-5.5 with reasoning disabled.
 The frontend's **Clean & filter** button shows reviewable field corrections and
 selected evidence while preserving the original Top-50. See the complete English
 [analysis handoff](../docs/ANALYSIS_HANDOFF.md) for setup, contracts, measured

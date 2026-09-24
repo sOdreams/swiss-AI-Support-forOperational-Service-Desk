@@ -1,6 +1,11 @@
 # Parallel Ticket Cleaning and Candidate Filtering
 
-**Selected serving default: `gpt-5.5-2026-04-23`, low reasoning.** On the 20 development tickets, the integrated pipeline completed all branches with a median elapsed time of **6.06s** (maximum 12.17s; nearest-rank p95 11.74s). It proposed four field corrections across three tickets and kept all original Top-50 IDs, ranks, scores and source relationships.
+**Historical experiment report.** The current lightweight default uses GPT-5.5
+with `reasoning_effort=none`, a 1,500-token ceiling per call and no automatic
+validation retry. It has not been rerun on all 20 live examples. The measurements
+below describe the earlier configurations, whose retry and output budgets differ.
+
+**Previously selected profile: `gpt-5.5-2026-04-23`, low reasoning.** On the 20 development tickets, the integrated pipeline completed all branches with a median elapsed time of **6.06s** (maximum 12.17s; nearest-rank p95 11.74s). It proposed four field corrections across three tickets and kept all original Top-50 IDs, ranks, scores and source relationships.
 
 The pipeline runs `clean(current facts)` concurrently with `FAISS(original narrative) → filter`. Clean predictions never prefilter or rewrite retrieval inputs. The deterministic merge checks service disagreements; a disagreement holds both service correction and active evidence selections for review.
 

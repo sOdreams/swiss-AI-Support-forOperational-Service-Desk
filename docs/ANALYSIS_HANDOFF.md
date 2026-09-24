@@ -1,8 +1,11 @@
 # Parallel clean + filter integration
 
 This module checks ticket fields and filters FAISS candidates through two
-concurrent branches. The default is **`gpt-5.5-2026-04-23`, low reasoning**, selected
-after running the same 20 development examples with GPT-5.4 and GPT-5.5.
+concurrent branches. The lightweight default is **`gpt-5.5-2026-04-23`, reasoning
+disabled (`none`)**, with one call per branch and no automatic retry. Each call
+has a 1,500-token output ceiling; actual output is usually much shorter.
+Set `ANALYSIS_REASONING_EFFORT=low` to opt into reasoning. The earlier 20-case
+comparison favored low for quality; the lighter default prioritizes latency.
 
 ## Start and use
 
@@ -104,7 +107,7 @@ flowchart LR
 - `analysis/contracts.py` owns structured schemas, citation/service/stage checks
   and deterministic response construction.
 - `analysis/pipeline.py` owns async scheduling, client reuse, bounded admission,
-  deadlines, retries and cache lifecycle.
+  deadlines and cache lifecycle.
 - `retrieval/retriever.py` supplies exact text and source services through
   `describe()` and `service_catalog()`. Index format and ranking are unchanged.
 
@@ -144,25 +147,33 @@ for audit. An unavailable filter preserves original retrieval in an
 successful filtering. The imported ticket is never modified by the endpoint.
 
 The default allows six model calls concurrently per process. Each model stage
-has a 45-second deadline including admission wait and one validation retry.
-SDK transport retries are disabled. Successful results use a 64-entry, five-minute
+has a 45-second deadline including admission wait. Validation failures immediately
+return partial results; there are no validation or SDK transport retries.
+Successful results use a 64-entry, five-minute
 memory cache keyed by all ticket inputs, model/config, prompts and index version.
 Identical in-flight requests share work. Cancelling one waiter does not cancel a
 shared result; shutdown cancels remaining tasks and closes the client. Partial
 and conflicting results are not cached.
 
-## Evidence for the chosen configuration
+## Earlier measurements and their limits
 
-See [PARALLEL_ANALYSIS_BENCHMARK.md](PARALLEL_ANALYSIS_BENCHMARK.md). The selected
-profile completed 20/20 development cases, with median 6.06s and maximum 12.17s
+See [PARALLEL_ANALYSIS_BENCHMARK.md](PARALLEL_ANALYSIS_BENCHMARK.md). The earlier
+low-reasoning profile completed 20/20 development cases, with median 6.06s and maximum 12.17s
 for retrieval plus both model branches. A repeated-request cache probe was 35ms
 at Python level. Earlier single-stage verbose filtering had median 38.91s, but
 that is a different model/prompt/output format, not a concurrency-only ablation.
 
-The selected profile proposed four corrections on three tickets. It retained
+That profile proposed four corrections on three tickets. It retained
 a prior-review primary analogue in 18/18 judgeable cases and retained 19 historical
 comment references actively plus two ambiguous cash-cutoff references in reserve.
 These are comparisons with earlier assistant review, not official GT accuracy.
+
+Across both branches, that run averaged 232 reasoning tokens and 329 visible
+output tokens per ticket. The earlier V1 `none` run averaged zero reasoning
+tokens and 312 visible output tokens, with median 3.77s; it also had two service
+disagreements. V1 used different prompts. The new one-call-per-branch default
+has passed local regression tests but has not been rerun on all 20 live examples;
+neither earlier timing nor quality result should be presented as its measurement.
 
 Reproduce calls on your own local challenge file:
 
@@ -172,7 +183,7 @@ OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 python backend/scripts/benchmark_analysis.py
   --artifact artifacts/retrieval/minilm-sdc-v1 \
   --output artifacts/analysis/new-run \
   --models gpt-5.4-2026-03-05 gpt-5.5-2026-04-23 \
-  --reasoning-effort low
+  --reasoning-effort none
 ```
 
 The runner accepts a raw ticket array or `{"records": [...]}`, prompts for the
@@ -195,8 +206,8 @@ Tests cover concurrent branch start, literal provenance, rejected-parent comment
 survival, in-flight deduplication, cache invalidation, deadlines/partial outputs,
 disagreement holds, stale frontend responses and copy-only preview export.
 The integration passed 23 backend tests, six browser tests, type checking, lint
-and the production frontend build. A real `/tickets/analyze` call using the final
-default returned HTTP 200, corrected the mailbox-request title, and preserved all
+and the production frontend build. A real `/tickets/analyze` call using the earlier
+low-reasoning default returned HTTP 200, corrected the mailbox-request title, and preserved all
 50 candidates, with the selected analogue retaining original rank 9.
 
 Official provider references: [GPT-5.5 model](https://developers.openai.com/api/docs/models/gpt-5.5)

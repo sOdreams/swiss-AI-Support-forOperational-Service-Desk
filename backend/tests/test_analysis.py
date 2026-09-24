@@ -107,6 +107,8 @@ def test_clean_and_filter_are_concurrent_and_retain_independent_comment_sources(
             assert "current_services" not in payload and "current_work_type" not in payload
             assert "expert@example.com" not in request["input"] and "Support" not in request["input"]
             assert request["store"] is False
+            assert request["reasoning"] == {"effort": "none"}
+            assert request["max_output_tokens"] == 1500
         await pipeline.close()
     asyncio.run(run())
 
@@ -136,7 +138,7 @@ def test_filter_validation_failure_preserves_clean_and_unfiltered_reserve():
         pipeline = TicketAnalysis(Retriever(), client=provider)
         result = await pipeline.analyze(TICKET)
         assert result["status"] == "partial" and result["clean"]["status"] == "ready"
-        assert len(provider.calls) == 3
+        assert len(provider.calls) == 2  # Invalid output falls back without another model call.
         assert not result["filter"]["primary_document_ids"]
         assert all(g["role"] == "reserve" for g in result["filter"]["candidates"])
         assert result["filter"]["comments"][0]["status"] == "uncertain"

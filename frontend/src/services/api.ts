@@ -26,6 +26,10 @@ export interface LearningFeedbackPayload {
 export const getTickets = () => request<Ticket[]>("/tickets");
 export const getTicket = (issueId: string) => request<Ticket>(`/tickets/${encodeURIComponent(issueId)}`);
 export const analyzeTicket = (issueId: string) => request<AiProposal>(`/tickets/${encodeURIComponent(issueId)}/assist`, { method: "POST" });
+export const importTickets = (tickets: Ticket[]) => request<{ tickets: Ticket[]; count: number }>("/tickets/import", {
+  method: "POST",
+  body: JSON.stringify({ tickets }),
+});
 export const saveHumanReview = (review: HumanReview) => request<void>("/feedback", { method: "POST", body: JSON.stringify(review) });
 export const submitLearningFeedback = (payload: LearningFeedbackPayload) => request<void>("/feedback/learning", { method: "POST", body: JSON.stringify(payload) });
 export const submitProcessedTicket = (payload: ProcessTicketPayload) => request<void>("/tickets/process", { method: "POST", body: JSON.stringify(payload) });

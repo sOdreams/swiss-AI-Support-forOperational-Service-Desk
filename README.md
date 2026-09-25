@@ -1,193 +1,111 @@
-# Service Desk Copilot
+# SwissLife Triage Workbench
 
-Aplicación frontend para revisar tickets de soporte con asistencia de IA. La interfaz permite comparar el ticket original con una propuesta generada por IA, evaluar la recomendación y registrar la decisión del analista humano.
+An end-to-end service-desk triage workbench for the SwissLife challenge. The system keeps the original Jira ticket as the source of truth, retrieves historical evidence, proposes deterministic triage values, and requires a human decision before any recommendation is treated as accepted.
 
-## Descripción del proyecto
+## What is included
 
-Este proyecto simula un panel de trabajo para un equipo de soporte/IT Service Desk. La idea principal es separar tres capas:
+- Ticket queue with search, filters, upload, raw Jira fields, comments and linked issues.
+- Backend API and deterministic triage engine using the bundled historical dataset.
+- Classify, prioritize and resolve proposal flow with supporting historical evidence.
+- Human review workspace with approve, edit and reject actions.
+- Two reviewable resolution paths with prerequisites and expected outcomes.
+- Structured processing feedback saved locally for the demo.
+- Python unit tests, backend contract tests and frontend CI checks.
 
-1. El ticket original (fuente de verdad)
-2. La propuesta sugerida por IA
-3. La decisión final del analista (aprobar, editar o rechazar)
+The current demo uses the deterministic lexical retrieval engine as the production path. The FAISS/LLM branch was evaluated separately; it is not required to run this end-to-end demo.
 
-La app muestra:
+## Requirements
 
-- una cola de tickets con búsqueda y filtro,
-- el detalle del ticket y sus comentarios,
-- la comparación entre datos reales y propuesta de IA,
-- el borrador de respuesta,
-- las fuentes utilizadas por la IA,
-- y la revisión humana final.
+- Python 3.10 or newer
+- Node.js 20 LTS recommended, Node.js 18+ supported
+- npm 9+
 
-## Stack tecnológico
+No OpenAI API key or Python package installation is required for the default demo backend. The backend uses Python's standard library and the included training data.
 
-- React 19
-- TypeScript
-- Vite
-- Tailwind CSS
-- Lucide React
-
-## Requisitos previos
-
-Asegúrate de tener instalado:
-
-- Node.js 18 o superior
-- npm 9 o superior
-
-Puedes verificarlo con:
-
-```bash
-node -v
-npm -v
-```
-
-## Estructura del proyecto
+## Project layout
 
 ```text
-SwissAITest-AI-Support-Agent/
-├── README.md
-├── frontend/
-│   ├── package.json
-│   ├── vite.config.ts
-│   ├── tsconfig.json
-│   ├── index.html
-│   ├── eslint.config.js
-│   └── src/
-│       ├── App.tsx
-│       ├── components/
-│       ├── data/
-│       ├── features/
-│       ├── lib/
-│       ├── services/
-│       ├── types/
-│       ├── index.css
-│       └── main.tsx
-└── .gitignore
+backend/                 HTTP API and proposal contract
+data/challenge.json      20-ticket demo queue
+data/training.json       historical training records
+engine/scripts/          triage engine and Python tests
+frontend/                React + Vite workbench
+runtime/                 local feedback output; ignored by Git
+.github/workflows/ci.yml GitHub Actions checks
 ```
 
-## Instalación
+## Run locally
 
-Desde la raíz del proyecto:
+Open two Git Bash terminals from the repository root.
+
+Terminal 1 — backend:
 
 ```bash
-cd frontend
-npm install
+cd /e/ZurichHack_SwissLife/The-Asians-AI-Support-forOperational-Servide-Desk
+python -u -m backend.server
 ```
 
-## Ejecución local
-
-Inicia el servidor de desarrollo:
+Terminal 2 — frontend:
 
 ```bash
-cd frontend
+cd /e/ZurichHack_SwissLife/The-Asians-AI-Support-forOperational-Servide-Desk/frontend
+npm ci --include=optional --no-audit --no-fund
 npm run dev
 ```
 
-Luego abre la URL que indique Vite, normalmente algo como:
+Open the Vite URL, normally `http://localhost:5173`.
 
-```text
-http://localhost:5173
-```
-
-## Build de producción
-
-Para compilar la aplicación para producción:
+To serve the production build from the Python API:
 
 ```bash
-cd frontend
+cd /e/ZurichHack_SwissLife/The-Asians-AI-Support-forOperational-Servide-Desk/frontend
 npm run build
+cd ..
+python -u -m backend.server
 ```
 
-El resultado se generará en la carpeta:
+Then open `http://localhost:8000`.
 
-```text
-frontend/dist/
-```
-
-## Variables de entorno
-
-La aplicación intenta usar una API si está configurada. Por defecto, el cliente usa:
-
-```text
-http://localhost:8000
-```
-
-Puedes definir una variable de entorno en un archivo `.env` dentro de `frontend`:
-
-```env
-VITE_API_URL=http://localhost:8000
-```
-
-Si no existe backend, la app sigue funcionando con datos mock dentro del frontend.
-
-## Datos actuales del proyecto
-
-La aplicación usa datos de ejemplo en:
-
-- [frontend/src/data/mockTickets.ts](frontend/src/data/mockTickets.ts)
-- [frontend/src/data/mockAiProposals.ts](frontend/src/data/mockAiProposals.ts)
-
-Esto permite ejecutar la interfaz sin depender de una base de datos o servicio real.
-
-## Flujo funcional principal
-
-1. El usuario selecciona un ticket desde la cola.
-2. Se muestra el detalle original del ticket.
-3. La IA propone valores para campos como prioridad, equipo de servicio, tipo de solicitud, etc.
-4. El analista puede:
-   - aprobar,
-   - corregir manualmente,
-   - o rechazar la propuesta.
-5. La decisión se guarda en el estado local de la interfaz.
-
-## Puntos importantes para replicar o adaptar
-
-- La lógica principal vive en [frontend/src/App.tsx](frontend/src/App.tsx)
-- Los componentes de IU se agrupan por dominio en [frontend/src/features](frontend/src/features)
-- Los tipos están en [frontend/src/types](frontend/src/types)
-- La integración con API está pensada en [frontend/src/services/api.ts](frontend/src/services/api.ts)
-
-## Nota sobre backend
-
-Este repositorio actualmente contiene una interfaz frontend funcional con mocks, pero no incluye un backend real ni una base de datos. Si se quiere conectar con un servicio real, se debe implementar una API que exponga endpoints tipo:
-
-- `GET /tickets`
-- `GET /tickets/:issueId`
-- `POST /tickets/:issueId/assist`
-- `POST /feedback`
-
-La interfaz ya está preparada para consumir esos endpoints a través del servicio `api.ts`.
-
-## Comandos útiles
+## Test locally
 
 ```bash
+# Backend and engine
+python -m py_compile backend/server.py engine/scripts/triage_pipeline.py
+(cd engine && python -m unittest discover -s scripts -p "test_*.py" -v)
+python -m unittest backend.test_server -v
+
+# Frontend
 cd frontend
-npm install
-npm run dev
-npm run build
+npm ci --include=optional --no-audit --no-fund
+npm run typecheck
 npm run lint
+npm run build
 ```
 
-## Resumen
+GitHub Actions runs the same checks on pushes and pull requests.
 
-Este proyecto es un prototipo de panel para revisión asistida por IA en soporte técnico, pensado para validar propuestas de clasificación y respuesta antes de aplicarlas. Está listo para ejecutarse localmente con datos mock y puede evolucionar hacia una integración real con un backend y una API de IA.
+## API endpoints
 
-## Recomendación para IA o colaboradores
+- `GET /health` — service and dataset health
+- `GET /stats` — queue, processing and review counts
+- `GET /tickets` — current ticket queue
+- `GET /tickets/:id` — one ticket
+- `POST /tickets/:id/assist` — evidence-backed triage proposal
+- `POST /tickets/import` — import a JSON ticket array
+- `POST /feedback` — append a human review decision
+- `POST /tickets/process` — append structured processing feedback
 
-Si vas a reutilizar este proyecto con una IA o con un agente, usa este flujo:
+## Demo flow
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+1. Start the backend and frontend.
+2. Select a ticket from the queue.
+3. Review the original values, AI proposal and historical evidence.
+4. Select one of the proposed resolution paths.
+5. Approve, edit or reject the proposal in the middle review workspace.
+6. Optionally record the actual solution and affected business aspect.
 
-Y luego revisa:
+AI output is advisory. The source ticket is never overwritten automatically.
 
-- [frontend/src/App.tsx](frontend/src/App.tsx)
-- [frontend/src/features/tickets/TicketDetail.tsx](frontend/src/features/tickets/TicketDetail.tsx)
-- [frontend/src/features/ai/AiProposalPanel.tsx](frontend/src/features/ai/AiProposalPanel.tsx)
-- [frontend/src/services/api.ts](frontend/src/services/api.ts)
+## Repository hygiene
 
-Eso te permitirá entender rápidamente cómo funciona el flujo de tickets, la IA y la revisión humana.
-
+Do not commit `frontend/node_modules`, `frontend/dist`, Python caches, `.env` files, or `runtime/*.json`. API keys should only be supplied through environment variables and must never be placed in tracked files.

@@ -1,49 +1,24 @@
-# Service Desk Copilot — Ticket Processing Workflow V6
+# SwissLife Triage Workbench frontend
 
-React + Vite + TypeScript + Tailwind CSS frontend for the Swiss {ai} Weeks / Swiss Life service-desk prototype.
+React + Vite + TypeScript frontend for the local SwissLife service-desk API.
 
-## Current workflow
+## Workflow
 
-1. Upload a JSON file containing Jira-style tickets.
-2. Search, filter, sort and paginate active tickets in **Ticket Queue**.
-3. Browse **Ticket Categories** horizontally (Work type, Request type, Priority, Status, Service team, Business entity).
-4. Click a ticket from either the queue or a category card.
-5. Review ticket information and complete:
-   - **Recommended Solutions** — select one of 3 recommendations, OR write the **Real solution**.
-   - **Affected Business Aspect** — select one of 3 structured impact options.
-6. **Send** is enabled only when the required information is complete.
-7. The processed ticket is removed from the active Ticket Queue and category overview and added to **Processed Tickets**.
-8. The processing payload is posted to `POST /tickets/process`. If the backend is unavailable, the payload is stored in browser `localStorage` for later synchronization.
+1. The app loads the active challenge queue from `GET /tickets`.
+2. Selecting a ticket shows its original Jira fields and comments.
+3. The middle review workspace compares the original values with the AI suggestion and captures the analyst's final decision.
+4. The middle workspace offers two resolution paths: an evidence-backed recommendation and a safe clarification/escalation alternative.
+5. The right-hand panel calls `POST /tickets/:id/assist` and displays the case summary, routing snapshot, confidence, draft response, and historical evidence.
+6. Approve, edit, or reject sends the decision to `POST /feedback`; processing outcomes are sent to `POST /tickets/process`.
+7. The analyst can capture the real solution and affected business aspect. Processing feedback falls back to browser storage if the API is temporarily unavailable.
 
-## Important AI-learning behavior
+## Run
 
-Human-entered real solutions and selected business-impact labels are captured as structured feedback for evaluation and future learning/fine-tuning. The browser does **not** instantly retrain the model.
-
-## Layout
-
-Desktop uses the fixed split:
-
-- 30% — Ticket Queue
-- 50% — Ticket Categories / Process Ticket
-- 20% — Processed Tickets
-
-Each panel has independent vertical scrolling. Category cards scroll horizontally in the middle panel.
-
-## Run locally
-
-```bash
+```powershell
 npm install
-npm run typecheck
-npm run lint
-npm run build
 npm run dev
 ```
 
-## JSON support
+The backend must be running from the parent directory with `python -m backend.server`. The API base defaults to `http://localhost:8000` and can be changed with `VITE_API_BASE_URL`.
 
-The importer accepts:
-- one ticket object,
-- an array of ticket objects,
-- wrapper objects such as `{ "tickets": [...] }`, `{ "issues": [...] }`, `{ "data": [...] }`, `{ "items": [...] }`, or `{ "results": [...] }`.
-
-Missing values remain `Not recorded`; they are not silently inferred.
+The upload control accepts one ticket object, an array, or common wrappers such as `{ "tickets": [...] }`, `{ "issues": [...] }`, `{ "data": [...] }`, `{ "items": [...] }`, and `{ "results": [...] }`.

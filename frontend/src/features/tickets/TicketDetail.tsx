@@ -8,6 +8,9 @@ import type { Ticket } from "../../types/ticket";
 import { CommentsThread } from "../conversation/CommentsThread";
 import { LinkedIssuesPanel } from "./LinkedIssuesPanel";
 import { RawJsonViewer } from "./RawJsonViewer";
+import { HumanReviewWorkspace } from "../review/HumanReviewWorkspace";
+import type { AiProposal } from "../../types/ai";
+import type { HumanReview } from "../../types/review";
 
 function Field({ label, children, wide = false }: { label: string; children: ReactNode; wide?: boolean }) {
   return (
@@ -35,7 +38,17 @@ function DataSection({ title, description, children }: { title: string; descript
   );
 }
 
-export function TicketDetail({ ticket }: { ticket?: Ticket }) {
+export function TicketDetail({
+  ticket,
+  proposal,
+  review,
+  onReviewChange,
+}: {
+  ticket?: Ticket;
+  proposal?: AiProposal;
+  review?: HumanReview;
+  onReviewChange: (review: HumanReview) => void;
+}) {
   if (!ticket) {
     return (
       <main className="panel-center min-h-0 min-w-0 overflow-hidden">
@@ -67,8 +80,8 @@ export function TicketDetail({ ticket }: { ticket?: Ticket }) {
           <span className="section-step section-step-center">02</span>
           <span className="section-icon section-icon-center"><FileText className="h-4 w-4" /></span>
           <div>
-            <h2 className="section-title">Ticket Detail</h2>
-            <p className="section-subtitle">Inspect the original Jira data</p>
+              <h2 className="section-title">Review &amp; decide</h2>
+              <p className="section-subtitle">Compare the source ticket with the AI recommendation</p>
           </div>
         </div>
       </div>
@@ -101,6 +114,13 @@ export function TicketDetail({ ticket }: { ticket?: Ticket }) {
               <Field label="Status"><span className="inline-flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5 text-[#315F9E]" />{ticket.status}</span></Field>
             </div>
           </section>
+
+          <HumanReviewWorkspace
+            ticket={ticket}
+            proposal={proposal}
+            review={review}
+            onReviewChange={onReviewChange}
+          />
 
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_5px_18px_rgba(15,23,42,0.045)]">
             <div className="mb-4 flex items-center justify-between gap-4 border-b border-slate-100 pb-3">

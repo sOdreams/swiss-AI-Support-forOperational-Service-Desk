@@ -11,6 +11,7 @@ export interface HumanCorrections {
   impact?: string | null;
   severity?: string | null;
   draft_response?: string;
+  resolution_option_id?: string | null;
 }
 
 export interface HumanReview {

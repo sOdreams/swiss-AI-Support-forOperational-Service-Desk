@@ -7,6 +7,8 @@ Read `docs/ANALYSIS_HANDOFF.md` for the implemented parallel clean/filter pipeli
 its API, English output contract, cache/failure behavior and evaluation limits.
 Read `docs/RESOLUTION_HANDOFF.md` for action cards, the single-call Resolve stage,
 analyst decisions and outcome feedback.
+Read `docs/TICKET_SIGNALS.md` for current-fact observations, prerequisite states,
+historical verification excerpts and candidate-pool coverage.
 
 Use English for code comments, documentation, UI text and generated explanations.
 Preserve original ticket text and literal evidence quotations. The latest lightweight
@@ -68,6 +70,11 @@ reconciliation or caching; use a complete workflow when those behaviors are need
   a cold request runs analysis first. Keep source conditions, original ranks and
   the full Top-50. Unknown/conflicting service evidence allows clarification and
   diagnostics only. A matching citation ID does not prove semantic correctness.
+- Filter also extracts bounded, cited `signals` in its existing call. These are
+  reviewable interpretations, not verified facts or new search/routing inputs.
+  Server-derived `evidence_support` describes only the selected candidate pool.
+  Recompute it after disagreement holds; never treat repeated comments as independent
+  successes. Historical verification excerpts are literal quotes, not current outcomes.
 - `frontend/src/features/resolution/` supports Use / Edit / Not applicable, an
   editable reply and a separately entered actual outcome. Feedback preserves the
   original proposal and edits; it does not execute actions, send replies or close Jira tickets.

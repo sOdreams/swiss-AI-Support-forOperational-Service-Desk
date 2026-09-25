@@ -10,6 +10,9 @@ latency and limitations. Routing and feedback remain separate.
 `POST /tickets/resolve` reuses analysis and adds one model call for reviewable
 action cards, a critical question and a reply draft. See the
 [resolution handoff](../docs/RESOLUTION_HANDOFF.md) for its Python/HTTP contracts.
+Filter's existing call also produces cited current observations and prerequisite
+states. Resolve uses these alongside the original facts. See
+[ticket signals](../docs/TICKET_SIGNALS.md); no additional call or index rebuild is needed.
 
 ## Quick start (from the repository root)
 
@@ -192,10 +195,12 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The ten browser tests use a mocked API to check Top-50 display, feedback provenance,
+The twelve browser tests use a mocked API to check Top-50 display, feedback provenance,
 field corrections, independent comment selection, correction-preview export,
 late-response isolation after ticket switching, action choices, source conditions,
 reply edits, separate actual outcomes, clarification-only proposals and error handling.
+They also check known prerequisites, exact current quotations, historical verification,
+context snapshots in feedback and the distinction between missing evidence and unavailable filtering.
 
 Tests use a deterministic fake encoder to exercise grouping, ranking, provenance,
 artifact validation, query errors, HTTP defaults and feedback persistence without

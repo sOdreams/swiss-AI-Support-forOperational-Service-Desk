@@ -5,7 +5,7 @@ import hashlib
 import json
 
 from .contracts import obj, string_ids, TEXT
-from .evidence import current_facts
+from .evidence import current_facts, evidence_support, verification_excerpt
 
 
 RESOLVE_PROMPT = """Help a service-desk analyst choose the next action. Return concise English.
@@ -17,6 +17,23 @@ interpretations. Explicit body/comment facts override a contradicted headline.
 Historical cases give context; only selected historical comments
 can support a procedure. Never infer a confirmed current cause or successful fix
 from a similar historical outcome. Source IDs must come from the supplied input.
+
+signals are cited interpretations of current facts, not additional verified facts.
+Use last_known_good and first_observed_failure to explain WHY a check is useful.
+Treat change_event as a lead, not a proven cause. Respect scope and constraints,
+and use stated workaround/deadline information without inventing dates or priority.
+In prerequisites, satisfied checks have already been answered: acknowledge them
+instead of asking again. Focus the critical question on a missing decision-changing
+detail. Do not turn a satisfied approval into a claim that access was provisioned.
+Verify checklist states against their Q facts: a reported account switch does not
+mean its exact mapping has been identified or checked. Do not assume an unstated
+cache/aggregation job exists; ask how an output is refreshed before naming its
+mechanism. Do not add mandatory approvals/change windows or refer to an established
+runbook unless the supplied facts or historical text actually establish them.
+The server's evidence_support describes this candidate pool, not all knowledge.
+Historical verification_excerpt clauses can inform expected_outcome, but describe
+past observations. Rephrase them as future checks. A filter condition is a check
+needed NOW, not evidence that the historical analyst performed it.
 
 Produce at most three short action cards. Prefer one or two useful steps over
 generic advice. Each needs next_step, reason, current fact_ids and source_ids.
@@ -69,15 +86,20 @@ def resolution_context(ticket, analysis):
         for comment in [c for c in filtered["comments"]
                         if c["id"] in active and c["status"] in {"reference", "conditional"}][:8]:
             source = {"id": comment["id"], "kind": "historical_comment", "text": comment["text"],
+                      "verification_excerpt": verification_excerpt(comment["text"]),
                       "status": comment["status"], "condition": comment["condition"],
                       "sources": deepcopy(comment["sources"])}
             sources[comment["id"]] = source
-            comments.append({k: source[k] for k in ("id", "text", "status", "condition")})
+            comments.append({k: source[k] for k in ("id", "text", "status", "condition", "verification_excerpt")})
     payload = {"current_facts": facts, "service": service,
                "evidence_status": "ready" if usable else filtered.get("status", "unavailable"),
                "clean_suggestions": [{k: f[k] for k in ("field", "suggested", "state")}
                                      for f in analysis.get("clean", {}).get("fields", [])],
                "historical_cases": cases, "historical_comments": comments,
+               "signals": {key: [{k: v for k, v in item.items() if k != "evidence"}
+                                  for item in filtered.get("signals", {}).get(key, [])] if usable else []
+                           for key in ("observations", "prerequisites")},
+               "evidence_support": evidence_support(filtered, analysis.get("conflicts", [])),
                "existing_questions": list(dict.fromkeys(analysis.get("clean", {}).get("questions", [])
                                                          + filtered.get("questions", [])))[:5]}
     return payload, sources
@@ -128,10 +150,14 @@ def resolution_result(ticket, analysis, value, sources, model):
         checks = list(dict.fromkeys(s["condition"] for s in evidence if s.get("condition")))
         actions.append({"id": f"A{number}", **action, "sources": evidence,
                         "required_checks": checks, "execution_authorized": False})
+    filtered = analysis.get("filter") or {}
+    signals = filtered.get("signals", {}) if filtered.get("status") == "ready" and not analysis.get("conflicts") else {}
     result = {"status": "ready", "mode": value["mode"], "actions": actions,
               "critical_question": value["critical_question"], "reply_draft": value["reply_draft"],
               "model": model, "index_version": (analysis.get("retrieval") or {}).get("index_version"),
               "requires_review": True, "execution_authorized": False,
+              "context_signals": {key: deepcopy(signals.get(key, [])) for key in ("observations", "prerequisites")},
+              "evidence_support": evidence_support(analysis.get("filter"), analysis.get("conflicts", [])),
               "ticket_fingerprint": hashlib.sha256(json.dumps(asdict(ticket), sort_keys=True).encode()).hexdigest()}
     result["proposal_id"] = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()
     return result

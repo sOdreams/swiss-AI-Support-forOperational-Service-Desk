@@ -119,3 +119,62 @@ test("a late resolve response cannot attach a proposal to another ticket", async
   await expect(page.getByRole("region", { name: "Resolution assistance" })).not.toContainText("Which approval record");
   await expect(page.getByRole("button", { name: "Generate next steps" })).toBeDisabled();
 });
+
+test("current observations and known prerequisites retain quotations and survive in the review", async ({ page }) => {
+  const signal = { observations: [
+    { kind: "scope", text: "The approved Archive role", evidence_ids: ["Q2"], evidence: [{ fact_id: "Q2", source: "description", text: tickets[0].Description }] },
+  ], prerequisites: [
+    { check: "Approval for the requested role", state: "satisfied", evidence_ids: ["Q2"], evidence: [{ fact_id: "Q2", source: "description", text: tickets[0].Description }] },
+    { check: "Identity of the user requiring access", state: "missing", evidence_ids: ["Q2"], evidence: [{ fact_id: "Q2", source: "description", text: tickets[0].Description }] },
+  ] };
+  const support = { state: "procedure_reference", reason: "Check current applicability before using the historical procedure.", active_comment_count: 1 };
+  const base = analysis();
+  const generated = resolved();
+  const source = generated.resolution.actions[1].sources[0];
+  source.text = "Resolution: Granted the approved role and confirmed access to the workspace.";
+  const response = { ...generated, filter: { ...base.filter, signals: signal, evidence_support: support }, resolution: {
+    ...generated.resolution, critical_question: "Which user needs the approved role?", context_signals: signal, evidence_support: support,
+    actions: generated.resolution.actions.map((action, i) => i === 1 ? { ...action, sources: [{ ...source, verification_excerpt: "confirmed access to the workspace." }] } : action),
+  } };
+  await page.route("**/tickets/resolve", (route) => route.fulfill({ json: response }));
+  await page.route("**/tickets/process", (route) => route.fulfill({ status: 201, json: { saved: true } }));
+  await openTicket(page);
+  await page.getByRole("button", { name: "Generate next steps" }).click();
+  const situation = page.getByRole("region", { name: "Situation and known checks" });
+  await expect(situation).toContainText("Already established in the ticket");
+  await expect(situation).toContainText("Not established; confirm if needed");
+  await expect(situation).toContainText("Historical procedure references available");
+  const scope = situation.getByRole("article", { name: "Affected scope" });
+  await scope.locator("summary").click();
+  await expect(scope).toContainText(tickets[0].Description);
+  const panel = page.getByRole("region", { name: "Resolution assistance" });
+  const action = panel.getByRole("article", { name: "Action 2", exact: true });
+  await action.locator("summary").click();
+  await expect(action).toContainText("Historical verification: confirmed access to the workspace.");
+  await expect(action).toContainText("Past evidence, not confirmation of the current outcome.");
+  await panel.getByLabel("Actual action and outcome").fill("Requested the user identity; no access change made.");
+  await page.getByRole("button", { name: /Service continuity/ }).click();
+  const submitted = page.waitForRequest("**/tickets/process");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  const payload = (await submitted).postDataJSON();
+  expect(payload.resolution.proposal.context_signals).toEqual(signal);
+  expect(payload.resolution.proposal.evidence_support).toEqual(support);
+});
+
+test("an empty knowledge selection is distinct from unavailable filtering", async ({ page }) => {
+  const base = analysis();
+  let ready = true;
+  await openTicket(page);
+  await page.route("**/tickets/analyze", (route) => route.fulfill({ json: { ...base, filter: { ...base.filter,
+    status: ready ? "ready" : "unfiltered_fallback", signals: { observations: [], prerequisites: [] },
+    evidence_support: ready ? { state: "no_selected_evidence", reason: "Nothing applicable was selected from this candidate pool.", active_comment_count: 0 }
+      : { state: "unavailable", reason: "Filtering was unavailable; coverage has not been assessed.", active_comment_count: 0 },
+  } } }));
+  await page.getByRole("button", { name: "Clean & filter", exact: true }).click();
+  const situation = page.getByRole("region", { name: "Situation and known checks" });
+  await expect(situation).toContainText("No applicable evidence selected");
+  ready = false;
+  await page.getByRole("button", { name: "Clean & filter", exact: true }).click();
+  await expect(situation).toContainText("Evidence assessment unavailable");
+  await expect(situation).not.toContainText("No applicable evidence selected");
+});

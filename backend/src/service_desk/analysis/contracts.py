@@ -19,6 +19,19 @@ def string_ids(values, maximum=None):
 
 TEXT = {"type": "string"}
 STAGE = {"type": "string", "enum": ["request", "external_delivery", "internal_processing", "unknown"]}
+SIGNAL_KINDS = ["last_known_good", "first_observed_failure", "change_event", "blocked_outcome",
+                "scope", "workaround", "deadline", "constraint"]
+
+
+def signals_schema(facts):
+    cited = {**string_ids(facts, 2), "minItems": 1}
+    observation = obj({"kind": {"type": "string", "enum": SIGNAL_KINDS},
+                       "text": {"type": "string", "minLength": 1, "maxLength": 220}, "evidence_ids": cited})
+    prerequisite = obj({"check": {"type": "string", "minLength": 1, "maxLength": 180},
+                        "state": {"type": "string", "enum": ["satisfied", "missing", "contradicted"]},
+                        "evidence_ids": cited})
+    return obj({"observations": {"type": "array", "items": observation, "maxItems": 8},
+                "prerequisites": {"type": "array", "items": prerequisite, "maxItems": 3}})
 
 
 def clean_schema(facts, catalog):
@@ -44,6 +57,7 @@ def filter_schema(facts, catalog, groups, comments):
         "observed_stage": STAGE, "stage_evidence_ids": string_ids(facts),
         "primary_ids": string_ids(groups, 10), "reserve_ids": string_ids(groups, 50),
         "comment_choices": {"type": "array", "items": choice, "maxItems": len(comments)},
+        "signals": signals_schema(facts),
         "questions": {"type": "array", "items": TEXT, "maxItems": 5}, "reason": TEXT,
     })
 
@@ -63,6 +77,15 @@ def validate_clean(value, facts):
 
 def validate_filter(value, groups, comments):
     errors = []
+    signals = value["signals"]
+    kinds = [s["kind"] for s in signals["observations"]]
+    if len(kinds) != len(set(kinds)):
+        errors.append("Use one observation per signal kind")
+    checks = [p["check"].strip().casefold() for p in signals["prerequisites"]]
+    if len(checks) != len(set(checks)):
+        errors.append("Prerequisite checks must be unique")
+    if any(not s["text"].strip() for s in signals["observations"]) or any(not c for c in checks):
+        errors.append("Signals require nonempty observations and checks")
     primary, reserve = value["primary_ids"], value["reserve_ids"]
     if len(set(primary + reserve)) != len(primary + reserve):
         errors.append("Group selections must be unique and disjoint")
@@ -138,4 +161,7 @@ def filter_result(value, originals, comments, facts):
             "questions": value["questions"] if value else [], "reason": value["reason"] if value else "Filter unavailable; original retrieval retained.",
             "service": value["service"] if value else None,
             "observed_stage": value["observed_stage"] if value else None,
-            "stage_evidence": quotes(value["stage_evidence_ids"], facts) if value else []}
+            "stage_evidence": quotes(value["stage_evidence_ids"], facts) if value else [],
+            "signals": {key: [{**deepcopy(item), "evidence": quotes(item["evidence_ids"], facts)}
+                              for item in value["signals"][key]] if value else []
+                        for key in ("observations", "prerequisites")}}

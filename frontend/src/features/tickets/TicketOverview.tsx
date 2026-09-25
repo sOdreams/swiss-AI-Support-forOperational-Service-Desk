@@ -18,6 +18,7 @@ import { RetrievalEvidencePanel } from "../retrieval/RetrievalEvidencePanel";
 import { useRetrieval } from "../retrieval/useRetrieval";
 import { useTicketAnalysis } from "../analysis/useTicketAnalysis";
 import { TicketAnalysisPanel } from "../analysis/TicketAnalysisPanel";
+import { TicketSignalsPanel } from "../analysis/TicketSignalsPanel";
 import { useResolution } from "../resolution/useResolution";
 import { ResolutionPanel } from "../resolution/ResolutionPanel";
 import { submitProcessedTicket } from "../../services/api";
@@ -228,6 +229,7 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
       </section>
 
       <TicketAnalysisPanel ticket={ticket} data={effectiveAnalysis} loading={analysis.loading} error={analysis.error} onRun={analysis.run} />
+      <TicketSignalsPanel filter={effectiveAnalysis?.filter} />
       <ResolutionPanel data={resolution.data} review={resolution.review} loading={resolution.loading} error={resolution.error}
         enabled={Boolean(analysis.data) && !analysis.loading} onRun={resolution.run} onReviewChange={resolution.setReview}
         outcome={realSolution} onOutcomeChange={(value) => { setRealSolution(value); setError(null); }} />

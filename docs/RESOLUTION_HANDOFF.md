@@ -4,6 +4,8 @@ Resolve turns the current ticket and selected historical evidence into up to thr
 action cards, one critical question when needed, and an editable English reply.
 The analyst chooses Use / Edit / Not applicable and records the actual outcome.
 This feature is implemented in the existing backend and frontend.
+Resolve also consumes [current signals and known prerequisites](TICKET_SIGNALS.md)
+from the existing filter call, and preserves that context in the saved proposal.
 
 ```text
 Original facts → Clean ───────────────────────┐
@@ -104,6 +106,8 @@ The response preserves the analysis, original Top-50 and provenance, and adds:
 | `resolution.reply_draft` | Editable English draft, distinct from a sent message. |
 | `resolution.proposal_id` | Content hash identifying the original proposal, not a signature. |
 | `resolution.ticket_fingerprint` | Hash of the original `TicketInput`. |
+| `resolution.context_signals` | Snapshot of the usable filter observations/prerequisites, with original quotations. Empty for unavailable/conflicting filtering or older analyses without signals. |
+| `resolution.evidence_support` | Server-derived selected-evidence coverage, not answer confidence. |
 | `resolution.requires_review` / `execution_authorized` | Always `true` / `false`. |
 | `analysis_cache_hit` | Whether analysis was cached when this proposal was computed. |
 | `cache_hit` | Whether the complete proposal response was reused on this request. |
@@ -173,7 +177,7 @@ browser-local fallback retains the same payload when saving to the API fails.
 ## Verification and development evaluation
 
 Run the commands in [the backend guide](../backend/README.md#verification).
-The integrated suite has 37 backend tests and ten browser tests. It covers one
+The integrated suite has 43 backend tests and twelve browser tests. It covers one
 additional call, cache reuse, citations, prerequisite retention, clarification,
 feedback persistence, action/draft edits, failure fallback and stale responses.
 Type checking, lint and the production build also pass.
@@ -194,6 +198,8 @@ stalled-listener prerequisite; ambiguous cases asked for clarification. Remainin
 quality issues include an ETA used as a weak prerequisite and wording that
 overstates a historical diagnostic check. These are analyst-review findings,
 not an operational success metric.
+This five-case report predates current signals. The newer complete-workflow smoke
+is recorded in [ticket-signals-smoke.json](../backend/validation/ticket-signals-smoke.json).
 
 ## Implementation map
 

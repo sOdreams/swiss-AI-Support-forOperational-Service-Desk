@@ -1,4 +1,4 @@
-import type { TicketAnalysisResponse } from "./analysis";
+import type { EvidenceSupport, TicketAnalysisResponse, TicketSignals } from "./analysis";
 import type { EvidenceSource } from "./retrieval";
 
 export interface ResolutionSource {
@@ -9,6 +9,7 @@ export interface ResolutionSource {
   document_id?: string;
   original_rank?: number;
   condition?: string;
+  verification_excerpt?: string | null;
   sources?: Array<{ document_id: string; original_rank: number; occurrences: number; examples: EvidenceSource[] }>;
 }
 
@@ -37,6 +38,8 @@ export interface ResolutionProposal {
   index_version: string | null;
   ticket_fingerprint: string;
   requires_review: true;
+  context_signals?: TicketSignals;
+  evidence_support?: EvidenceSupport;
   execution_authorized: false;
 }
 

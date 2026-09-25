@@ -72,6 +72,7 @@ class Provider:
         else:
             value = {"service": "Payments" if self.conflict else "Archive", "service_evidence_ids": ["Q2"],
                      "observed_stage": "request", "stage_evidence_ids": ["Q2"],
+                     "signals": {"observations": [], "prerequisites": []},
                      "primary_ids": [] if self.conflict else ["G1"], "reserve_ids": [], "comment_choices": [],
                      "questions": [], "reason": "Same access-grant workflow; removal is a different action."}
             if not self.conflict:
@@ -223,6 +224,7 @@ def test_condition_cannot_override_a_different_or_unknown_failure_stage():
     groups = {"G1": {"services": ["Archive"]}}
     comments = {"E1": {"services": ["Archive"]}}
     value = {"service": "Archive", "service_evidence_ids": ["Q1"], "primary_ids": [], "reserve_ids": [],
+             "signals": {"observations": [], "prerequisites": []},
              "observed_stage": "external_delivery", "stage_evidence_ids": ["Q1"],
              "comment_choices": [{"id": "E1", "status": "conditional", "condition": "Check the internal consumer.",
                                    "evidence_ids": ["Q1"], "evidence_stage": "internal_processing"}]}

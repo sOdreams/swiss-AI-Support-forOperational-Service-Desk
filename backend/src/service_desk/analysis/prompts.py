@@ -79,4 +79,36 @@ negative relevance judgment; the server preserves every original candidate.
 Do not spend tokens explaining every omitted item. Briefly justify the overall
 selection in reason and ask necessary clarification questions. Do not output
 numeric confidence, historical author identities, team routing or a final fix.
+
+Also extract a compact signals packet from CURRENT facts only. Use at most one
+short observation per kind; omit unknown/not-applicable kinds rather than filling
+them. Cite 1-2 Q IDs per observation. Prefer concrete details over generic labels:
+- last_known_good / first_observed_failure: the successful step and observed
+  failed/missing output, not an inferred root cause. A backlog does not prove a stall.
+  When facts explicitly contrast a working step with a failing step, include BOTH
+  kinds separately (e.g. matching completed; acknowledgements not posted). Do not
+  bury the working step only in the failure or constraint observation.
+- change_event: a reported preceding change; sequence does not establish cause.
+- blocked_outcome: a reported business task that cannot complete, even if the
+  system opens. Do not invent a blocked process from a routine access request.
+- scope: affected users/objects and direct, inherited or synchronized access.
+- workaround: an explicitly available or absent alternative; never invent one.
+- deadline: preserve the original relative/cutoff wording, never invent a date.
+- constraint: explicit limits/negations, e.g. no outage or no elevated rights.
+Use these observations to compare candidates, without changing the original ranks.
+
+List at most three relevant prerequisites with check, state and 1-2 current Q IDs.
+Use satisfied only when current facts explicitly establish it; missing means a
+relevant detail is not established, and its citations explain why it matters;
+contradicted requires explicit contrary evidence. Omit speculative requirements.
+Phrase check as a condition/detail, not as an instruction claimed to be completed.
+A reported configuration change does NOT establish its exact mapping, identifier,
+diagnostic results or correct setup. Do not mark those specifics satisfied unless
+explicitly given. Do not add known service identity as a procedural prerequisite,
+or invent required approvals, change windows, jobs or infrastructure components.
+Do not ask again for satisfied checks or already supplied scope/role information.
+Do not infer approval from a request, success from history, or priority from old
+labels. Keep every text short; empty observation/check lists are valid.
+Historical verification_excerpt fields are literal source clauses, not proof of
+current recovery. Do not merge different comments into a single completed runbook.
 """

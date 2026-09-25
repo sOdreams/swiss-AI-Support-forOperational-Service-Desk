@@ -13,6 +13,7 @@ React + Vite + TypeScript + Tailwind CSS frontend for the Swiss {ai} Weeks / Swi
 5. Review ticket information and complete:
    - **Clean & filter** — run ticket checks and evidence filtering in parallel, inspect the primary candidates or all original Top-50, and review selected historical comments and their conditions.
    - **Download correction preview** — export suggested changes to a separate copy; the imported ticket is not modified.
+   - **Situation and known checks** — inspect cited process boundaries, changes, impact/scope, workarounds and deadlines; distinguish established prerequisites from missing/contradicted details and inspect evidence coverage.
    - **Generate next steps** — prepare action cards from the filtered evidence, one critical question when needed, and an editable English reply draft.
    - Choose **Use / Edit / Not applicable** for each card. Inspect its **Check first**, **Expected outcome** and expandable **Source** references.
    - Enter **Actual action and outcome** yourself. A selected suggestion never fills this in or establishes success. Without a generated proposal, general review steps and the **Real solution** field remain available.
@@ -24,6 +25,9 @@ React + Vite + TypeScript + Tailwind CSS frontend for the Swiss {ai} Weeks / Swi
 **Send** saves the human review. It does not send the reply draft, perform an action,
 or change the ticket in Jira. Resolution feedback preserves the original proposal,
 the analyst's decisions/edits and the actual outcome as separate fields.
+It also retains the usable observations/checklist and evidence-coverage snapshot
+inside the original resolution proposal. Historical verification quotations describe
+past evidence and never fill the current actual-outcome field.
 
 ## Important AI-learning behavior
 

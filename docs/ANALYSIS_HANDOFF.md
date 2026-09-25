@@ -57,6 +57,8 @@ Response fields:
 | `filter.primary_document_ids` | At most ten primary groups in original retrieval order. An empty list is valid. |
 | `filter.comments` | Deduplicated exact comment patterns, applicability, conditions, current citations and original source relationships. |
 | `filter.active_comment_ids` | Only `reference` or `conditional` comments; uncertain comments stay in reserve. |
+| `filter.signals` | Bounded current observations and prerequisite states, with Q IDs and exact current quotations. |
+| `filter.evidence_support` | Server-derived coverage of this candidate pool, recomputed after conflict reconciliation. |
 | `conflicts` | Independent clean/filter service disagreements. |
 | `cache_hit`, `elapsed_ms`, `compute_ms`, `timings` | Current Python request time, original compute time and branch measurements. |
 | `stage_status` | Per-model-stage success/error type. Raw provider output is omitted from HTTP responses. |
@@ -373,10 +375,14 @@ npm run test:e2e
 Tests cover concurrent branch start, literal provenance, rejected-parent comment
 survival, in-flight deduplication, cache invalidation, deadlines/partial outputs,
 disagreement holds, stale frontend responses and copy-only preview export.
-The integration passed 37 backend tests, ten browser tests, type checking, lint
+The integration passed 43 backend tests, twelve browser tests, type checking, lint
 and the production frontend build. A real `/tickets/analyze` call using the earlier
 low-reasoning default returned HTTP 200, corrected the mailbox-request title, and preserved all
 50 candidates, with the selected analogue retaining original rank 9.
 
 Official provider references: [GPT-5.5 model](https://developers.openai.com/api/docs/models/gpt-5.5)
 and [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs).
+
+See [TICKET_SIGNALS.md](TICKET_SIGNALS.md) for signal extraction, coverage states,
+historical verification excerpts and the expanded Filter → Resolve contract. This
+uses the same two analysis calls; earlier latency reports predate the added fields.

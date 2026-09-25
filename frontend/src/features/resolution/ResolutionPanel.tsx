@@ -42,7 +42,7 @@ export function ResolutionPanel({ data, review, loading, error, enabled, onRun, 
             className="mt-1 w-full rounded-lg border border-teal-300 p-2 text-sm" value={choice.edited_next_step ?? action.next_step}
             onChange={(event) => onReviewChange({ ...review, actions: review.actions.map((item) => item.action_id === action.id ? { ...item, edited_next_step: event.target.value } : item) })} />
             : <p className="mt-1 text-sm font-semibold text-slate-900">{action.next_step}</p>}
-          <p className="mt-2 text-xs leading-5 text-slate-600">{action.reason}</p>
+          <p className="mt-2 text-xs leading-5 text-slate-600"><span className="font-semibold">Why this next step: </span>{action.reason}</p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <div className="rounded-lg bg-amber-50 p-3"><h5 className="text-xs font-semibold text-amber-900">Check first</h5>
               {checks.length ? <ul className="mt-1 ml-4 list-disc space-y-1 text-xs leading-5 text-slate-700">{checks.map((check) => <li key={check}>{check}</li>)}</ul>
@@ -54,6 +54,7 @@ export function ResolutionPanel({ data, review, loading, error, enabled, onRun, 
             {action.sources.map((source) => <div key={source.id} className="mt-2 border-l-2 border-teal-200 pl-3">
               <p className="font-semibold text-slate-600">{source.id} · {source.kind.replaceAll("_", " ")}{source.source ? ` · ${source.source}` : ""}</p>
               <p className="mt-1 whitespace-pre-wrap leading-5 text-slate-700">{source.text}</p>
+              {source.verification_excerpt && <p className="mt-2 rounded bg-slate-50 p-2 text-slate-700"><span className="font-semibold">Historical verification: </span>{source.verification_excerpt}<span className="mt-1 block text-slate-500">Past evidence, not confirmation of the current outcome.</span></p>}
               {source.original_rank && <p className="text-slate-500">Original rank {source.original_rank}</p>}
               {source.sources && <p className="text-slate-500">Original ranks: {source.sources.map((s) => s.original_rank).join(", ")}</p>}
             </div>)}

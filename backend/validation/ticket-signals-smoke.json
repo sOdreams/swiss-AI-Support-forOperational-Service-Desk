@@ -1,0 +1,280 @@
+{
+  "date": "2026-09-25",
+  "protocol": {
+    "model": "gpt-5.5-2026-04-23",
+    "reasoning_effort": "none",
+    "cases": [
+      6,
+      13,
+      14,
+      15,
+      18,
+      19
+    ],
+    "index_version": "afa533f71d666da9f11d",
+    "code_sha256": {
+      "__init__.py": "92bc3f5fc6abaea87bb7212fa67b782793c303d5675a6a8af0628a4c7e9e7768",
+      "evidence.py": "8811ea2e853ad6e9dbec51da093f86f0d80e72f0cfefb8ff213981dbab134e1b",
+      "prompts.py": "7d7bb58cceaddc1e0e0380f880fbfa06eb6b7d6ab4136da1ea8903c625e46e69",
+      "contracts.py": "83ad61a8c7fef1fc998e0125e65d2fa4c47b96bc8e053d66722fe9a4efde7c93",
+      "pipeline.py": "9d8beabdc5333213137d1ad61e84ed9d6393a7b9e247d0c6e01226818676921a",
+      "resolution.py": "cfdedac8d6afac35e5807333c63e7225b5a5bc07fb6b1ecbeea097d78f2beb60"
+    },
+    "data_sha256": "71df79d9228b78e8f4a140d66bb519f582146e74aaeb77d4b41527ad5b7c258d",
+    "concurrency": 2,
+    "fresh_stages": [
+      "clean",
+      "retrieval",
+      "filter",
+      "resolve"
+    ],
+    "evaluation": "Six-case development smoke; no GT accuracy claim; model loading excluded."
+  },
+  "methodology": {
+    "selection": "Six selected development examples with stage contrasts, changes, known approval, revocation scope and deadlines.",
+    "timing_boundary": "Cold Python analyze_and_resolve(), including FAISS and all three fresh model calls; excludes model loading, HTTP and rendering. Two tickets at a time after case 14.",
+    "iteration": "An initial six-case run exposed omitted last-known-good fields and an overstated known mapping. Prompts were tightened before these six fresh calls.",
+    "checks": "All stages valid, three calls per ticket, original Top-50 retained, exact current quotations, signal snapshot persistence, literal historical verification excerpts.",
+    "reviewer": "Coding agent qualitative inspection; no expert outcome labels.",
+    "artifacts": "Ignored local artifacts/signals/smoke-20260925-v2."
+  },
+  "summary": {
+    "cases": 6,
+    "ready": 6,
+    "model_calls": 18,
+    "retries": 0,
+    "min_ms": 6500.03,
+    "median_ms": 9130.83,
+    "max_ms": 11828.79,
+    "total_input_tokens": 42190,
+    "total_output_tokens": 5339,
+    "mean_filter_output_tokens": 423,
+    "total_reasoning_tokens": 0
+  },
+  "cases": [
+    {
+      "case_number": 6,
+      "status": "ready",
+      "mode": "action_plan",
+      "elapsed_ms": 10730.0,
+      "timings_ms": {
+        "clean_ms": 1712.8,
+        "retrieval_ms": 50.06,
+        "filter_ms": 6221.53,
+        "resolve_ms": 4311.74
+      },
+      "model_calls": 3,
+      "retrieved_groups": 50,
+      "observed_signal_kinds": [
+        "last_known_good",
+        "first_observed_failure",
+        "blocked_outcome",
+        "scope"
+      ],
+      "prerequisite_states": [
+        "missing",
+        "missing"
+      ],
+      "coverage_state": "procedure_reference",
+      "output_tokens_by_stage": {
+        "clean": 92,
+        "filter": 504,
+        "resolve": 464
+      },
+      "input_tokens": 6759,
+      "reasoning_tokens": 0,
+      "qualitative_review": {
+        "observation": "Separates the correct preview from failed PDF generation, preserves release-blocking impact, and proposes sourced conditional template remediation plus PDF checks.",
+        "remaining_limit": "The release-status question and production-path checks are suggestions for review, not independently established requirements."
+      }
+    },
+    {
+      "case_number": 13,
+      "status": "ready",
+      "mode": "action_plan",
+      "elapsed_ms": 8866.06,
+      "timings_ms": {
+        "clean_ms": 1615.79,
+        "retrieval_ms": 132.98,
+        "filter_ms": 4685.07,
+        "resolve_ms": 3913.83
+      },
+      "model_calls": 3,
+      "retrieved_groups": 50,
+      "observed_signal_kinds": [
+        "last_known_good",
+        "first_observed_failure",
+        "change_event",
+        "blocked_outcome",
+        "workaround"
+      ],
+      "prerequisite_states": [
+        "missing",
+        "missing"
+      ],
+      "coverage_state": "analogue_only",
+      "output_tokens_by_stage": {
+        "clean": 100,
+        "filter": 384,
+        "resolve": 323
+      },
+      "input_tokens": 6759,
+      "reasoning_tokens": 0,
+      "qualitative_review": {
+        "observation": "Separates current detail pages from the stale overview, preserves the preceding rule update and manual workaround, and asks which rule changed.",
+        "remaining_limit": "Some missing-check wording mentions possible refresh/cache mechanisms; their existence is not established by the ticket."
+      }
+    },
+    {
+      "case_number": 14,
+      "status": "ready",
+      "mode": "action_plan",
+      "elapsed_ms": 8744.26,
+      "timings_ms": {
+        "clean_ms": 3639.29,
+        "retrieval_ms": 46.31,
+        "filter_ms": 3323.67,
+        "resolve_ms": 3695.45
+      },
+      "model_calls": 3,
+      "retrieved_groups": 50,
+      "observed_signal_kinds": [
+        "scope",
+        "constraint"
+      ],
+      "prerequisite_states": [
+        "satisfied",
+        "satisfied"
+      ],
+      "coverage_state": "analogue_only",
+      "output_tokens_by_stage": {
+        "clean": 94,
+        "filter": 267,
+        "resolve": 302
+      },
+      "input_tokens": 6944,
+      "reasoning_tokens": 0,
+      "qualitative_review": {
+        "observation": "Keeps manager approval and standard-role restrictions satisfied; asks for the exact target user account instead of asking for approval again.",
+        "remaining_limit": "The known role still needs mapping to an actual account/profile; no applicable historical procedure was selected."
+      }
+    },
+    {
+      "case_number": 15,
+      "status": "ready",
+      "mode": "needs_information",
+      "elapsed_ms": 6500.03,
+      "timings_ms": {
+        "clean_ms": 2006.15,
+        "retrieval_ms": 63.64,
+        "filter_ms": 3503.46,
+        "resolve_ms": 2801.77
+      },
+      "model_calls": 3,
+      "retrieved_groups": 50,
+      "observed_signal_kinds": [
+        "scope",
+        "deadline",
+        "constraint"
+      ],
+      "prerequisite_states": [
+        "satisfied",
+        "missing"
+      ],
+      "coverage_state": "analogue_only",
+      "output_tokens_by_stage": {
+        "clean": 97,
+        "filter": 273,
+        "resolve": 203
+      },
+      "input_tokens": 7253,
+      "reasoning_tokens": 0,
+      "qualitative_review": {
+        "observation": "Preserves direct, synchronized and inherited revocation scope plus the original end-of-day wording. Requests the missing contractor identity.",
+        "remaining_limit": "No historical revocation procedure was selected; diagnostics and clarification do not complete offboarding."
+      }
+    },
+    {
+      "case_number": 18,
+      "status": "ready",
+      "mode": "action_plan",
+      "elapsed_ms": 11828.79,
+      "timings_ms": {
+        "clean_ms": 1746.92,
+        "retrieval_ms": 84.76,
+        "filter_ms": 6100.33,
+        "resolve_ms": 5510.45
+      },
+      "model_calls": 3,
+      "retrieved_groups": 50,
+      "observed_signal_kinds": [
+        "last_known_good",
+        "first_observed_failure",
+        "change_event",
+        "blocked_outcome",
+        "scope",
+        "workaround"
+      ],
+      "prerequisite_states": [
+        "satisfied",
+        "missing",
+        "satisfied"
+      ],
+      "coverage_state": "procedure_reference",
+      "output_tokens_by_stage": {
+        "clean": 96,
+        "filter": 553,
+        "resolve": 488
+      },
+      "input_tokens": 6932,
+      "reasoning_tokens": 0,
+      "qualitative_review": {
+        "observation": "Separates working order creation from failed routing, preserves the broker-change trigger, and marks the exact mapping as missing rather than checked.",
+        "remaining_limit": "Mapping/routing defects remain hypotheses. The text says a workaround is required, which does not establish that it is available or effective."
+      }
+    },
+    {
+      "case_number": 19,
+      "status": "ready",
+      "mode": "action_plan",
+      "elapsed_ms": 9395.6,
+      "timings_ms": {
+        "clean_ms": 1806.65,
+        "retrieval_ms": 90.01,
+        "filter_ms": 5130.35,
+        "resolve_ms": 4003.0
+      },
+      "model_calls": 3,
+      "retrieved_groups": 50,
+      "observed_signal_kinds": [
+        "first_observed_failure",
+        "last_known_good",
+        "scope",
+        "constraint"
+      ],
+      "prerequisite_states": [
+        "missing",
+        "missing"
+      ],
+      "coverage_state": "procedure_reference",
+      "output_tokens_by_stage": {
+        "clean": 92,
+        "filter": 557,
+        "resolve": 450
+      },
+      "input_tokens": 7543,
+      "reasoning_tokens": 0,
+      "qualitative_review": {
+        "observation": "Separates completed matching from missing acknowledgements; listener status stays unknown and restart/replay remains conditional.",
+        "remaining_limit": "A diagnostic card also asks whether acknowledgements are absent upstream; this is a question, not a confirmed change in failure location."
+      }
+    }
+  ],
+  "limits": [
+    "Development checks, not held-out GT accuracy or proof of improvement.",
+    "This is not an A/B test against the earlier implementation.",
+    "Structured signal correctness and question usefulness still need human review.",
+    "The earlier 3.61-second Resolve-only measurement used saved analysis; do not compare it directly with this complete workflow.",
+    "Browser tests use deterministic fixtures; visual inspection replays a real current case-14 result."
+  ]
+}

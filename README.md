@@ -18,6 +18,7 @@ Original ticket ──→ Clean current facts ───────────�
 - The UI shows field suggestions, selected historical references and the original Top-50. A correction preview can be downloaded as a separate copy.
 - **Generate next steps** adds one Resolve call: up to three action cards, one critical question when needed and an editable English reply draft. Each card includes current facts, sources, prerequisites and a verification criterion where supported.
 - Analysts choose **Use / Edit / Not applicable** and enter the actual action/outcome separately. Suggestions never count as completed work.
+- **Situation and known checks** shows the working/failing process steps, preceding changes, business impact, scope, workaround, deadlines and constraints when supported. A cited prerequisite checklist distinguishes established, missing and contradicted details. Coverage labels describe the selected evidence, and historical verification clauses remain tied to their sources. See [ticket signals](docs/TICKET_SIGNALS.md).
 - Human reviews are stored through `POST /tickets/process` in SQLite. Uploaded tickets remain browser-local.
 
 Automated routing remains future work. There is no action execution, message sending, Jira writeback or online model/index training. General review templates remain available when no generated proposal is ready.
@@ -79,12 +80,13 @@ See [the recorded smoke results](backend/validation/lite-latency.json). The [ear
 
 Resolve adds one call after cached analysis (three calls total on a cold request). Its separate five-case development smoke check and limits are documented in [the resolution handoff](docs/RESOLUTION_HANDOFF.md); the analysis timings above exclude Resolve.
 
-Backend checks: 37 tests passed. Frontend integration checks: ten browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
+Backend checks: 43 tests passed. Frontend integration checks: twelve browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
 
 ## Handoff map
 
 - [Analysis handoff](docs/ANALYSIS_HANDOFF.md): full pipeline contract, defaults, scheduling, failure behavior and downstream use.
 - [Resolution handoff](docs/RESOLUTION_HANDOFF.md): action cards, one-call integration, UI review, feedback and development smoke results.
+- [Ticket signals](docs/TICKET_SIGNALS.md): observations, known prerequisites, evidence coverage and their use in Resolve without another model call.
 - [Retrieval handoff](docs/RETRIEVAL_HANDOFF.md): grouping, ranks, comment provenance and legacy integration differences.
 - [Backend guide](backend/README.md): artifact build, HTTP/Python contracts and tests.
 - [Frontend guide](frontend/README.md): review workflow and local setup.

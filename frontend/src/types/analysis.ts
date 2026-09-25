@@ -25,6 +25,7 @@ export interface FilteredCandidate extends RetrievalHit {
 export interface FilteredComment {
   id: string;
   text: string;
+  verification_excerpt?: string | null;
   services: string[];
   status: "reference" | "conditional" | "uncertain" | "not_selected";
   condition: string;
@@ -33,6 +34,20 @@ export interface FilteredComment {
   requires_current_verification: boolean;
   execution_authorized: false;
   sources: Array<{ document_id: string; original_rank: number; occurrences: number; examples: EvidenceSource[] }>;
+}
+
+export type SignalKind = "last_known_good" | "first_observed_failure" | "change_event" | "blocked_outcome"
+  | "scope" | "workaround" | "deadline" | "constraint";
+
+export interface TicketSignals {
+  observations: Array<{ kind: SignalKind; text: string; evidence_ids: string[]; evidence: CurrentEvidence[] }>;
+  prerequisites: Array<{ check: string; state: "satisfied" | "missing" | "contradicted"; evidence_ids: string[]; evidence: CurrentEvidence[] }>;
+}
+
+export interface EvidenceSupport {
+  state: "procedure_reference" | "analogue_only" | "no_selected_evidence" | "unavailable" | "needs_review";
+  reason: string;
+  active_comment_count: number;
 }
 
 export interface FilterResult {
@@ -44,6 +59,8 @@ export interface FilterResult {
   questions: string[];
   reason: string;
   service: string | null;
+  signals?: TicketSignals;
+  evidence_support?: EvidenceSupport;
 }
 
 export interface TicketAnalysisResponse {

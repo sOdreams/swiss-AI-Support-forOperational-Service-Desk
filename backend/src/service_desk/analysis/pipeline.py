@@ -13,7 +13,7 @@ from openai import AsyncOpenAI
 from ..retrieval import TicketQuery
 from ..retrieval.types import RetrievalHit
 from .contracts import clean_result, clean_schema, filter_result, filter_schema, validate_clean, validate_filter
-from .evidence import current_facts, prepare_evidence
+from .evidence import current_facts, prepare_evidence, evidence_support
 from .prompts import CLEAN_PROMPT, FILTER_PROMPT
 from .resolution import RESOLVE_PROMPT, resolution_context, resolution_schema, validate_resolution, resolution_result
 
@@ -222,8 +222,9 @@ class TicketAnalysis:
             {"current_facts": facts, "service_catalog": self.catalog, **packet},
             filter_schema(facts, self.catalog, originals, comments),
             lambda value: validate_filter(value, originals, comments))
-        return {"filter": filter_result(result["value"] if result["ok"] else None, originals, comments, facts),
-                "model_result": result}
+        filtered = filter_result(result["value"] if result["ok"] else None, originals, comments, facts)
+        filtered["evidence_support"] = evidence_support(filtered)
+        return {"filter": filtered, "model_result": result}
 
     async def _retrieve_and_filter(self, ticket, query=None):
         started = time.perf_counter()
@@ -312,6 +313,8 @@ class TicketAnalysis:
                 for comment in filtered["comments"]:
                     if comment["status"] in {"reference", "conditional"}:
                         comment["status"] = "uncertain"
+        if filtered is not None:
+            filtered["evidence_support"] = evidence_support(filtered, conflicts)
         ready = clean["ok"] and evidence["model_result"]["ok"]
         return {"status": "needs_review" if conflicts else "ready" if ready else "partial",
                 "clean": cleaned, "filter": filtered, "retrieval": evidence["retrieval"],

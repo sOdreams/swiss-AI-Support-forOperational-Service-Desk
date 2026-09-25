@@ -18,6 +18,8 @@ import { RetrievalEvidencePanel } from "../retrieval/RetrievalEvidencePanel";
 import { useRetrieval } from "../retrieval/useRetrieval";
 import { useTicketAnalysis } from "../analysis/useTicketAnalysis";
 import { TicketAnalysisPanel } from "../analysis/TicketAnalysisPanel";
+import { useResolution } from "../resolution/useResolution";
+import { ResolutionPanel } from "../resolution/ResolutionPanel";
 import { submitProcessedTicket } from "../../services/api";
 import type { ProcessedTicketRecord, ProcessTicketPayload } from "../../types/processing";
 import type { Ticket } from "../../types/ticket";
@@ -101,7 +103,10 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
 }) {
   const originalRetrieval = useRetrieval(ticket);
   const analysis = useTicketAnalysis(ticket);
-  const retrieval = analysis.data?.retrieval ? { data: analysis.data.retrieval, loading: false, error: null } : originalRetrieval;
+  const resolution = useResolution(ticket, analysis.data);
+  const effectiveAnalysis = resolution.data ?? analysis.data;
+  const proposal = resolution.data?.resolution.status === "ready" ? resolution.data.resolution : null;
+  const retrieval = effectiveAnalysis?.retrieval ? { data: effectiveAnalysis.retrieval, loading: false, error: null } : originalRetrieval;
   const [selectedEvidenceIds, setSelectedEvidenceIds] = useState<string[]>([]);
   const solutions = useMemo(() => recommendedSolutions(ticket), [ticket]);
   const aspects = useMemo(() => businessAspects(ticket), [ticket]);
@@ -119,8 +124,14 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
     setError(null);
   }, [ticket.issue_id]);
 
-  const hasSolution = Boolean(selectedSolution || realSolution.trim());
-  const isComplete = hasSolution && Boolean(selectedAspect);
+  const chosenActions = proposal?.actions.flatMap((action) => {
+    const choice = resolution.review?.actions.find((item) => item.action_id === action.id);
+    return choice?.decision === "use" ? [action.next_step] : choice?.decision === "edit" ? [choice.edited_next_step ?? ""] : [];
+  }) ?? [];
+  const recommendation = proposal ? chosenActions.join("\n") || null : selectedSolution;
+  const hasSolution = proposal ? Boolean(realSolution.trim()) : Boolean(selectedSolution || realSolution.trim());
+  const validEdits = !resolution.review?.actions.some((action) => action.decision === "edit" && !action.edited_next_step?.trim());
+  const isComplete = hasSolution && Boolean(selectedAspect) && validEdits && !resolution.loading;
 
   const toggleSolution = (solution: string) => {
     setSelectedSolution((current) => current === solution ? null : solution);
@@ -139,11 +150,15 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
     const payload: ProcessTicketPayload = {
       issue_id: ticket.issue_id,
       issue_key: ticket.issue_key,
-      recommended_solution: selectedSolution,
+      recommended_solution: recommendation,
       real_solution: realSolution.trim() || null,
       affected_business_aspect: selectedAspect,
       processed_at: processedAt,
       source: "human_resolution_workflow",
+      ...(proposal && resolution.review ? { resolution: {
+        proposal, actions: resolution.review.actions, reply_draft: resolution.review.reply_draft,
+        actual_outcome: realSolution.trim(),
+      } } : {}),
       ...(retrieval.data ? { retrieval: {
         index_version: retrieval.data.index_version,
         model: retrieval.data.model,
@@ -173,7 +188,7 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
       issue_id: ticket.issue_id,
       issue_key: ticket.issue_key,
       summary: ticket.summary,
-      recommended_solution: selectedSolution,
+      recommended_solution: recommendation,
       real_solution: realSolution.trim() || null,
       affected_business_aspect: selectedAspect,
       processed_at: processedAt,
@@ -212,12 +227,15 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
         </div>
       </section>
 
-      <TicketAnalysisPanel ticket={ticket} data={analysis.data} loading={analysis.loading} error={analysis.error} onRun={analysis.run} />
-      <RetrievalEvidencePanel {...retrieval} filter={analysis.data?.filter} selectedIds={selectedEvidenceIds} onToggle={(id) => {
+      <TicketAnalysisPanel ticket={ticket} data={effectiveAnalysis} loading={analysis.loading} error={analysis.error} onRun={analysis.run} />
+      <ResolutionPanel data={resolution.data} review={resolution.review} loading={resolution.loading} error={resolution.error}
+        enabled={Boolean(analysis.data) && !analysis.loading} onRun={resolution.run} onReviewChange={resolution.setReview}
+        outcome={realSolution} onOutcomeChange={(value) => { setRealSolution(value); setError(null); }} />
+      <RetrievalEvidencePanel {...retrieval} filter={effectiveAnalysis?.filter} selectedIds={selectedEvidenceIds} onToggle={(id) => {
         setSelectedEvidenceIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
       }} />
 
-      <section className="processor-section">
+      {!proposal && <section className="processor-section">
         <div className="processor-section-heading">
           <span className="processor-section-icon"><Wrench className="h-4 w-4" /></span>
           <div><h3>1. Suggested review steps</h3><p>These are general templates. Review the evidence above, or write the actual solution below.</p></div>
@@ -245,7 +263,7 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
             placeholder="Write the actual solution applied by the analyst. This is captured as human feedback for AI evaluation and future learning."
           />
         </div>
-      </section>
+      </section>}
 
       <section className="processor-section">
         <div className="processor-section-heading">
@@ -269,7 +287,7 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
       <section className="processor-submit-card">
         <div className="min-w-0">
           <div className="flex items-center gap-2"><ClipboardCheck className="h-4 w-4 text-blue-700" /><strong>Ready to process</strong></div>
-          <p>{isComplete ? "All required information is complete. Sending will move this ticket to Processed Tickets." : "Choose a solution (or enter the real solution) and select one affected business aspect."}</p>
+          <p>{isComplete ? "All required information is complete. Sending saves your review and moves this ticket to Processed Tickets." : proposal ? "Record the actual action/outcome, complete any action edits, and select the affected business aspect." : "Choose a solution (or enter the real solution) and select one affected business aspect."}</p>
           {error ? <p className="processor-error">{error}</p> : null}
         </div>
         <button type="button" onClick={() => void handleSend()} disabled={!isComplete || sending} className="processor-send-button">

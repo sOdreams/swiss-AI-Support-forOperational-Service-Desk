@@ -24,7 +24,7 @@ candidates = retriever.search(TicketQuery(
 ), top_k=50)
 ```
 
-For cleaning and filtering, use the existing `TicketAnalysis.analyze(TicketInput(...))` Python API or `POST /tickets/analyze`. It returns `clean`, `retrieval` and `filter` together. Filtering already exists; routing and resolution generation remain downstream work.
+For cleaning and filtering, use the existing `TicketAnalysis.analyze(TicketInput(...))` Python API or `POST /tickets/analyze`. It returns `clean`, `retrieval` and `filter` together. Resolution proposals are an implemented downstream consumer: use `TicketAnalysis.analyze_and_resolve()` or `POST /tickets/resolve`. See the [resolution handoff](RESOLUTION_HANDOFF.md). Routing remains separate future work.
 
 For custom ordering, use `TicketAnalysis.clean()`, `.retrieve()` and `.filter()`.
 Retrieval returns a self-contained candidate snapshot that can be saved and passed

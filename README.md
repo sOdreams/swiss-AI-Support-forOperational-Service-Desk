@@ -1,6 +1,6 @@
 # Service Desk Copilot
 
-This branch implements the complete **FAISS retrieval + ticket cleaning + candidate filtering** pipeline, with a React review interface and a Python API.
+This branch implements **FAISS retrieval + ticket cleaning + candidate filtering + resolution proposals**, with a React review interface and a Python API.
 
 For a new developer or coding agent, read [AGENTS.md](AGENTS.md), then [the analysis handoff](docs/ANALYSIS_HANDOFF.md). The handoff describes the implemented API, Python entry point, output contract, failure handling and extension boundaries. All code, documentation, UI copy and generated explanations should be in English; preserve original source quotations.
 
@@ -8,7 +8,7 @@ For a new developer or coding agent, read [AGENTS.md](AGENTS.md), then [the anal
 
 ```text
 Original ticket ──→ Clean current facts ────────────┐
-                └→ FAISS Top-50 → Filter evidence ─┴→ Field suggestions + evidence
+                └→ FAISS Top-50 → Filter evidence ─┴→ Resolve → Analyst review
 ```
 
 - Retrieval uses pinned MiniLM embeddings and FAISS cosine search, returning up to **50 distinct document groups with original ranks and provenance**.
@@ -16,9 +16,11 @@ Original ticket ──→ Clean current facts ───────────�
 - Independent Python stage calls allow custom ordering. The optional `analyze_clean_first()` workflow searches a proposed corrected title while filtering against original facts; it does not insert predicted service/team labels. See the [stage interfaces](docs/ANALYSIS_HANDOFF.md#independent-stage-calls-and-explicit-ordering).
 - The default model is **GPT-5.5 (`gpt-5.5-2026-04-23`), reasoning disabled**, with one model call per branch, a 1,500-token ceiling per call and no automatic retries.
 - The UI shows field suggestions, selected historical references and the original Top-50. A correction preview can be downloaded as a separate copy.
+- **Generate next steps** adds one Resolve call: up to three action cards, one critical question when needed and an editable English reply draft. Each card includes current facts, sources, prerequisites and a verification criterion where supported.
+- Analysts choose **Use / Edit / Not applicable** and enter the actual action/outcome separately. Suggestions never count as completed work.
 - Human reviews are stored through `POST /tickets/process` in SQLite. Uploaded tickets remain browser-local.
 
-Resolution generation and automated routing are future work. The existing general review templates are not generated resolutions. There is no Jira writeback or online model/index training.
+Automated routing remains future work. There is no action execution, message sending, Jira writeback or online model/index training. General review templates remain available when no generated proposal is ready.
 
 ## Run locally
 
@@ -50,16 +52,19 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open the frontend, upload a Jira-style ticket JSON file, select a ticket and click **Clean & filter**. A demo file is available at `frontend/public/swisslife_20_tickets.json`. API documentation is at `http://localhost:8000/docs`.
+Open the frontend, upload a Jira-style ticket JSON file, select a ticket, click **Clean & filter**, then **Generate next steps**. A demo file is available at `frontend/public/swisslife_20_tickets.json`. API documentation is at `http://localhost:8000/docs`.
 
 ## Entry points
 
 | Purpose | Entry point |
 |---|---|
 | Full analysis over HTTP | `POST /tickets/analyze` |
+| Analysis plus resolution proposals | `POST /tickets/resolve` |
 | Retrieval only | `POST /retrieval/search` |
 | Complete source pagination | `GET /retrieval/documents/{document_id}/sources` |
 | Full analysis in Python | `service_desk.analysis.TicketAnalysis.analyze()` |
+| Full analysis plus proposals in Python | `TicketAnalysis.analyze_and_resolve()` |
+| Resolve from existing analysis only | `TicketAnalysis.resolve(ticket, analysis)` |
 | Retrieval in Python | `service_desk.retrieval.TicketRetriever.search()` |
 | Active frontend | `App → TicketOverview → TicketProcessor` |
 | Human feedback | `POST /tickets/process` |
@@ -72,11 +77,14 @@ The latest lightweight configuration completed three live development tickets in
 
 See [the recorded smoke results](backend/validation/lite-latency.json). The [earlier 20-ticket comparison](docs/PARALLEL_ANALYSIS_BENCHMARK.md) used different configurations and is not the current default's quality score.
 
-Backend checks: 29 tests passed. Frontend integration checks: six browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
+Resolve adds one call after cached analysis (three calls total on a cold request). Its separate five-case development smoke check and limits are documented in [the resolution handoff](docs/RESOLUTION_HANDOFF.md); the analysis timings above exclude Resolve.
+
+Backend checks: 37 tests passed. Frontend integration checks: ten browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
 
 ## Handoff map
 
 - [Analysis handoff](docs/ANALYSIS_HANDOFF.md): full pipeline contract, defaults, scheduling, failure behavior and downstream use.
+- [Resolution handoff](docs/RESOLUTION_HANDOFF.md): action cards, one-call integration, UI review, feedback and development smoke results.
 - [Retrieval handoff](docs/RETRIEVAL_HANDOFF.md): grouping, ranks, comment provenance and legacy integration differences.
 - [Backend guide](backend/README.md): artifact build, HTTP/Python contracts and tests.
 - [Frontend guide](frontend/README.md): review workflow and local setup.

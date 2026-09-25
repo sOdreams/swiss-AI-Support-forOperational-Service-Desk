@@ -61,6 +61,13 @@ def create_app(artifact_dir=None, feedback_path=None, *, analysis_factory=None):
 
     @app.post("/tickets/analyze")
     async def analyze(body: AnalysisRequest):
+        return await run_analysis(body, "analyze")
+
+    @app.post("/tickets/resolve")
+    async def resolve(body: AnalysisRequest):
+        return await run_analysis(body, "analyze_and_resolve")
+
+    async def run_analysis(body, method):
         if not app.state.analysis:
             raise HTTPException(503, "Ticket analysis is not configured on this server")
         if sum(map(len, body.comments)) > 50000:
@@ -68,7 +75,7 @@ def create_app(artifact_dir=None, feedback_path=None, *, analysis_factory=None):
         if sum(map(len, body.current_services)) > 3000:
             raise HTTPException(422, "Service metadata exceeds the input size limit")
         try:
-            result = await app.state.analysis.analyze(TicketInput(
+            result = await getattr(app.state.analysis, method)(TicketInput(
                 body.summary, body.description or "", tuple(body.comments),
                 tuple(body.current_services), body.current_work_type))
         except ValueError as exc:

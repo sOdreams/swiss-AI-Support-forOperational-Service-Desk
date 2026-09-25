@@ -1,4 +1,4 @@
-"""Two independent LLM branches, bounded concurrency, validation and memoization."""
+"""Parallel clean/filter with optional resolution, validation and memoization."""
 import asyncio
 from collections import OrderedDict
 from copy import deepcopy
@@ -15,6 +15,7 @@ from ..retrieval.types import RetrievalHit
 from .contracts import clean_result, clean_schema, filter_result, filter_schema, validate_clean, validate_filter
 from .evidence import current_facts, prepare_evidence
 from .prompts import CLEAN_PROMPT, FILTER_PROMPT
+from .resolution import RESOLVE_PROMPT, resolution_context, resolution_schema, validate_resolution, resolution_result
 
 
 @dataclass(frozen=True)
@@ -75,6 +76,10 @@ class TicketAnalysis:
         """Experimental: clean, retrieve with a proposed title, filter original facts."""
         return await self._analyze(ticket, "clean_first")
 
+    async def analyze_and_resolve(self, ticket: TicketInput):
+        """Reuse analysis, then make one additional call for reviewable next steps."""
+        return await self._analyze(ticket, "resolve")
+
     async def _analyze(self, ticket, workflow):
         if self.retriever is None:
             raise ValueError("analyze requires a retriever; clean/filter can run independently")
@@ -84,7 +89,7 @@ class TicketAnalysis:
         key = hashlib.sha256(json.dumps({"ticket": asdict(ticket), "config": asdict(self.config), "workflow": workflow,
             "service_catalog": self.catalog,
             "index_version": self.retriever.manifest["index_version"],
-            "prompts": [CLEAN_PROMPT, FILTER_PROMPT]}, sort_keys=True).encode()).hexdigest()
+            "prompts": [CLEAN_PROMPT, FILTER_PROMPT] + ([RESOLVE_PROMPT] if workflow == "resolve" else [])}, sort_keys=True).encode()).hexdigest()
         cached = self._cache.get(key)
         if cached and cached[0] > time.monotonic():
             self._cache.move_to_end(key)
@@ -94,7 +99,8 @@ class TicketAnalysis:
             return result
         self._cache.pop(key, None)
         if key not in self._inflight:
-            compute = self._compute if workflow == "parallel" else self._compute_clean_first
+            compute = {"parallel": self._compute, "clean_first": self._compute_clean_first,
+                       "resolve": self._compute_with_resolution}[workflow]
             task = asyncio.create_task(compute(ticket))
             self._inflight[key] = task
             task.add_done_callback(lambda done: self._completed(key, done))
@@ -240,6 +246,30 @@ class TicketAnalysis:
                     "filter": None, "model_result": {"ok": False, "error": _safe_error(exc), "calls": []}}
         return {"retrieval": candidates["retrieval"], "retrieval_ms": retrieval_ms,
                 "query": candidates["query"], "query_fallback": fallback, **filtered}
+
+    async def resolve(self, ticket: TicketInput, analysis: dict):
+        """One independent model call using original facts and active evidence only."""
+        payload, sources = resolution_context(ticket, analysis)
+        result = await self._generate("ticket_resolve", RESOLVE_PROMPT, payload,
+            resolution_schema(payload["current_facts"], sources),
+            lambda value: validate_resolution(value, payload, sources))
+        resolution = resolution_result(ticket, analysis, result["value"], sources, self.config.model) if result["ok"] else {
+            "status": "unavailable", "actions": [], "critical_question": None, "reply_draft": "",
+            "reason": "Next-step suggestions unavailable; review the original ticket and evidence."}
+        return {"resolution": resolution, "model_result": result}
+
+    async def _compute_with_resolution(self, ticket):
+        started = time.perf_counter()
+        result = await self.analyze(ticket)
+        resolved = await self.resolve(ticket, result)
+        result["analysis_cache_hit"] = result.pop("cache_hit")
+        result["resolution"] = resolved["resolution"]
+        result["stages"]["resolve"] = resolved["model_result"]
+        result["timings"]["resolve_ms"] = resolved["model_result"]["seconds"] * 1000
+        result["compute_ms"] = (time.perf_counter() - started) * 1000
+        if not resolved["model_result"]["ok"]:
+            result["status"] = "partial"
+        return result
 
     async def _compute(self, ticket):
         started = time.perf_counter()

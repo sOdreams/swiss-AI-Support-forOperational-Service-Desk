@@ -1,0 +1,139 @@
+{
+  "date": "2026-09-25",
+  "protocol": {
+    "model": "gpt-5.5-2026-04-23",
+    "reasoning_effort": "none",
+    "cases": [
+      4,
+      7,
+      9,
+      16,
+      19
+    ],
+    "input_analysis": "Saved parallel_analysis_v2 GPT-5.5 low-reasoning outputs",
+    "resolution_code_sha256": "a11ed10597278d7793987d3de98494384e6a5b965ba057fe48eb495411451a3d",
+    "evaluation": "Five-case development smoke check; no GT accuracy claim; only Resolve calls are fresh."
+  },
+  "methodology": {
+    "selection": "Five deliberately selected development examples covering ambiguity, a misleading title, external delay and an internal queue issue.",
+    "prior_iteration": "An initial five-case run exposed bundled questions; the prompt was tightened before these five fresh calls.",
+    "fresh_stages": [
+      "resolve"
+    ],
+    "reused_stages": [
+      "clean",
+      "filter",
+      "retrieval"
+    ],
+    "concurrency": "Case 16 first, then cases 4, 7, 9 and 19 concurrently.",
+    "timing_boundary": "Standalone Python resolve() only; excludes analysis, model loading, HTTP and rendering.",
+    "reviewer": "Coding agent qualitative inspection; no independent expert labels or confirmed operational outcomes.",
+    "raw_artifacts": "Ignored local artifacts/resolution/smoke-20260925-v2; not required by serving code."
+  },
+  "summary": {
+    "cases": 5,
+    "valid_outputs": 5,
+    "model_calls": 5,
+    "retries": 0,
+    "min_ms": 2491.08,
+    "median_ms": 3607.77,
+    "max_ms": 4733.46,
+    "total_input_tokens": 5713,
+    "total_output_tokens": 1249,
+    "mean_output_tokens": 249.8,
+    "total_reasoning_tokens": 0
+  },
+  "cases": [
+    {
+      "case_number": 4,
+      "status": "ready",
+      "mode": "needs_information",
+      "action_count": 2,
+      "resolve_elapsed_ms": 3607.77,
+      "model_calls": 1,
+      "input_tokens": 1138,
+      "output_tokens": 251,
+      "reasoning_tokens": 0,
+      "schema_and_contract_valid": true,
+      "qualitative_review": {
+        "focus": "External custodian delay",
+        "observation": "Asks which custodian issued the notice and checks ownership. No internal restart is proposed.",
+        "limitation": "The suggested service label remains a model interpretation and still needs analyst confirmation."
+      }
+    },
+    {
+      "case_number": 7,
+      "status": "ready",
+      "mode": "needs_information",
+      "action_count": 1,
+      "resolve_elapsed_ms": 2491.08,
+      "model_calls": 1,
+      "input_tokens": 1140,
+      "output_tokens": 180,
+      "reasoning_tokens": 0,
+      "schema_and_contract_valid": true,
+      "qualitative_review": {
+        "focus": "Ambiguous margin cash report",
+        "observation": "Asks for the affected account or portfolio and checks where the discrepancy is visible. No financial adjustment is proposed.",
+        "limitation": "The reply requests a secondary diagnostic detail in addition to the single critical-question field."
+      }
+    },
+    {
+      "case_number": 9,
+      "status": "ready",
+      "mode": "needs_information",
+      "action_count": 1,
+      "resolve_elapsed_ms": 2865.03,
+      "model_calls": 1,
+      "input_tokens": 1013,
+      "output_tokens": 173,
+      "reasoning_tokens": 0,
+      "schema_and_contract_valid": true,
+      "qualitative_review": {
+        "focus": "Unknown internal consumer of a vendor publication",
+        "observation": "Asks which internal service consumes the delayed publication. It does not guess a named platform or procedure.",
+        "limitation": "Check first repeats the vendor ETA rather than a concrete prerequisite; an analyst should edit this wording."
+      }
+    },
+    {
+      "case_number": 16,
+      "status": "ready",
+      "mode": "action_plan",
+      "action_count": 2,
+      "resolve_elapsed_ms": 4733.46,
+      "model_calls": 1,
+      "input_tokens": 1134,
+      "output_tokens": 303,
+      "reasoning_tokens": 0,
+      "schema_and_contract_valid": true,
+      "qualitative_review": {
+        "focus": "Outage-like title for a mailbox service request",
+        "observation": "Uses explicit no-outage facts, suggests the standard request path, and makes provisioning conditional on approval.",
+        "limitation": "Requested names and access details still need confirmation; the proposal is not an executable runbook."
+      }
+    },
+    {
+      "case_number": 19,
+      "status": "ready",
+      "mode": "action_plan",
+      "action_count": 2,
+      "resolve_elapsed_ms": 4306.28,
+      "model_calls": 1,
+      "input_tokens": 1288,
+      "output_tokens": 342,
+      "reasoning_tokens": 0,
+      "schema_and_contract_valid": true,
+      "qualitative_review": {
+        "focus": "Internal settlement queue backlog",
+        "observation": "Checks whether the listener is consuming before suggesting conditional restart/replay. The original filter condition is retained by the server.",
+        "limitation": "The reason slightly overstates what the historical case recorded about checking first; the condition comes from filtering, not proof that the historical analyst performed that check."
+      }
+    }
+  ],
+  "limits": [
+    "Not a held-out evaluation or GT accuracy estimate.",
+    "Valid citation IDs do not prove semantic grounding, applicability or successful resolution.",
+    "Saved clean/filter outputs used low reasoning; this does not evaluate the current end-to-end default.",
+    "UI browser checks use deterministic fixtures; a separate visual check replays the real case-16 output."
+  ]
+}

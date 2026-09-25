@@ -324,8 +324,19 @@ historical benchmark report. Start with `api.py`, `analysis/pipeline.py`, and
 `analysis/contracts.py`; the module map above explains the remaining files.
 The application has no dependency on a research checkout or its evaluation labels.
 
-Resolution generation and routing were discussed but are not implemented here.
-A future consumer can select the supported evidence from an analysis response:
+Resolution proposals are implemented as an independent downstream stage:
+
+```python
+resolved = await pipeline.resolve(ticket, result)  # One call, no search or cleaning.
+proposal = resolved["resolution"]
+# Or use the cached composition, which obtains analysis on the server:
+combined = await pipeline.analyze_and_resolve(ticket)
+```
+
+`POST /tickets/resolve` exposes the combined workflow using the same ticket body as
+`/tickets/analyze`. See [RESOLUTION_HANDOFF.md](RESOLUTION_HANDOFF.md) for action
+cards, source checks, feedback and failure handling. Routing remains future work.
+Other consumers can select supported evidence from an analysis response:
 
 ```python
 filtered = result.get("filter")
@@ -338,14 +349,15 @@ else:
     primary_groups, active_comments = [], []
 ```
 
-Pass original current facts and these selections to a future consumer. Keep the
+Pass original current facts and these selections to downstream consumers. Keep the
 comment conditions, evidence IDs and source relationships. A selected parent
 does not activate its other comments. Do not treat reserve/not-selected evidence
 as a supported fix, or an unfiltered fallback as a successful filter. Clean field
 suggestions are reviewable proposals, not verified updates to the current ticket.
 Historical remedies do not establish the current cause or completed resolution.
-The existing feedback endpoint records human review; adding a resolve stage must
-not silently mark the ticket resolved or change the retrieval/index contract.
+The existing feedback endpoint records human review, including optional resolution
+proposals, edits and actual outcomes. It does not mark tickets resolved in Jira or
+change the retrieval/index contract.
 
 ## Checks
 
@@ -361,7 +373,7 @@ npm run test:e2e
 Tests cover concurrent branch start, literal provenance, rejected-parent comment
 survival, in-flight deduplication, cache invalidation, deadlines/partial outputs,
 disagreement holds, stale frontend responses and copy-only preview export.
-The integration passed 29 backend tests, six browser tests, type checking, lint
+The integration passed 37 backend tests, ten browser tests, type checking, lint
 and the production frontend build. A real `/tickets/analyze` call using the earlier
 low-reasoning default returned HTTP 200, corrected the mailbox-request title, and preserved all
 50 candidates, with the selected analogue retaining original rank 9.

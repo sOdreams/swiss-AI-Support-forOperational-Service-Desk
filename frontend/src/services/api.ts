@@ -4,6 +4,7 @@ import type { ProcessTicketPayload } from "../types/processing";
 import type { HumanReview } from "../types/review";
 import type { Ticket } from "../types/ticket";
 import type { TicketAnalysisResponse } from "../types/analysis";
+import type { ResolutionResponse } from "../types/resolution";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
 
@@ -38,10 +39,14 @@ export const retrieveEvidence = (ticket: Ticket, signal?: AbortSignal) => reques
   body: JSON.stringify({ summary: ticket.summary, description: ticket.description, comments: ticket.all_comments.map((comment) => comment.body), top_k: 50 }),
 });
 
-export const cleanAndFilterTicket = (ticket: Ticket, signal?: AbortSignal) => request<TicketAnalysisResponse>("/tickets/analyze", {
-  method: "POST",
-  signal,
-  body: JSON.stringify({ summary: ticket.summary, description: ticket.description,
+const analysisBody = (ticket: Ticket) => JSON.stringify({ summary: ticket.summary, description: ticket.description,
     comments: ticket.all_comments.map((comment) => comment.body),
-    current_services: ticket.affected_business_or_it_services, current_work_type: ticket.work_type }),
+    current_services: ticket.affected_business_or_it_services, current_work_type: ticket.work_type });
+
+export const cleanAndFilterTicket = (ticket: Ticket, signal?: AbortSignal) => request<TicketAnalysisResponse>("/tickets/analyze", {
+  method: "POST", signal, body: analysisBody(ticket),
+});
+
+export const resolveTicket = (ticket: Ticket, signal?: AbortSignal) => request<ResolutionResponse>("/tickets/resolve", {
+  method: "POST", signal, body: analysisBody(ticket),
 });

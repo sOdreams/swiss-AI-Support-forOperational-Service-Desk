@@ -5,12 +5,14 @@ commands, the HTTP/Python contracts, ranking semantics and verification steps.
 Read `docs/RETRIEVAL_HANDOFF.md` for filter/routing integration examples.
 Read `docs/ANALYSIS_HANDOFF.md` for the implemented parallel clean/filter pipeline,
 its API, English output contract, cache/failure behavior and evaluation limits.
+Read `docs/RESOLUTION_HANDOFF.md` for action cards, the single-call Resolve stage,
+analyst decisions and outcome feedback.
 
 Use English for code comments, documentation, UI text and generated explanations.
 Preserve original ticket text and literal evidence quotations. The latest lightweight
 latency smoke results are in `backend/validation/lite-latency.json`.
-FAISS, clean and filter are implemented. Resolution generation and routing remain
-future work; do not describe the frontend's general review templates as generated fixes.
+FAISS, clean, filter and reviewable resolution proposals are implemented. Routing
+remains future work. General review templates are the manual fallback, not generated fixes.
 
 ## Agent entry points
 
@@ -24,6 +26,8 @@ Use `from service_desk.analysis import TicketAnalysis, TicketInput` and
 | Retrieve a reusable candidate snapshot | `await pipeline.retrieve(query)` |
 | Filter an existing snapshot only | `await pipeline.filter(ticket, candidates)` |
 | Full clean-first workflow | `await pipeline.analyze_clean_first(ticket)` |
+| Next steps from an existing analysis | `await pipeline.resolve(ticket, analysis)` |
+| Cached analysis plus next steps | `await pipeline.analyze_and_resolve(ticket)` |
 
 `ticket` is a `TicketInput`; `query` is a `TicketQuery`. Create one pipeline with
 the loaded retriever and reuse it; call `await pipeline.close()` at shutdown.
@@ -59,6 +63,14 @@ reconciliation or caching; use a complete workflow when those behaviors are need
   proposed title corrections for search and preserves original facts for filtering.
   The default HTTP/UI workflow remains parallel. Compare workflows before changing
   defaults; a corrected title is not verified current evidence.
+- `analysis/resolution.py` builds proposals from original facts and active filtered
+  comments. `/tickets/resolve` reuses server-side analysis and adds one model call;
+  a cold request runs analysis first. Keep source conditions, original ranks and
+  the full Top-50. Unknown/conflicting service evidence allows clarification and
+  diagnostics only. A matching citation ID does not prove semantic correctness.
+- `frontend/src/features/resolution/` supports Use / Edit / Not applicable, an
+  editable reply and a separately entered actual outcome. Feedback preserves the
+  original proposal and edits; it does not execute actions, send replies or close Jira tickets.
 - `data-exploratory` is a separate remote branch with an older `TriageEngine`.
   It is not imported by this backend. Its lexical score weights and row indices
   are incompatible with cosine scores and grouped document IDs.

@@ -1,0 +1,1663 @@
+{
+  "date": "2026-09-25",
+  "decision": "Use refined concise prompts in the existing default workflow. Keep joint Filter/Resolve behind the explicit experimental Python/HTTP entry point; do not change the UI workflow.",
+  "refined_reduction_percent": {
+    "compact_median_latency": 24.5,
+    "fast_median_latency": 38.2,
+    "compact_total_output_tokens": 20.2
+  },
+  "completed_comparison_provider_calls": 320,
+  "checked_invariants": [
+    "All 50 original IDs, ranks, scores and retrieval provenance were identical across arms for every paired ticket in both rounds.",
+    "Every released historical source belonged to the surviving primary/active selection; procedures had active historical comment citations.",
+    "Exact current quotations and conditional source checks were preserved by the server.",
+    "No action or assignment was authorized; failed joint drafts were withheld without retry.",
+    "Recorded calls were exactly three per baseline/compact ticket and two per fast ticket; zero reasoning tokens."
+  ],
+  "rounds": {
+    "initial": {
+      "protocol": {
+        "created_at_utc": "2026-09-25T03:11:24Z",
+        "baseline_ref": "2b6862200887fbf4f2a91b820e8bee6a85fc4db3",
+        "model": "gpt-5.5-2026-04-23",
+        "reasoning_effort": "none",
+        "index_version": "afa533f71d666da9f11d",
+        "data_sha256": "71df79d9228b78e8f4a140d66bb519f582146e74aaeb77d4b41527ad5b7c258d",
+        "code_sha256": {
+          "__init__.py": "92bc3f5fc6abaea87bb7212fa67b782793c303d5675a6a8af0628a4c7e9e7768",
+          "evidence.py": "8811ea2e853ad6e9dbec51da093f86f0d80e72f0cfefb8ff213981dbab134e1b",
+          "prompts.py": "bca9491888cb90dd8e154b5dda49a49288386127cecbf4af02e81ae5f3ca2f41",
+          "contracts.py": "1e98a44111a110192f3e33f027bad51dab68030831be3796b29a0aa1c5b1e7cf",
+          "pipeline.py": "99aaef9ab7965f23179eaf3207e105c80e0d4d713d4c65139bf062e0645d3cc5",
+          "resolution.py": "b86eb933bf058ce63e0722339894b5ec948b1c3f5ae4f88ae7cac5473bbebb8e",
+          "triage.py": "86069c70dc2418ba64cf7234670ffb0abaf9c200d8e56f10a4691cf7801272db",
+          "fast.py": "f464b50068af4e618737d7214c2cb4cb24290ccd88d00cfc0832b969d16a5a0a"
+        },
+        "baseline_prompt_sha256": {
+          "candidate_filter": "d22be715afa6dc6834990ffd0acec0a7454467d6991c7c6f2b89110b4f66fd05",
+          "ticket_resolve": "28657ea991da3f10f8ca3e45e987aa9b7080830803950a70d2f6a5c063163630"
+        },
+        "cases": 20,
+        "case_concurrency": 2,
+        "cache_size": 0,
+        "retries": 0,
+        "schedule": "Each ticket runs all three arms sequentially in rotating order; first ticket alone, then bounded concurrent tickets. Encoder load excluded.",
+        "arms": {
+          "baseline": "Previous Filter/Resolve prompts, three calls",
+          "compact": "Concise Filter/Resolve prompts, three calls",
+          "fast": "Clean parallel with retrieval and joint Filter/Resolve, two calls; post-reconciliation validation"
+        },
+        "evaluation": "Public development cases; no answer annotations in inference. One paired pass, not GT accuracy or a production latency guarantee."
+      },
+      "arms": {
+        "baseline": {
+          "cases": 20,
+          "ready": 18,
+          "partial": 1,
+          "needs_review": 1,
+          "filter_failures": 1,
+          "resolution_unavailable": 0,
+          "provider_calls": 60,
+          "reasoning_tokens": 0,
+          "input_tokens": 155014,
+          "output_tokens": 17539,
+          "cached_input_tokens": 35584,
+          "median_elapsed_ms": 9778.8,
+          "max_elapsed_ms": 13180.0,
+          "p95_elapsed_ms": 11923.4,
+          "all_top50_retained": true,
+          "median_stage_ms": {
+            "clean_ms": 2357.2,
+            "retrieval_ms": 64.1,
+            "filter_ms": 4921.8,
+            "resolve_ms": 4205.3
+          }
+        },
+        "compact": {
+          "cases": 20,
+          "ready": 19,
+          "partial": 0,
+          "needs_review": 1,
+          "filter_failures": 0,
+          "resolution_unavailable": 0,
+          "provider_calls": 60,
+          "reasoning_tokens": 0,
+          "input_tokens": 157225,
+          "output_tokens": 13651,
+          "cached_input_tokens": 0,
+          "median_elapsed_ms": 7358.2,
+          "max_elapsed_ms": 9198.0,
+          "p95_elapsed_ms": 8917.9,
+          "all_top50_retained": true,
+          "median_stage_ms": {
+            "clean_ms": 2058.8,
+            "retrieval_ms": 64.8,
+            "filter_ms": 4127.6,
+            "resolve_ms": 3151.4
+          }
+        },
+        "fast": {
+          "cases": 20,
+          "ready": 18,
+          "partial": 2,
+          "needs_review": 0,
+          "filter_failures": 0,
+          "resolution_unavailable": 2,
+          "provider_calls": 40,
+          "reasoning_tokens": 0,
+          "input_tokens": 154019,
+          "output_tokens": 14133,
+          "cached_input_tokens": 0,
+          "median_elapsed_ms": 6224.1,
+          "max_elapsed_ms": 8003.9,
+          "p95_elapsed_ms": 7788.4,
+          "all_top50_retained": true,
+          "median_stage_ms": {
+            "clean_ms": 2398.7,
+            "retrieval_ms": 65.9,
+            "filter_resolve_ms": 5807.7
+          }
+        }
+      },
+      "paired_median_delta_ms": {
+        "compact": -2311.4,
+        "fast": -3156.2
+      },
+      "review_findings": [
+        {
+          "arm": "compact",
+          "case": 13,
+          "finding": "An inferred dashboard refresh/propagation failure was marked satisfied; source facts establish a stale overview, not the mechanism."
+        },
+        {
+          "arm": "compact",
+          "case": 15,
+          "finding": "Removal scope was preserved but the missing contractor identifier was not explicitly requested."
+        },
+        {
+          "arm": "compact",
+          "case": 16,
+          "finding": "The normal approval path being required was shortened into a claim that approval was already satisfied."
+        },
+        {
+          "arm": "compact",
+          "case": 19,
+          "finding": "Pending confirmations were marked identified for safe replay without evidence of replay eligibility."
+        },
+        {
+          "arm": "fast",
+          "case": 1,
+          "finding": "Mention of a colleague was overstated as relevant user details already supplied."
+        },
+        {
+          "arm": "fast",
+          "case": 12,
+          "finding": "The affected-fund count was overstated as an available fund list and breach details."
+        },
+        {
+          "arm": "fast",
+          "case": 14,
+          "finding": "Recorded approval was respected, but the absent target identity was not requested."
+        },
+        {
+          "arm": "fast",
+          "case": 9,
+          "finding": "Clean/filter service disagreement made the pre-generated draft incompatible with reconciled sources; no actions were released."
+        },
+        {
+          "arm": "fast",
+          "case": 20,
+          "finding": "An independent Clean service disagreement withheld the joint draft; baseline/compact in this pass retained a clarification."
+        },
+        {
+          "arm": "baseline",
+          "case": 4,
+          "finding": "A primary group outside the supported service failed Filter validation; separate Resolve still generated current-fact diagnostics."
+        }
+      ],
+      "review_scope": "Assistant qualitative inspection of all 20 cases across the three arms, against original narrative and returned evidence. Findings are not independent human labels or GT scores.",
+      "decision": "Do not promote the first compact prompts on latency alone. Preserve qualifiers and missing identifiers, then rerun all 20 cases in all arms.",
+      "per_case": [
+        {
+          "case": 1,
+          "arm": "baseline",
+          "elapsed_ms": 11657.3,
+          "status": "ready",
+          "filter_service": "Tax Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 1,
+          "arm": "compact",
+          "elapsed_ms": 8301.0,
+          "status": "ready",
+          "filter_service": "Tax Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 1,
+          "arm": "fast",
+          "elapsed_ms": 5847.8,
+          "status": "ready",
+          "filter_service": "Tax Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 2,
+          "arm": "baseline",
+          "elapsed_ms": 8248.6,
+          "status": "ready",
+          "filter_service": "Portfolio Accounting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 2,
+          "arm": "compact",
+          "elapsed_ms": 5958.3,
+          "status": "ready",
+          "filter_service": "Portfolio Accounting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 2,
+          "arm": "fast",
+          "elapsed_ms": 5768.6,
+          "status": "ready",
+          "filter_service": "Portfolio Accounting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 3,
+          "arm": "baseline",
+          "elapsed_ms": 6784.4,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 3,
+          "arm": "compact",
+          "elapsed_ms": 5787.0,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 3,
+          "arm": "fast",
+          "elapsed_ms": 4153.4,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 4,
+          "arm": "baseline",
+          "elapsed_ms": 10636.5,
+          "status": "partial",
+          "filter_service": null,
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {
+            "filter": [
+              "Primary G10 does not match the supported service",
+              "Primary G11 does not match the supported service"
+            ]
+          }
+        },
+        {
+          "case": 4,
+          "arm": "compact",
+          "elapsed_ms": 8175.6,
+          "status": "ready",
+          "filter_service": "Securities Settlement",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 4,
+          "arm": "fast",
+          "elapsed_ms": 6282.0,
+          "status": "ready",
+          "filter_service": "Securities Settlement",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 5,
+          "arm": "baseline",
+          "elapsed_ms": 13180.0,
+          "status": "ready",
+          "filter_service": "Trade Matching",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 5,
+          "arm": "compact",
+          "elapsed_ms": 8679.9,
+          "status": "ready",
+          "filter_service": "Trade Matching",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 5,
+          "arm": "fast",
+          "elapsed_ms": 8003.9,
+          "status": "ready",
+          "filter_service": "Trade Matching",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 6,
+          "arm": "baseline",
+          "elapsed_ms": 11066.9,
+          "status": "ready",
+          "filter_service": "Client Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 6,
+          "arm": "compact",
+          "elapsed_ms": 8734.6,
+          "status": "ready",
+          "filter_service": "Client Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 6,
+          "arm": "fast",
+          "elapsed_ms": 7108.4,
+          "status": "ready",
+          "filter_service": "Client Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 7,
+          "arm": "baseline",
+          "elapsed_ms": 8458.9,
+          "status": "ready",
+          "filter_service": "Cash Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 7,
+          "arm": "compact",
+          "elapsed_ms": 7670.5,
+          "status": "ready",
+          "filter_service": "Cash Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 7,
+          "arm": "fast",
+          "elapsed_ms": 5398.3,
+          "status": "ready",
+          "filter_service": "Cash Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 8,
+          "arm": "baseline",
+          "elapsed_ms": 9532.7,
+          "status": "ready",
+          "filter_service": "Rimes Data Feed",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 8,
+          "arm": "compact",
+          "elapsed_ms": 7089.0,
+          "status": "ready",
+          "filter_service": "Rimes Data Feed",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 8,
+          "arm": "fast",
+          "elapsed_ms": 6166.4,
+          "status": "ready",
+          "filter_service": "Rimes Data Feed",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 9,
+          "arm": "baseline",
+          "elapsed_ms": 8745.0,
+          "status": "needs_review",
+          "filter_service": "Rimes Data Feed",
+          "service_conflict": true,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 9,
+          "arm": "compact",
+          "elapsed_ms": 7420.5,
+          "status": "needs_review",
+          "filter_service": "Fund Pricing",
+          "service_conflict": true,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 9,
+          "arm": "fast",
+          "elapsed_ms": 6000.5,
+          "status": "partial",
+          "filter_service": "Fund Pricing",
+          "service_conflict": true,
+          "resolution_status": "unavailable",
+          "actions": 0,
+          "validation_errors": {
+            "resolve": [
+              "Resolution does not match the reconciled active-source schema"
+            ]
+          }
+        },
+        {
+          "case": 10,
+          "arm": "baseline",
+          "elapsed_ms": 11029.2,
+          "status": "ready",
+          "filter_service": "Regulatory Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 10,
+          "arm": "compact",
+          "elapsed_ms": 7234.6,
+          "status": "ready",
+          "filter_service": "Regulatory Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 10,
+          "arm": "fast",
+          "elapsed_ms": 6281.8,
+          "status": "ready",
+          "filter_service": "Regulatory Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 11,
+          "arm": "baseline",
+          "elapsed_ms": 9825.7,
+          "status": "ready",
+          "filter_service": "SimCorp Dimension",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 11,
+          "arm": "compact",
+          "elapsed_ms": 7295.8,
+          "status": "ready",
+          "filter_service": "SimCorp Dimension",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 11,
+          "arm": "fast",
+          "elapsed_ms": 7566.9,
+          "status": "ready",
+          "filter_service": "SimCorp Dimension",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 12,
+          "arm": "baseline",
+          "elapsed_ms": 9764.5,
+          "status": "ready",
+          "filter_service": "NAV Calculation",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 12,
+          "arm": "compact",
+          "elapsed_ms": 8917.9,
+          "status": "ready",
+          "filter_service": "NAV Calculation",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 12,
+          "arm": "fast",
+          "elapsed_ms": 5767.2,
+          "status": "ready",
+          "filter_service": "NAV Calculation",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 13,
+          "arm": "baseline",
+          "elapsed_ms": 8937.7,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 13,
+          "arm": "compact",
+          "elapsed_ms": 7581.4,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 13,
+          "arm": "fast",
+          "elapsed_ms": 5677.1,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 14,
+          "arm": "baseline",
+          "elapsed_ms": 7065.5,
+          "status": "ready",
+          "filter_service": "CRM & Client Portal",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 14,
+          "arm": "compact",
+          "elapsed_ms": 6841.6,
+          "status": "ready",
+          "filter_service": "CRM & Client Portal",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 14,
+          "arm": "fast",
+          "elapsed_ms": 5221.8,
+          "status": "ready",
+          "filter_service": "CRM & Client Portal",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 15,
+          "arm": "baseline",
+          "elapsed_ms": 7185.9,
+          "status": "ready",
+          "filter_service": "SharePoint & File Storage",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 15,
+          "arm": "compact",
+          "elapsed_ms": 6129.7,
+          "status": "ready",
+          "filter_service": "SharePoint & File Storage",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 15,
+          "arm": "fast",
+          "elapsed_ms": 6927.3,
+          "status": "ready",
+          "filter_service": "SharePoint & File Storage",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 16,
+          "arm": "baseline",
+          "elapsed_ms": 10175.6,
+          "status": "ready",
+          "filter_service": "Outlook & Email",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 16,
+          "arm": "compact",
+          "elapsed_ms": 7054.8,
+          "status": "ready",
+          "filter_service": "Outlook & Email",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 16,
+          "arm": "fast",
+          "elapsed_ms": 6923.7,
+          "status": "ready",
+          "filter_service": "Outlook & Email",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 17,
+          "arm": "baseline",
+          "elapsed_ms": 9793.0,
+          "status": "ready",
+          "filter_service": "Corporate Actions",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 17,
+          "arm": "compact",
+          "elapsed_ms": 6803.8,
+          "status": "ready",
+          "filter_service": "Corporate Actions",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 17,
+          "arm": "fast",
+          "elapsed_ms": 7074.0,
+          "status": "ready",
+          "filter_service": "Corporate Actions",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 18,
+          "arm": "baseline",
+          "elapsed_ms": 11923.4,
+          "status": "ready",
+          "filter_service": "Order Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 18,
+          "arm": "compact",
+          "elapsed_ms": 7650.7,
+          "status": "ready",
+          "filter_service": "Order Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 18,
+          "arm": "fast",
+          "elapsed_ms": 7773.5,
+          "status": "ready",
+          "filter_service": "Order Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 19,
+          "arm": "baseline",
+          "elapsed_ms": 10358.1,
+          "status": "ready",
+          "filter_service": "Securities Settlement",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 19,
+          "arm": "compact",
+          "elapsed_ms": 9198.0,
+          "status": "ready",
+          "filter_service": "Securities Settlement",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 19,
+          "arm": "fast",
+          "elapsed_ms": 7788.4,
+          "status": "ready",
+          "filter_service": "Securities Settlement",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 20,
+          "arm": "baseline",
+          "elapsed_ms": 7233.2,
+          "status": "ready",
+          "filter_service": "Identity & Access Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 20,
+          "arm": "compact",
+          "elapsed_ms": 5777.7,
+          "status": "ready",
+          "filter_service": "Identity & Access Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 20,
+          "arm": "fast",
+          "elapsed_ms": 5652.7,
+          "status": "partial",
+          "filter_service": "Identity & Access Management",
+          "service_conflict": true,
+          "resolution_status": "unavailable",
+          "actions": 0,
+          "validation_errors": {
+            "resolve": [
+              "Resolution does not match the reconciled active-source schema"
+            ]
+          }
+        }
+      ]
+    },
+    "refined": {
+      "protocol": {
+        "created_at_utc": "2026-09-25T03:16:56Z",
+        "baseline_ref": "2b6862200887fbf4f2a91b820e8bee6a85fc4db3",
+        "model": "gpt-5.5-2026-04-23",
+        "reasoning_effort": "none",
+        "index_version": "afa533f71d666da9f11d",
+        "data_sha256": "71df79d9228b78e8f4a140d66bb519f582146e74aaeb77d4b41527ad5b7c258d",
+        "code_sha256": {
+          "__init__.py": "92bc3f5fc6abaea87bb7212fa67b782793c303d5675a6a8af0628a4c7e9e7768",
+          "evidence.py": "8811ea2e853ad6e9dbec51da093f86f0d80e72f0cfefb8ff213981dbab134e1b",
+          "prompts.py": "e8d6af9e470c141c69cb1bbb66e1153ee48348d4a95dd0f741e16071bcf20886",
+          "contracts.py": "1e98a44111a110192f3e33f027bad51dab68030831be3796b29a0aa1c5b1e7cf",
+          "pipeline.py": "99aaef9ab7965f23179eaf3207e105c80e0d4d713d4c65139bf062e0645d3cc5",
+          "resolution.py": "5bdb708e7ee89158892865ad3a76fd2f6d9e2fa7b60025e71a3322fa57f03ce5",
+          "triage.py": "86069c70dc2418ba64cf7234670ffb0abaf9c200d8e56f10a4691cf7801272db",
+          "fast.py": "f464b50068af4e618737d7214c2cb4cb24290ccd88d00cfc0832b969d16a5a0a"
+        },
+        "baseline_prompt_sha256": {
+          "candidate_filter": "d22be715afa6dc6834990ffd0acec0a7454467d6991c7c6f2b89110b4f66fd05",
+          "ticket_resolve": "28657ea991da3f10f8ca3e45e987aa9b7080830803950a70d2f6a5c063163630"
+        },
+        "cases": 20,
+        "case_concurrency": 2,
+        "cache_size": 0,
+        "retries": 0,
+        "schedule": "Each ticket runs all three arms sequentially in rotating order; first ticket alone, then bounded concurrent tickets. Encoder load excluded.",
+        "arms": {
+          "baseline": "Previous Filter/Resolve prompts, three calls",
+          "compact": "Concise Filter/Resolve prompts, three calls",
+          "fast": "Clean parallel with retrieval and joint Filter/Resolve, two calls; post-reconciliation validation"
+        },
+        "evaluation": "Public development cases; no answer annotations in inference. One paired pass, not GT accuracy or a production latency guarantee."
+      },
+      "arms": {
+        "baseline": {
+          "cases": 20,
+          "ready": 16,
+          "partial": 3,
+          "needs_review": 1,
+          "filter_failures": 3,
+          "resolution_unavailable": 0,
+          "provider_calls": 60,
+          "reasoning_tokens": 0,
+          "input_tokens": 153821,
+          "output_tokens": 16823,
+          "cached_input_tokens": 69376,
+          "median_elapsed_ms": 9970.0,
+          "max_elapsed_ms": 12767.4,
+          "p95_elapsed_ms": 11116.4,
+          "all_top50_retained": true,
+          "median_stage_ms": {
+            "clean_ms": 2193.5,
+            "retrieval_ms": 67.3,
+            "filter_ms": 5020.4,
+            "resolve_ms": 4191.6
+          }
+        },
+        "compact": {
+          "cases": 20,
+          "ready": 18,
+          "partial": 1,
+          "needs_review": 1,
+          "filter_failures": 1,
+          "resolution_unavailable": 0,
+          "provider_calls": 60,
+          "reasoning_tokens": 0,
+          "input_tokens": 160948,
+          "output_tokens": 13428,
+          "cached_input_tokens": 0,
+          "median_elapsed_ms": 7528.4,
+          "max_elapsed_ms": 9531.2,
+          "p95_elapsed_ms": 8769.7,
+          "all_top50_retained": true,
+          "median_stage_ms": {
+            "clean_ms": 2211.2,
+            "retrieval_ms": 69.0,
+            "filter_ms": 4236.8,
+            "resolve_ms": 3065.7
+          }
+        },
+        "fast": {
+          "cases": 20,
+          "ready": 19,
+          "partial": 1,
+          "needs_review": 0,
+          "filter_failures": 0,
+          "resolution_unavailable": 1,
+          "provider_calls": 40,
+          "reasoning_tokens": 0,
+          "input_tokens": 157919,
+          "output_tokens": 14193,
+          "cached_input_tokens": 0,
+          "median_elapsed_ms": 6160.6,
+          "max_elapsed_ms": 8452.2,
+          "p95_elapsed_ms": 8285.8,
+          "all_top50_retained": true,
+          "median_stage_ms": {
+            "clean_ms": 2225.2,
+            "retrieval_ms": 69.7,
+            "filter_resolve_ms": 5934.8
+          }
+        }
+      },
+      "paired_median_delta_ms": {
+        "compact": -2067.9,
+        "fast": -3263.1
+      },
+      "per_case": [
+        {
+          "case": 1,
+          "arm": "baseline",
+          "elapsed_ms": 10481.3,
+          "status": "ready",
+          "filter_service": "Tax Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 1,
+          "arm": "compact",
+          "elapsed_ms": 7240.2,
+          "status": "ready",
+          "filter_service": "Tax Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 1,
+          "arm": "fast",
+          "elapsed_ms": 6148.0,
+          "status": "ready",
+          "filter_service": "Tax Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 2,
+          "arm": "baseline",
+          "elapsed_ms": 7087.2,
+          "status": "ready",
+          "filter_service": "Portfolio Accounting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 2,
+          "arm": "compact",
+          "elapsed_ms": 5020.5,
+          "status": "ready",
+          "filter_service": "Portfolio Accounting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 0,
+          "validation_errors": {}
+        },
+        {
+          "case": 2,
+          "arm": "fast",
+          "elapsed_ms": 5433.3,
+          "status": "ready",
+          "filter_service": "Portfolio Accounting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 3,
+          "arm": "baseline",
+          "elapsed_ms": 6317.5,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 3,
+          "arm": "compact",
+          "elapsed_ms": 5931.8,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 3,
+          "arm": "fast",
+          "elapsed_ms": 5511.2,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 4,
+          "arm": "baseline",
+          "elapsed_ms": 10761.5,
+          "status": "partial",
+          "filter_service": null,
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {
+            "filter": [
+              "Primary G10 does not match the supported service",
+              "Primary G11 does not match the supported service"
+            ]
+          }
+        },
+        {
+          "case": 4,
+          "arm": "compact",
+          "elapsed_ms": 8591.6,
+          "status": "ready",
+          "filter_service": "Securities Settlement",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 4,
+          "arm": "fast",
+          "elapsed_ms": 8452.2,
+          "status": "ready",
+          "filter_service": "Securities Settlement",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 5,
+          "arm": "baseline",
+          "elapsed_ms": 11116.4,
+          "status": "ready",
+          "filter_service": "Trade Matching",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 5,
+          "arm": "compact",
+          "elapsed_ms": 9531.2,
+          "status": "ready",
+          "filter_service": "Trade Matching",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 5,
+          "arm": "fast",
+          "elapsed_ms": 7595.2,
+          "status": "ready",
+          "filter_service": "Trade Matching",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 6,
+          "arm": "baseline",
+          "elapsed_ms": 10718.3,
+          "status": "ready",
+          "filter_service": "Client Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 6,
+          "arm": "compact",
+          "elapsed_ms": 8649.2,
+          "status": "ready",
+          "filter_service": "Client Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 6,
+          "arm": "fast",
+          "elapsed_ms": 7345.3,
+          "status": "ready",
+          "filter_service": "Client Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 7,
+          "arm": "baseline",
+          "elapsed_ms": 10266.3,
+          "status": "partial",
+          "filter_service": null,
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {
+            "filter": [
+              "Comment Eb2b7aaa9d34a has an unsupported/different failure stage; reserve as uncertain or omit it",
+              "Comment Ef11d23378034 has an unsupported/different failure stage; reserve as uncertain or omit it"
+            ]
+          }
+        },
+        {
+          "case": 7,
+          "arm": "compact",
+          "elapsed_ms": 6089.3,
+          "status": "ready",
+          "filter_service": "Cash Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 0,
+          "validation_errors": {}
+        },
+        {
+          "case": 7,
+          "arm": "fast",
+          "elapsed_ms": 5369.2,
+          "status": "ready",
+          "filter_service": "Cash Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 8,
+          "arm": "baseline",
+          "elapsed_ms": 10649.8,
+          "status": "partial",
+          "filter_service": null,
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {
+            "filter": [
+              "Primary G10 does not match the supported service",
+              "Primary G11 does not match the supported service"
+            ]
+          }
+        },
+        {
+          "case": 8,
+          "arm": "compact",
+          "elapsed_ms": 7998.6,
+          "status": "partial",
+          "filter_service": null,
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {
+            "filter": [
+              "Primary G10 does not match the supported service",
+              "Primary G11 does not match the supported service"
+            ]
+          }
+        },
+        {
+          "case": 8,
+          "arm": "fast",
+          "elapsed_ms": 5534.8,
+          "status": "ready",
+          "filter_service": "Rimes Data Feed",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 9,
+          "arm": "baseline",
+          "elapsed_ms": 7984.3,
+          "status": "needs_review",
+          "filter_service": "Fund Pricing",
+          "service_conflict": true,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 9,
+          "arm": "compact",
+          "elapsed_ms": 6690.7,
+          "status": "needs_review",
+          "filter_service": "Rimes Data Feed",
+          "service_conflict": true,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 9,
+          "arm": "fast",
+          "elapsed_ms": 5044.7,
+          "status": "partial",
+          "filter_service": "Rimes Data Feed",
+          "service_conflict": true,
+          "resolution_status": "unavailable",
+          "actions": 0,
+          "validation_errors": {
+            "resolve": [
+              "Uncertain or unavailable service evidence requires needs_information"
+            ]
+          }
+        },
+        {
+          "case": 10,
+          "arm": "baseline",
+          "elapsed_ms": 10262.4,
+          "status": "ready",
+          "filter_service": "Regulatory Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 10,
+          "arm": "compact",
+          "elapsed_ms": 7531.5,
+          "status": "ready",
+          "filter_service": "Regulatory Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 10,
+          "arm": "fast",
+          "elapsed_ms": 6567.4,
+          "status": "ready",
+          "filter_service": "Regulatory Reporting",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 11,
+          "arm": "baseline",
+          "elapsed_ms": 8421.9,
+          "status": "ready",
+          "filter_service": "SimCorp Dimension",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 11,
+          "arm": "compact",
+          "elapsed_ms": 7824.1,
+          "status": "ready",
+          "filter_service": "SimCorp Dimension",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 11,
+          "arm": "fast",
+          "elapsed_ms": 7056.8,
+          "status": "ready",
+          "filter_service": "SimCorp Dimension",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 12,
+          "arm": "baseline",
+          "elapsed_ms": 7897.8,
+          "status": "ready",
+          "filter_service": "NAV Calculation",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 12,
+          "arm": "compact",
+          "elapsed_ms": 6657.6,
+          "status": "ready",
+          "filter_service": "NAV Calculation",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 12,
+          "arm": "fast",
+          "elapsed_ms": 6484.0,
+          "status": "ready",
+          "filter_service": "NAV Calculation",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 13,
+          "arm": "baseline",
+          "elapsed_ms": 9696.5,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 13,
+          "arm": "compact",
+          "elapsed_ms": 8495.9,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 13,
+          "arm": "fast",
+          "elapsed_ms": 6173.1,
+          "status": "ready",
+          "filter_service": "Risk & Compliance Monitoring",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 14,
+          "arm": "baseline",
+          "elapsed_ms": 8623.2,
+          "status": "ready",
+          "filter_service": "CRM & Client Portal",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 14,
+          "arm": "compact",
+          "elapsed_ms": 6112.1,
+          "status": "ready",
+          "filter_service": "CRM & Client Portal",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 14,
+          "arm": "fast",
+          "elapsed_ms": 4785.9,
+          "status": "ready",
+          "filter_service": "CRM & Client Portal",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 15,
+          "arm": "baseline",
+          "elapsed_ms": 7315.9,
+          "status": "ready",
+          "filter_service": "SharePoint & File Storage",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 15,
+          "arm": "compact",
+          "elapsed_ms": 5199.6,
+          "status": "ready",
+          "filter_service": "SharePoint & File Storage",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 15,
+          "arm": "fast",
+          "elapsed_ms": 5138.3,
+          "status": "ready",
+          "filter_service": "SharePoint & File Storage",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 16,
+          "arm": "baseline",
+          "elapsed_ms": 10064.6,
+          "status": "ready",
+          "filter_service": "Outlook & Email",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 16,
+          "arm": "compact",
+          "elapsed_ms": 8769.7,
+          "status": "ready",
+          "filter_service": "Outlook & Email",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 16,
+          "arm": "fast",
+          "elapsed_ms": 6019.0,
+          "status": "ready",
+          "filter_service": "Outlook & Email",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 17,
+          "arm": "baseline",
+          "elapsed_ms": 10984.6,
+          "status": "ready",
+          "filter_service": "Corporate Actions",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 17,
+          "arm": "compact",
+          "elapsed_ms": 7525.3,
+          "status": "ready",
+          "filter_service": "Corporate Actions",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 17,
+          "arm": "fast",
+          "elapsed_ms": 7831.3,
+          "status": "ready",
+          "filter_service": "Corporate Actions",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 18,
+          "arm": "baseline",
+          "elapsed_ms": 12767.4,
+          "status": "ready",
+          "filter_service": "Order Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 18,
+          "arm": "compact",
+          "elapsed_ms": 8150.8,
+          "status": "ready",
+          "filter_service": "Order Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 18,
+          "arm": "fast",
+          "elapsed_ms": 8285.8,
+          "status": "ready",
+          "filter_service": "Order Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 19,
+          "arm": "baseline",
+          "elapsed_ms": 9875.4,
+          "status": "ready",
+          "filter_service": "Securities Settlement",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        },
+        {
+          "case": 19,
+          "arm": "compact",
+          "elapsed_ms": 8744.8,
+          "status": "ready",
+          "filter_service": "Securities Settlement",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 19,
+          "arm": "fast",
+          "elapsed_ms": 7880.3,
+          "status": "ready",
+          "filter_service": "Securities Settlement",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 3,
+          "validation_errors": {}
+        },
+        {
+          "case": 20,
+          "arm": "baseline",
+          "elapsed_ms": 6663.1,
+          "status": "ready",
+          "filter_service": "Identity & Access Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 20,
+          "arm": "compact",
+          "elapsed_ms": 6333.6,
+          "status": "ready",
+          "filter_service": "Identity & Access Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 1,
+          "validation_errors": {}
+        },
+        {
+          "case": 20,
+          "arm": "fast",
+          "elapsed_ms": 5757.0,
+          "status": "ready",
+          "filter_service": "Identity & Access Management",
+          "service_conflict": false,
+          "resolution_status": "ready",
+          "actions": 2,
+          "validation_errors": {}
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "The same 20 public development cases were reused after qualitative inspection and prompt refinement. These are not held-out or GT accuracy results.",
+    "Ready counts measure schema, citation membership and pipeline checks, not business correctness. Semantic errors can pass them.",
+    "Assistant qualitative review is not independent human annotation; case-level notes are in docs/LATENCY_EXPERIMENT.md.",
+    "Two completed paired passes; model sampling, network conditions and provider prompt caching varied. Reported p95 is only the nearest-rank statistic of 20 observations.",
+    "Pipeline result caching was disabled and model initialization excluded. Warm cached analysis should use ordinary Resolve, not the experimental joint path.",
+    "Round one exposed loss of qualifiers and overstated prerequisites. It is retained here instead of being overwritten by the refined run.",
+    "The initial setup invocation was cancelled before any case output and is not a latency or quality observation."
+  ],
+  "raw_artifacts": "Ignored local artifacts/latency/paired-20-20260925-run2 and artifacts/latency/paired-20-20260925-refined.",
+  "benchmark_script_sha256": "1666f1b98c5c15cdf1995eee38f94b28b40f01b7c44f3c065a406657110d9c09"
+}

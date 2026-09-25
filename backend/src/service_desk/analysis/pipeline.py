@@ -17,6 +17,7 @@ from .evidence import current_facts, prepare_evidence, evidence_support
 from .prompts import CLEAN_PROMPT, FILTER_PROMPT
 from .resolution import RESOLVE_PROMPT, resolution_context, resolution_schema, validate_resolution, resolution_result
 from .triage import PRIORITY_GUIDANCE, RULE_VERSION, build_triage
+from .fast import FAST_PROMPT, fast_schema, validate_fast_resolution
 
 
 @dataclass(frozen=True)
@@ -83,6 +84,10 @@ class TicketAnalysis:
         """Reuse analysis, then make one additional call for reviewable next steps."""
         return await self._analyze(ticket, "resolve")
 
+    async def analyze_and_resolve_fast(self, ticket: TicketInput):
+        """Experimental two-call workflow; independent Clean plus joint Filter/Resolve."""
+        return await self._analyze(ticket, "fast")
+
     async def _analyze(self, ticket, workflow):
         if self.retriever is None:
             raise ValueError("analyze requires a retriever; clean/filter can run independently")
@@ -93,7 +98,8 @@ class TicketAnalysis:
             "service_catalog": self.catalog,
             "routing_catalog": self.routing_catalog, "priority_rule_version": RULE_VERSION,
             "index_version": self.retriever.manifest["index_version"],
-            "prompts": [CLEAN_PROMPT, FILTER_PROMPT] + ([RESOLVE_PROMPT] if workflow == "resolve" else [])}, sort_keys=True).encode()).hexdigest()
+            "prompts": [CLEAN_PROMPT, FILTER_PROMPT] + ([RESOLVE_PROMPT] if workflow == "resolve" else
+                                                        [FAST_PROMPT] if workflow == "fast" else [])}, sort_keys=True).encode()).hexdigest()
         cached = self._cache.get(key)
         if cached and cached[0] > time.monotonic():
             self._cache.move_to_end(key)
@@ -104,7 +110,7 @@ class TicketAnalysis:
         self._cache.pop(key, None)
         if key not in self._inflight:
             compute = {"parallel": self._compute, "clean_first": self._compute_clean_first,
-                       "resolve": self._compute_with_resolution}[workflow]
+                       "resolve": self._compute_with_resolution, "fast": self._compute_fast}[workflow]
             task = asyncio.create_task(compute(ticket))
             self._inflight[key] = task
             task.add_done_callback(lambda done: self._completed(key, done))
@@ -277,6 +283,51 @@ class TicketAnalysis:
         result["timings"]["resolve_ms"] = resolved["model_result"]["seconds"] * 1000
         result["compute_ms"] = (time.perf_counter() - started) * 1000
         if not resolved["model_result"]["ok"]:
+            result["status"] = "partial"
+        return result
+
+    async def _retrieve_and_draft(self, ticket):
+        started = time.perf_counter()
+        candidates = None
+        try:
+            candidates = await self.retrieve(TicketQuery(ticket.summary, ticket.description, ticket.comments))
+            facts = current_facts(ticket)
+            hits = [RetrievalHit(**hit) for hit in candidates["retrieval"]["hits"]]
+            packet, originals, comments = prepare_evidence(candidates["documents"], hits)
+            generated = await self._generate("filter_resolve", FAST_PROMPT,
+                {"current_facts": facts, "service_catalog": self.catalog, **packet},
+                fast_schema(facts, self.catalog, originals, comments),
+                lambda value: validate_filter(value["filter"], originals, comments))
+            selected = generated["value"]["filter"] if generated["ok"] else None
+            filtered = filter_result(selected, originals, comments, facts)
+            draft = generated["value"]["resolution"] if generated["ok"] else None
+        except Exception as exc:
+            generated = {"ok": False, "value": None, "error": _safe_error(exc), "calls": [], "seconds": 0}
+            selected = filtered = draft = None
+        # Account for the joint provider call once; these are logical stage views.
+        filter_stage = {"ok": generated["ok"], "value": selected, "error": generated.get("error"),
+                        "calls": [], "seconds": generated["seconds"], "shared_call": "filter_resolve"}
+        evidence = {"retrieval": candidates["retrieval"] if candidates else None,
+                    "retrieval_ms": candidates["retrieval_ms"] if candidates else (time.perf_counter() - started) * 1000,
+                    "filter": filtered, "model_result": filter_stage}
+        return evidence, generated, draft
+
+    async def _compute_fast(self, ticket):
+        started = time.perf_counter()
+        cleaning, (evidence, generated, draft) = await asyncio.gather(self.clean(ticket), self._retrieve_and_draft(ticket))
+        result = self._merge(cleaning, evidence, started)
+        errors, sources = validate_fast_resolution(draft, ticket, result) if draft is not None else (["No validated joint draft"], {})
+        result["resolution"] = resolution_result(ticket, result, draft, sources, self.config.model) if not errors else {
+            "status": "unavailable", "actions": [], "critical_question": None, "reply_draft": "",
+            "reason": "Joint next-step draft withheld; review the original ticket and validated evidence."}
+        result["stages"]["filter_resolve"] = generated
+        result["stages"]["resolve"] = {"ok": not errors, "value": draft if not errors else None,
+            "error": {"type": "ValidationFailed"} if errors else None, "validation_errors": errors,
+            "calls": [], "seconds": 0, "shared_call": "filter_resolve"}
+        result["timings"]["filter_resolve_ms"] = result["timings"].pop("filter_ms")
+        result["compute_ms"] = (time.perf_counter() - started) * 1000
+        result["workflow"] = "fast"
+        if errors:
             result["status"] = "partial"
         return result
 

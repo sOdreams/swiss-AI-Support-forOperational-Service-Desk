@@ -139,7 +139,7 @@ no suggestion or historical verification automatically fills the actual outcome.
 - `backend/tests/test_signals.py` and `frontend/e2e/resolution.spec.ts`: citation rejection,
   no extra calls/query changes, conflict handling, source retention and review persistence.
 
-All 48 backend tests and 15 browser tests pass, along with frontend type checking,
+All 56 backend tests and 15 browser tests pass, along with frontend type checking,
 lint and production build. The [live smoke report](../backend/validation/ticket-signals-smoke.json)
 records fresh Clean/FAISS/Filter/Resolve calls on six selected development cases.
 These examples informed prompt changes. It is a functionality/latency check with

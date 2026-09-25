@@ -6,6 +6,9 @@ disabled (`none`)**, with one call per branch and no automatic retry. Each call
 has a 1,500-token output ceiling; actual output is usually much shorter.
 Set `ANALYSIS_REASONING_EFFORT=low` to opt into reasoning. The earlier 20-case
 comparison favored low for quality; the lighter default prioritizes latency.
+The current Filter prompt uses soft concise-output targets. See the
+[paired latency experiment](LATENCY_EXPERIMENT.md) for the baseline comparison
+and optional joint Filter/Resolve workflow; stage APIs remain independent.
 
 ## Start and use
 
@@ -377,7 +380,7 @@ npm run test:e2e
 Tests cover concurrent branch start, literal provenance, rejected-parent comment
 survival, in-flight deduplication, cache invalidation, deadlines/partial outputs,
 disagreement holds, stale frontend responses and copy-only preview export.
-The integration passed 48 backend tests, fifteen browser tests, type checking, lint
+The integration passed 56 backend tests, fifteen browser tests, type checking, lint
 and the production frontend build. A real `/tickets/analyze` call using the earlier
 low-reasoning default returned HTTP 200, corrected the mailbox-request title, and preserved all
 50 candidates, with the selected analogue retaining original rank 9.

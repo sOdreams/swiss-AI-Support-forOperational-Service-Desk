@@ -144,7 +144,7 @@ Markdown is local and is not automatically uploaded or sent anywhere.
 | `frontend/src/features/triage/` | Priority calculation and routing evidence presentation. |
 | `frontend/src/features/handoff/` | Deterministic draft assembly, preview, clipboard and Markdown download. |
 
-48 backend tests and 15 browser tests pass, including all 25 matrix cells, unknown
+56 backend tests and 15 browser tests pass, including all 25 matrix cells, unknown
 dimensions, missing citations, conflict holds, ambiguous catalogues, independent
 comment provenance, row deduplication, no extra inference, feedback persistence,
 handoff action/outcome separation and clipboard/stale-ticket handling. Frontend type

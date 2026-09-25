@@ -15,6 +15,9 @@ states. Resolve uses these alongside the original facts. See
 [ticket signals](../docs/TICKET_SIGNALS.md); no additional call or index rebuild is needed.
 Analysis responses also include `triage.priority` and `triage.routing`, computed
 without another model call. See [triage and handoff](../docs/TRIAGE_HANDOFF.md).
+For concise-output and experimental joint-inference usage, see the
+[latency comparison](../docs/LATENCY_EXPERIMENT.md). `POST /tickets/resolve-fast`
+is explicit opt-in; the existing UI endpoints retain the separate Resolve stage.
 
 ## Quick start (from the repository root)
 

@@ -67,6 +67,11 @@ def create_app(artifact_dir=None, feedback_path=None, *, analysis_factory=None):
     async def resolve(body: AnalysisRequest):
         return await run_analysis(body, "analyze_and_resolve")
 
+    @app.post("/tickets/resolve-fast")
+    async def resolve_fast(body: AnalysisRequest):
+        """Experimental joint inference; explicitly selected, never the UI default."""
+        return await run_analysis(body, "analyze_and_resolve_fast")
+
     async def run_analysis(body, method):
         if not app.state.analysis:
             raise HTTPException(503, "Ticket analysis is not configured on this server")

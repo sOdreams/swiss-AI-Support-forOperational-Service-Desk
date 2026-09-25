@@ -62,6 +62,16 @@ Describe proposed next steps in conditional/future language; never say work was
 completed, approved, sent or fixed unless current facts explicitly establish it.
 Do not repeat an unverified historical diagnosis as the current cause. No numeric
 confidence, greetings with invented names, or promises about completion time.
+
+Use compact cards: aim for next_step <=20 words, reason <=12, check_first and
+expected_outcome <=16 each, and reply_draft <=40 words. Exceed these targets only
+to preserve a necessary condition or distinction. Do not repeat the whole incident
+in each field or the reply. Keep IDs and prerequisites even when shortening prose.
+Recheck every claimed satisfied prerequisite against the literal Q facts. Knowing
+that approval is required is not approval granted; observing pending records is
+not confirmation that replay is safe. Do not repeat an unsupported satisfied label
+as fact. Ask for a missing target identifier when it is necessary to perform the
+next check, rather than assuming a named person or record count supplies it.
 """
 
 

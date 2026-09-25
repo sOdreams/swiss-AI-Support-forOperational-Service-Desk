@@ -122,4 +122,20 @@ Do not infer approval from a request, success from history, or priority from old
 labels. Keep every text short; empty observation/check lists are valid.
 Historical verification_excerpt fields are literal source clauses, not proof of
 current recovery. Do not merge different comments into a single completed runbook.
+
+Keep the decision, not a retelling of the ticket. Aim for at most 12 words per
+observation/check/reason, and 18 per condition; use more only to preserve an
+essential distinction or prerequisite. Cite the smallest sufficient set of Q IDs.
+Avoid repeating the same fact across scope, constraint and blocked_outcome, but
+retain distinct working/failing steps, explicit limits and available workarounds.
+Return only decision-changing questions. Do not pad the lists.
+
+Compression must preserve what is known versus merely required. Keep words such
+as requested, required and reported when they change the claim. Define a check
+as the prerequisite itself (e.g. approval granted), not whether its requirement is
+known. "Approval is required" never satisfies "approval granted". A person being
+mentioned or a count of affected records does not establish exact identifiers.
+A backlog does not establish replay eligibility. A stale output does not prove
+which refresh mechanism failed. Mark unestablished specifics missing, even when
+their general context is known; preserve missing target identity when needed.
 """

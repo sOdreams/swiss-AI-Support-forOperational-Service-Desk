@@ -84,7 +84,14 @@ Resolve adds one call after cached analysis (three calls total on a cold request
 
 Priority/routing and handoff add no model calls. The [current triage smoke report](backend/validation/triage-smoke.json) records a complete workflow check; it is not an accuracy comparison.
 
-Backend checks: 48 tests passed. Frontend integration checks: fifteen browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
+Filter/Resolve now use concise output targets. An explicit two-call alternative
+is available through `analyze_and_resolve_fast()` or `POST /tickets/resolve-fast`;
+see [the latency experiment](docs/LATENCY_EXPERIMENT.md) before choosing it.
+The refined 20-case comparison measured 9.97 s baseline, 7.53 s concise default
+and 6.16 s joint medians. Joint inference withheld one conflicted draft, so it
+remains opt-in. These development results are not GT accuracy or production SLAs.
+
+Backend checks: 56 tests passed. Frontend integration checks: fifteen browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
 
 ## Handoff map
 

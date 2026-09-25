@@ -11,11 +11,13 @@ Read `docs/TICKET_SIGNALS.md` for current-fact observations, prerequisite states
 historical verification excerpts and candidate-pool coverage.
 Read `docs/TRIAGE_HANDOFF.md` for priority calculation, advisory team routing,
 historical contributors and the browser handoff export.
+Read `docs/LATENCY_EXPERIMENT.md` for concise prompts, the experimental joint
+workflow, its distinct failure behavior and the paired 20-case benchmark.
 
 Use English for code comments, documentation, UI text and generated explanations.
-Preserve original ticket text and literal evidence quotations. The latest full-flow
-development smoke is in `backend/validation/triage-smoke.json`; the earlier
-lightweight latency baseline is in `backend/validation/lite-latency.json`.
+Preserve original ticket text and literal evidence quotations. The latest paired
+latency comparison is in `backend/validation/latency-comparison.json`. Earlier
+smokes are `backend/validation/triage-smoke.json` and `lite-latency.json`.
 FAISS, clean, filter, resolution proposals, priority suggestions, advisory routing
 and handoff export are implemented. Automatic assignment remains future work.
 General review templates are the manual fallback, not generated fixes.
@@ -34,6 +36,7 @@ Use `from service_desk.analysis import TicketAnalysis, TicketInput` and
 | Full clean-first workflow | `await pipeline.analyze_clean_first(ticket)` |
 | Next steps from an existing analysis | `await pipeline.resolve(ticket, analysis)` |
 | Cached analysis plus next steps | `await pipeline.analyze_and_resolve(ticket)` |
+| Experimental joint Filter/Resolve | `await pipeline.analyze_and_resolve_fast(ticket)` |
 | Recompute priority/routing from an analysis | `build_triage(analysis, routing_catalog)` from `service_desk.analysis.triage` |
 
 `ticket` is a `TicketInput`; `query` is a `TicketQuery`. Create one pipeline with
@@ -75,6 +78,12 @@ reconciliation or caching; use a complete workflow when those behaviors are need
   a cold request runs analysis first. Keep source conditions, original ranks and
   the full Top-50. Unknown/conflicting service evidence allows clarification and
   diagnostics only. A matching citation ID does not prove semantic correctness.
+- The experimental `analyze_and_resolve_fast()` / `/tickets/resolve-fast` runs
+  Clean independently alongside FAISS and joint Filter/Resolve inference. Validate
+  Filter, reconcile Clean, then validate the draft against surviving active sources.
+  Count the joint call only under `stages.filter_resolve`; logical stage views have
+  empty `calls`. Preserve the default UI workflow until comparative review supports
+  changing it. Fast results have their own cache identity and no automatic retry.
 - Filter also extracts bounded, cited `signals` in its existing call. These are
   reviewable interpretations, not verified facts or new search/routing inputs.
   Server-derived `evidence_support` describes only the selected candidate pool.

@@ -22,6 +22,55 @@ The current demo uses the deterministic lexical retrieval engine as the producti
 
 No OpenAI API key or Python package installation is required for the default demo backend. The backend uses Python's standard library and the included training data.
 
+## First-time environment setup
+
+The following steps assume Windows with Git Bash. They do not assume that Python, Conda, Node.js or frontend packages are already available.
+
+### 1. Install Python
+
+Install either [Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) / Anaconda or Python 3.10+ from [python.org](https://www.python.org/downloads/). After installation, open a new Git Bash window and verify:
+
+```bash
+python --version
+conda --version   # only needed if you use Conda
+```
+
+Recommended Conda setup:
+
+```bash
+conda create -n swisslife-e2e python=3.11 -y
+conda activate swisslife-e2e
+python --version
+```
+
+The default backend has no third-party Python dependencies, so there is no `pip install -r requirements.txt` step. Python's standard library is enough to run the API, triage engine and backend tests.
+
+### 2. Install Node.js and npm
+
+Install Node.js 20 LTS from [nodejs.org](https://nodejs.org/en/download). Open a new Git Bash window and verify:
+
+```bash
+node --version
+npm --version
+```
+
+### 3. Install frontend dependencies
+
+```bash
+cd /e/ZurichHack_SwissLife/The-Asians-AI-Support-forOperational-Servide-Desk/frontend
+npm ci --include=optional --no-audit --no-fund
+```
+
+This installs the exact versions recorded in `frontend/package-lock.json`. The `node_modules` directory is local-only and is ignored by Git.
+
+If the system drive is short on space, move npm's cache to the E: drive:
+
+```bash
+npm ci --include=optional --cache E:/npm-cache --no-audit --no-fund
+```
+
+Do not commit `.env`, API keys, `node_modules`, `dist` or runtime output files.
+
 ## Project layout
 
 ```text

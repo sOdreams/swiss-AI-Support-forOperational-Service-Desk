@@ -24,6 +24,7 @@ const KEY_ALIASES: Record<string, string[]> = {
   linked_issues: ["linked_issues", "Linked issues", "Linked Issues"],
   resolution: ["resolution", "Resolution"],
   due_date: ["due_date", "Due date", "Due Date"],
+  resolution_date: ["resolution_date", "Resolution date", "Resolution Date"],
   all_comments: ["all_comments", "All Comments", "All comments"],
 };
 
@@ -179,6 +180,7 @@ function normalizeTicket(record: UnknownRecord, index: number): Ticket {
     linked_issues: linkedIssues(get("linked_issues")),
     resolution: scalar(get("resolution")),
     due_date: scalar(get("due_date")),
+    resolution_date: scalar(get("resolution_date")),
     all_comments: comments(get("all_comments"), issueKey),
     raw: record,
   };
@@ -198,7 +200,7 @@ export function extractTicketRecords(payload: unknown): UnknownRecord[] {
   if (!isRecord(payload)) return [];
   if (looksLikeTicket(payload)) return [payload];
 
-  for (const key of ["tickets", "issues", "data", "items", "results"]) {
+  for (const key of ["records", "tickets", "issues", "data", "items", "results"]) {
     const candidate = payload[key];
     if (Array.isArray(candidate)) return candidate.filter(isRecord);
     if (isRecord(candidate) && looksLikeTicket(candidate)) return [candidate];

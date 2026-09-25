@@ -48,6 +48,7 @@ export interface Ticket {
   linked_issues: LinkedIssue[];
   resolution: string | null;
   due_date: string | null;
+  resolution_date?: string | null;
   all_comments: JiraComment[];
   raw?: Record<string, unknown>;
 }

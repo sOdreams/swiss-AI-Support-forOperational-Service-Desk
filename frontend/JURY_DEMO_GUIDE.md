@@ -20,3 +20,10 @@
 - Structured feedback capture.
 - Clear separation between active and processed work.
 - Safe path toward AI improvement from reviewed analyst outcomes.
+
+
+## V7 feedback moment
+
+For one ticket, rate all three AI recommendations as Highly / Medium / Poor relevant. Select one recommendation, or reject all three and enter the Real Solution. Explain that the labels are stored as structured RAG feedback, while a human-entered real solution becomes a reviewed knowledge candidate for future vector-database ingestion.
+
+Suggested line: **“The system does not blindly learn from every click. Human labels improve our retrieval evaluation, and validated real resolutions can become new knowledge for future RAG queries.”**

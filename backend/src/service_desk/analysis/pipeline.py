@@ -16,6 +16,7 @@ from .contracts import clean_result, clean_schema, filter_result, filter_schema,
 from .evidence import current_facts, prepare_evidence, evidence_support
 from .prompts import CLEAN_PROMPT, FILTER_PROMPT
 from .resolution import RESOLVE_PROMPT, resolution_context, resolution_schema, validate_resolution, resolution_result
+from .triage import PRIORITY_GUIDANCE, RULE_VERSION, build_triage
 
 
 @dataclass(frozen=True)
@@ -49,12 +50,14 @@ def _safe_error(exc):
 
 
 class TicketAnalysis:
-    def __init__(self, retriever=None, *, service_catalog=None, api_key=None, config=None, client=None):
+    def __init__(self, retriever=None, *, service_catalog=None, routing_catalog=None, api_key=None, config=None, client=None):
         self.retriever = retriever
         self.config = config or AnalysisConfig()
         if service_catalog is None and retriever is None:
             raise ValueError("Provide a retriever or an explicit service_catalog")
         self.catalog = list(service_catalog) if service_catalog is not None else retriever.service_catalog()
+        self.routing_catalog = deepcopy(routing_catalog) if routing_catalog is not None else (
+            retriever.service_team_catalog() if hasattr(retriever, "service_team_catalog") else {})
         self.client = client or AsyncOpenAI(api_key=api_key, base_url="https://api.openai.com/v1",
                                             timeout=self.config.stage_timeout_seconds, max_retries=0)
         self._semaphore = asyncio.Semaphore(self.config.max_concurrent_calls)
@@ -88,6 +91,7 @@ class TicketAnalysis:
         started = time.perf_counter()
         key = hashlib.sha256(json.dumps({"ticket": asdict(ticket), "config": asdict(self.config), "workflow": workflow,
             "service_catalog": self.catalog,
+            "routing_catalog": self.routing_catalog, "priority_rule_version": RULE_VERSION,
             "index_version": self.retriever.manifest["index_version"],
             "prompts": [CLEAN_PROMPT, FILTER_PROMPT] + ([RESOLVE_PROMPT] if workflow == "resolve" else [])}, sort_keys=True).encode()).hexdigest()
         cached = self._cache.get(key)
@@ -166,7 +170,11 @@ class TicketAnalysis:
         if not facts:
             raise ValueError("Provide a title, description or comment")
         result = await self._generate("ticket_clean", CLEAN_PROMPT,
-            {"current_facts": facts, "service_catalog": self.catalog}, clean_schema(facts, self.catalog),
+            {"current_facts": facts, "service_catalog": self.catalog, "priority_guidance": {
+                **PRIORITY_GUIDANCE,
+                "critical_services": [s for s in self.catalog if s in PRIORITY_GUIDANCE["critical_services"]],
+                "non_critical_services": [s for s in self.catalog if s in PRIORITY_GUIDANCE["non_critical_services"]],
+            }}, clean_schema(facts, self.catalog),
             lambda value: validate_clean(value, facts))
         cleaned = clean_result(ticket, result["value"], facts) if result["ok"] else {
             "status": "unavailable", "fields": [], "questions": [], "reason": "Cleaning unavailable; current fields preserved."}
@@ -316,7 +324,7 @@ class TicketAnalysis:
         if filtered is not None:
             filtered["evidence_support"] = evidence_support(filtered, conflicts)
         ready = clean["ok"] and evidence["model_result"]["ok"]
-        return {"status": "needs_review" if conflicts else "ready" if ready else "partial",
+        result = {"status": "needs_review" if conflicts else "ready" if ready else "partial",
                 "clean": cleaned, "filter": filtered, "retrieval": evidence["retrieval"],
                 "conflicts": conflicts, "facts": facts,
                 "model": self.config.model, "reasoning_effort": self.config.reasoning_effort,
@@ -325,3 +333,5 @@ class TicketAnalysis:
                             "retrieval_ms": evidence["retrieval_ms"],
                             "filter_ms": evidence["model_result"].get("seconds", 0) * 1000},
                 "stages": {"clean": clean, "filter": evidence["model_result"]}}
+        result["triage"] = build_triage(result, self.routing_catalog)
+        return result

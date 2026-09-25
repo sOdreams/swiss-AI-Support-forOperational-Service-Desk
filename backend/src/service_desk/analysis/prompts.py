@@ -24,6 +24,17 @@ work_type and a title correction with Q IDs; title evidence must include body
 or comments. Do not invent causes, approvals, dates, assignments or resolution.
 Questions should identify missing facts that change interpretation. Keep reason
 to one short sentence. No historical solutions or evaluation answers are given.
+
+Assess urgency and impact from current facts using priority_guidance. Cite up to
+three Q IDs for each supported dimension; otherwise return null and an empty list.
+Do not guess from an imported label, an urgent-sounding title, service criticality
+alone, or historical votes. Do not infer no workaround or a duration not reported.
+Business output can be unusable even when the application opens. Routine access
+requests do not imply a service outage. A stated difficult workaround or deadline
+can support urgency; unclear scope/operational effect may leave impact unknown.
+Unknown services have unknown criticality unless current facts establish it.
+Use questions for missing decision-changing facts. Do not output a priority:
+the server calculates it from these two dimensions with the fixed matrix.
 """
 
 FILTER_PROMPT = """Select useful evidence from an existing service-desk Top-50 candidate pool.

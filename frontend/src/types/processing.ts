@@ -1,5 +1,6 @@
 import type { RetrievalProvenance } from "./retrieval";
 import type { ResolutionFeedback } from "./resolution";
+import type { TriageResult } from "./triage";
 
 export interface ProcessedTicketRecord {
   issue_id: string;
@@ -22,4 +23,5 @@ export interface ProcessTicketPayload {
   source: "human_resolution_workflow";
   retrieval?: RetrievalProvenance;
   resolution?: ResolutionFeedback;
+  triage?: TriageResult;
 }

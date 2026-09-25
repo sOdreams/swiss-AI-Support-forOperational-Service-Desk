@@ -1,4 +1,5 @@
 import type { EvidenceSource, RetrievalHit, RetrievalResponse } from "./retrieval";
+import type { TriageResult } from "./triage";
 
 export interface CurrentEvidence {
   fact_id: string;
@@ -64,6 +65,7 @@ export interface FilterResult {
 }
 
 export interface TicketAnalysisResponse {
+  triage?: TriageResult;
   status: "ready" | "needs_review" | "partial";
   clean: { status: "ready" | "unavailable"; fields: FieldSuggestion[]; questions: string[]; reason: string };
   filter: FilterResult | null;

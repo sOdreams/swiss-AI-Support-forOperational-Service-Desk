@@ -24,7 +24,7 @@ candidates = retriever.search(TicketQuery(
 ), top_k=50)
 ```
 
-For cleaning and filtering, use the existing `TicketAnalysis.analyze(TicketInput(...))` Python API or `POST /tickets/analyze`. It returns `clean`, `retrieval` and `filter` together. Resolution proposals are an implemented downstream consumer: use `TicketAnalysis.analyze_and_resolve()` or `POST /tickets/resolve`. See the [resolution handoff](RESOLUTION_HANDOFF.md). Routing remains separate future work.
+For cleaning and filtering, use the existing `TicketAnalysis.analyze(TicketInput(...))` Python API or `POST /tickets/analyze`. It returns `clean`, `retrieval`, `filter` and `triage` together. Resolution proposals are an implemented downstream consumer: use `TicketAnalysis.analyze_and_resolve()` or `POST /tickets/resolve`. See the [resolution handoff](RESOLUTION_HANDOFF.md) and [advisory routing contract](TRIAGE_HANDOFF.md).
 
 For custom ordering, use `TicketAnalysis.clean()`, `.retrieve()` and `.filter()`.
 Retrieval returns a self-contained candidate snapshot that can be saved and passed
@@ -42,7 +42,7 @@ The filter evaluates group relevance and individual comment applicability indepe
 
 Each returned comment includes up to three source examples. Retrieve complete provenance with `retriever.sources(document_id, offset, limit)` or the paginated HTTP source endpoint. Use the same index version while paging.
 
-A future routing consumer may inspect historical author/service/team metadata. Historical assignee and comment author are different fields; neither alone establishes the appropriate current owner. Keep routing output out of the retrieval query.
+The routing consumer inspects historical service/team mappings and independently selected comment authors. Historical assignee and comment author are different fields; neither alone establishes the appropriate current owner. Keep routing output out of the retrieval query.
 
 ## Legacy interfaces are not interchangeable
 

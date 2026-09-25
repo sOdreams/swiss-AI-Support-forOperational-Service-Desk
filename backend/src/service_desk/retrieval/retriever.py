@@ -107,3 +107,17 @@ class TicketRetriever:
         """Historical service names, with no team or assignee predictions."""
         return sorted({s for doc in self._documents for e in doc["evidence"]
                        for ref in e["sources"] for s in ref["services"]})
+
+    def service_team_catalog(self):
+        """Observed mappings, deduplicated by source row; never a live owner roster."""
+        rows = {}
+        for doc in self._documents:
+            for comment in doc["evidence"]:
+                for ref in comment["sources"]:
+                    if len(ref["services"]) != 1:
+                        continue  # Multi-service records do not establish a unique mapping.
+                    service = ref["services"][0]
+                    for team in ref.get("teams", []):
+                        rows.setdefault(service, {}).setdefault(team, set()).add(ref["row_index"])
+        return {service: [{"team": team, "historical_rows": len(indices), "example_row_indices": sorted(indices)[:3]}
+                          for team, indices in sorted(teams.items())] for service, teams in sorted(rows.items())}

@@ -1,5 +1,6 @@
 """Schemas and deterministic validation/materialization, without provider I/O."""
 from copy import deepcopy
+from .triage import URGENCIES, IMPACTS
 
 
 def obj(properties):
@@ -43,6 +44,10 @@ def clean_schema(facts, catalog):
         "title_conflict": {"type": "boolean"},
         "suggested_summary": {"type": ["string", "null"]},
         "title_evidence_ids": string_ids(facts),
+        "urgency": {"type": ["string", "null"], "enum": [*URGENCIES, None]},
+        "urgency_evidence_ids": string_ids(facts, 3),
+        "impact": {"type": ["string", "null"], "enum": [*IMPACTS, None]},
+        "impact_evidence_ids": string_ids(facts, 3),
         "questions": {"type": "array", "items": TEXT, "maxItems": 5}, "reason": TEXT,
     })
 
@@ -160,6 +165,7 @@ def filter_result(value, originals, comments, facts):
             "active_comment_ids": [c["id"] for c in comment_results if c["status"] in {"reference", "conditional"}],
             "questions": value["questions"] if value else [], "reason": value["reason"] if value else "Filter unavailable; original retrieval retained.",
             "service": value["service"] if value else None,
+            "service_evidence": quotes(value["service_evidence_ids"], facts) if value else [],
             "observed_stage": value["observed_stage"] if value else None,
             "stage_evidence": quotes(value["stage_evidence_ids"], facts) if value else [],
             "signals": {key: [{**deepcopy(item), "evidence": quotes(item["evidence_ids"], facts)}

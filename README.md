@@ -19,9 +19,11 @@ Original ticket ──→ Clean current facts ───────────�
 - **Generate next steps** adds one Resolve call: up to three action cards, one critical question when needed and an editable English reply draft. Each card includes current facts, sources, prerequisites and a verification criterion where supported.
 - Analysts choose **Use / Edit / Not applicable** and enter the actual action/outcome separately. Suggestions never count as completed work.
 - **Situation and known checks** shows the working/failing process steps, preceding changes, business impact, scope, workaround, deadlines and constraints when supported. A cited prerequisite checklist distinguishes established, missing and contradicted details. Coverage labels describe the selected evidence, and historical verification clauses remain tied to their sources. See [ticket signals](docs/TICKET_SIGNALS.md).
+- **Priority and routing for review** calculates Priority from cited Urgency/Impact using the challenge matrix, proposes a team from the historical service directory, and exposes relevant historical contributors separately from current assignees.
+- **Copy handoff / Download handoff** prepares a local English Markdown draft with facts, triage, missing information, source references, action choices and actual outcomes. It works after analysis even when Resolve is unavailable. See [triage and handoff](docs/TRIAGE_HANDOFF.md).
 - Human reviews are stored through `POST /tickets/process` in SQLite. Uploaded tickets remain browser-local.
 
-Automated routing remains future work. There is no action execution, message sending, Jira writeback or online model/index training. General review templates remain available when no generated proposal is ready.
+Automatic assignment remains future work. There is no action execution, message sending, Jira writeback or online model/index training. General review templates remain available when no generated proposal is ready.
 
 ## Run locally
 
@@ -74,19 +76,22 @@ The API accepts ticket text directly; an issue ID alone is insufficient. Both mo
 
 ## Measurements and checks
 
-The latest lightweight configuration completed three live development tickets in **4.86s, 4.08s and 3.85s** (median **4.08s**), including retrieval and both model branches. It used zero reasoning tokens and averaged 273 output tokens per ticket. A repeated-request cache probe took 43ms. These Python-level measurements exclude startup/model loading, HTTP and browser rendering; they do not establish accuracy.
+Before signals and triage were added, the lightweight configuration completed three live development tickets in **4.86s, 4.08s and 3.85s** (median **4.08s**), including retrieval and both model branches. It used zero reasoning tokens and averaged 273 output tokens per ticket. A repeated-request cache probe took 43ms. These Python-level measurements exclude startup/model loading, HTTP and browser rendering; they do not establish accuracy or describe the current complete workflow.
 
 See [the recorded smoke results](backend/validation/lite-latency.json). The [earlier 20-ticket comparison](docs/PARALLEL_ANALYSIS_BENCHMARK.md) used different configurations and is not the current default's quality score.
 
 Resolve adds one call after cached analysis (three calls total on a cold request). Its separate five-case development smoke check and limits are documented in [the resolution handoff](docs/RESOLUTION_HANDOFF.md); the analysis timings above exclude Resolve.
 
-Backend checks: 43 tests passed. Frontend integration checks: twelve browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
+Priority/routing and handoff add no model calls. The [current triage smoke report](backend/validation/triage-smoke.json) records a complete workflow check; it is not an accuracy comparison.
+
+Backend checks: 48 tests passed. Frontend integration checks: fifteen browser tests, type checking, lint and production build passed. Commands are in [backend/README.md](backend/README.md).
 
 ## Handoff map
 
 - [Analysis handoff](docs/ANALYSIS_HANDOFF.md): full pipeline contract, defaults, scheduling, failure behavior and downstream use.
 - [Resolution handoff](docs/RESOLUTION_HANDOFF.md): action cards, one-call integration, UI review, feedback and development smoke results.
 - [Ticket signals](docs/TICKET_SIGNALS.md): observations, known prerequisites, evidence coverage and their use in Resolve without another model call.
+- [Triage and handoff](docs/TRIAGE_HANDOFF.md): priority rules, team catalogue, contributor provenance, local handoff export and feedback.
 - [Retrieval handoff](docs/RETRIEVAL_HANDOFF.md): grouping, ranks, comment provenance and legacy integration differences.
 - [Backend guide](backend/README.md): artifact build, HTTP/Python contracts and tests.
 - [Frontend guide](frontend/README.md): review workflow and local setup.

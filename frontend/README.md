@@ -14,11 +14,15 @@ React + Vite + TypeScript + Tailwind CSS frontend for the Swiss {ai} Weeks / Swi
    - **Clean & filter** — run ticket checks and evidence filtering in parallel, inspect the primary candidates or all original Top-50, and review selected historical comments and their conditions.
    - **Download correction preview** — export suggested changes to a separate copy; the imported ticket is not modified.
    - **Situation and known checks** — inspect cited process boundaries, changes, impact/scope, workarounds and deadlines; distinguish established prerequisites from missing/contradicted details and inspect evidence coverage.
+   - **Priority and routing for review** — inspect matrix-derived priority, current citations, suggested historical team mapping and relevant comment authors. Current ticket labels are unchanged.
    - **Generate next steps** — prepare action cards from the filtered evidence, one critical question when needed, and an editable English reply draft.
    - Choose **Use / Edit / Not applicable** for each card. Inspect its **Check first**, **Expected outcome** and expandable **Source** references.
    - Enter **Actual action and outcome** yourself. A selected suggestion never fills this in or establishes success. Without a generated proposal, general review steps and the **Real solution** field remain available.
    - **Affected Business Aspect** — select one of 3 structured impact options.
 6. **Send** is enabled only when the required information is complete.
+   **Copy handoff / Download handoff** is already available after analysis; it includes
+   current triage, evidence, open questions and action decisions, plus actual findings
+   when entered. It can be used while a ticket is still unresolved.
 7. The processed ticket is removed from the active Ticket Queue and category overview and added to **Processed Tickets**.
 8. The processing payload is posted to `POST /tickets/process`. If the backend is unavailable, the payload is stored in browser `localStorage` for later synchronization.
 

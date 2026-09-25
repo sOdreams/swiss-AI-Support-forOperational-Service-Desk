@@ -19,6 +19,9 @@ import { useRetrieval } from "../retrieval/useRetrieval";
 import { useTicketAnalysis } from "../analysis/useTicketAnalysis";
 import { TicketAnalysisPanel } from "../analysis/TicketAnalysisPanel";
 import { TicketSignalsPanel } from "../analysis/TicketSignalsPanel";
+import { TriagePanel } from "../triage/TriagePanel";
+import { HandoffPanel } from "../handoff/HandoffPanel";
+import { buildHandoff } from "../handoff/buildHandoff";
 import { useResolution } from "../resolution/useResolution";
 import { ResolutionPanel } from "../resolution/ResolutionPanel";
 import { submitProcessedTicket } from "../../services/api";
@@ -156,6 +159,7 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
       affected_business_aspect: selectedAspect,
       processed_at: processedAt,
       source: "human_resolution_workflow",
+      ...(effectiveAnalysis?.triage ? { triage: effectiveAnalysis.triage } : {}),
       ...(proposal && resolution.review ? { resolution: {
         proposal, actions: resolution.review.actions, reply_draft: resolution.review.reply_draft,
         actual_outcome: realSolution.trim(),
@@ -229,6 +233,7 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
       </section>
 
       <TicketAnalysisPanel ticket={ticket} data={effectiveAnalysis} loading={analysis.loading} error={analysis.error} onRun={analysis.run} />
+      <TriagePanel triage={effectiveAnalysis?.triage} />
       <TicketSignalsPanel filter={effectiveAnalysis?.filter} />
       <ResolutionPanel data={resolution.data} review={resolution.review} loading={resolution.loading} error={resolution.error}
         enabled={Boolean(analysis.data) && !analysis.loading} onRun={resolution.run} onReviewChange={resolution.setReview}
@@ -285,6 +290,9 @@ function TicketProcessor({ ticket, onBack, onProcessed }: {
           })}
         </div>
       </section>
+
+      {effectiveAnalysis && <HandoffPanel issueKey={ticket.issue_key}
+        markdown={buildHandoff(ticket, effectiveAnalysis, proposal, resolution.review, realSolution)} />}
 
       <section className="processor-submit-card">
         <div className="min-w-0">

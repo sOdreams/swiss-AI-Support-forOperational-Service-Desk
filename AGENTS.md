@@ -9,12 +9,16 @@ Read `docs/RESOLUTION_HANDOFF.md` for action cards, the single-call Resolve stag
 analyst decisions and outcome feedback.
 Read `docs/TICKET_SIGNALS.md` for current-fact observations, prerequisite states,
 historical verification excerpts and candidate-pool coverage.
+Read `docs/TRIAGE_HANDOFF.md` for priority calculation, advisory team routing,
+historical contributors and the browser handoff export.
 
 Use English for code comments, documentation, UI text and generated explanations.
-Preserve original ticket text and literal evidence quotations. The latest lightweight
-latency smoke results are in `backend/validation/lite-latency.json`.
-FAISS, clean, filter and reviewable resolution proposals are implemented. Routing
-remains future work. General review templates are the manual fallback, not generated fixes.
+Preserve original ticket text and literal evidence quotations. The latest full-flow
+development smoke is in `backend/validation/triage-smoke.json`; the earlier
+lightweight latency baseline is in `backend/validation/lite-latency.json`.
+FAISS, clean, filter, resolution proposals, priority suggestions, advisory routing
+and handoff export are implemented. Automatic assignment remains future work.
+General review templates are the manual fallback, not generated fixes.
 
 ## Agent entry points
 
@@ -30,6 +34,7 @@ Use `from service_desk.analysis import TicketAnalysis, TicketInput` and
 | Full clean-first workflow | `await pipeline.analyze_clean_first(ticket)` |
 | Next steps from an existing analysis | `await pipeline.resolve(ticket, analysis)` |
 | Cached analysis plus next steps | `await pipeline.analyze_and_resolve(ticket)` |
+| Recompute priority/routing from an analysis | `build_triage(analysis, routing_catalog)` from `service_desk.analysis.triage` |
 
 `ticket` is a `TicketInput`; `query` is a `TicketQuery`. Create one pipeline with
 the loaded retriever and reuse it; call `await pipeline.close()` at shutdown.
@@ -75,6 +80,14 @@ reconciliation or caching; use a complete workflow when those behaviors are need
   Server-derived `evidence_support` describes only the selected candidate pool.
   Recompute it after disagreement holds; never treat repeated comments as independent
   successes. Historical verification excerpts are literal quotes, not current outcomes.
+- Clean additionally assesses cited urgency/impact; `analysis/triage.py` computes
+  priority with the pinned challenge matrix. Unknown dimensions stay unknown.
+  Routing uses a separate historical service/team catalogue and only active comment
+  authors; it never predicts from historical Assignee or changes the search query.
+  Service disagreements hold both priority and routing. Neither means assignment.
+- `frontend/src/features/handoff/` creates an English Markdown draft locally from
+  current analysis/review. Copy/download do not send messages. Keep proposed actions,
+  Not applicable choices and analyst-entered actual outcomes distinct in exports.
 - `frontend/src/features/resolution/` supports Use / Edit / Not applicable, an
   editable reply and a separately entered actual outcome. Feedback preserves the
   original proposal and edits; it does not execute actions, send replies or close Jira tickets.

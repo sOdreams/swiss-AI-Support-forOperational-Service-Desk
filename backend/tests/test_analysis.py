@@ -66,6 +66,7 @@ class Provider:
         data = json.loads(kwargs["input"])
         if stage == "ticket_clean":
             value = {"service": "Archive", "service_evidence_ids": ["Q2"],
+                     "urgency": None, "urgency_evidence_ids": [], "impact": None, "impact_evidence_ids": [],
                      "work_type": "Service Request", "work_type_evidence_ids": ["Q2"],
                      "title_conflict": True, "suggested_summary": "Archive access request",
                      "title_evidence_ids": ["Q3"], "questions": [], "reason": "The body explicitly requests access and denies an outage."}

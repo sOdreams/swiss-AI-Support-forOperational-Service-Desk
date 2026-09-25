@@ -22,8 +22,8 @@ increase latency despite the unchanged call count.
 
 No FAISS artifact rebuild or query rewrite is needed. Original Top-50 ranks and
 scores are retained. Routing can consume cited observations through the analysis
-contract without entering the retrieval query. No priority calculation or new
-routing assignment is implemented by this extension.
+contract without entering the retrieval query. [Priority calculation and advisory
+routing](TRIAGE_HANDOFF.md) are implemented separately; automatic assignment is not.
 
 ## Filter output
 
@@ -139,7 +139,7 @@ no suggestion or historical verification automatically fills the actual outcome.
 - `backend/tests/test_signals.py` and `frontend/e2e/resolution.spec.ts`: citation rejection,
   no extra calls/query changes, conflict handling, source retention and review persistence.
 
-All 43 backend tests and 12 browser tests pass, along with frontend type checking,
+All 48 backend tests and 15 browser tests pass, along with frontend type checking,
 lint and production build. The [live smoke report](../backend/validation/ticket-signals-smoke.json)
 records fresh Clean/FAISS/Filter/Resolve calls on six selected development cases.
 These examples informed prompt changes. It is a functionality/latency check with

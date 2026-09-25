@@ -14,7 +14,8 @@ Original facts → Clean ──────────────────�
 
 Resolve makes one additional model call. There is no agent loop, second index,
 automatic retry, action execution, reply sending or Jira writeback. Existing clean,
-retrieval and filter APIs remain independent. Routing is still separate future work.
+retrieval and filter APIs remain independent. [Advisory routing and handoff](TRIAGE_HANDOFF.md)
+are now separate downstream features; automatic assignment remains future work.
 
 ## Run the demo
 
@@ -177,7 +178,7 @@ browser-local fallback retains the same payload when saving to the API fails.
 ## Verification and development evaluation
 
 Run the commands in [the backend guide](../backend/README.md#verification).
-The integrated suite has 43 backend tests and twelve browser tests. It covers one
+The integrated suite has 48 backend tests and fifteen browser tests. It covers one
 additional call, cache reuse, citations, prerequisite retention, clarification,
 feedback persistence, action/draft edits, failure fallback and stale responses.
 Type checking, lint and the production build also pass.

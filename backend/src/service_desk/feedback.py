@@ -66,9 +66,12 @@ class ProcessTicketPayload(BaseModel):
     source: Literal["human_resolution_workflow"]
     retrieval: RetrievalProvenance | None = None
     resolution: ResolutionReview | None = None
+    triage: dict | None = None
 
     @model_validator(mode="after")
     def has_solution(self):
+        if self.triage is not None and len(json.dumps(self.triage)) > 100000:
+            raise ValueError("Triage review exceeds the size limit")
         if self.resolution and (self.real_solution or "").strip() != self.resolution.actual_outcome.strip():
             raise ValueError("The actual outcome must match the recorded human solution")
         if not (self.recommended_solution or "").strip() and not (self.real_solution or "").strip():

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { readFile } from "node:fs/promises";
 
 const tickets = [
   { "Issue ID": "1", "Issue Key": "RESOLVE-1", Summary: "Archive access request", Description: "Please grant the approved Archive role.", "All Comments": [] },
@@ -177,4 +178,87 @@ test("an empty knowledge selection is distinct from unavailable filtering", asyn
   await page.getByRole("button", { name: "Clean & filter", exact: true }).click();
   await expect(situation).toContainText("Evidence assessment unavailable");
   await expect(situation).not.toContainText("No applicable evidence selected");
+});
+
+function triage(held = false) {
+  const evidence = [{ fact_id: "Q2", source: "description", text: tickets[0].Description }];
+  return {
+    priority: { status: held ? "needs_review" : "suggested", urgency: { value: "Low", evidence },
+      impact: { value: "Minor / Localized", evidence }, value: held ? null : "Low", proposed_value: "Low",
+      rule_version: "test-rules", rule_source: "https://example.com/matrix", reason: held ? "Review the service disagreement." : "Calculated from urgency and impact.", requires_review: true },
+    routing: { status: held ? "needs_review" : "suggested", service: held ? null : "Archive", team: held ? null : "Access Operations",
+      reason: held ? "Review the service interpretation." : "Historical catalogue maps Archive to Access Operations.", service_evidence: evidence,
+      catalogue_evidence: held ? [] : [{ team: "Access Operations", historical_rows: 5, example_row_indices: [1, 2, 3] }],
+      historical_contributors: held ? [] : [{ author: "expert@example.com", evidence: [{ comment_id: "E1", text: "Resolution: Granted approved access.",
+        condition: "Verify the target account.", document_id: "doc-0", original_rank: 1, row_index: 3 }] }],
+      index_version: "test-index", assignee: null, assignment_authorized: false, requires_review: true },
+  };
+}
+
+test("priority and routing show cited proposals while handoff preserves choices and actual findings", async ({ page }) => {
+  const generated = { ...resolved(), triage: triage() };
+  await page.route("**/tickets/resolve", (route) => route.fulfill({ json: generated }));
+  await page.route("**/tickets/process", (route) => route.fulfill({ status: 201, json: { saved: true } }));
+  await openTicket(page);
+  await page.getByRole("button", { name: "Generate next steps" }).click();
+  const assessment = page.getByRole("region", { name: "Priority and routing suggestions" });
+  await expect(assessment).toContainText("Access Operations");
+  await assessment.getByText("Evidence and calculation", { exact: true }).click();
+  await expect(assessment).toContainText("Low × Minor / Localized → Low");
+  await expect(assessment).toContainText(tickets[0].Description);
+  await assessment.getByText("Historical contributors for this scenario", { exact: true }).click();
+  await expect(assessment).toContainText("expert@example.com");
+  await expect(assessment).toContainText("not verified current assignees");
+  const panel = page.getByRole("region", { name: "Resolution assistance" });
+  await panel.getByRole("article", { name: "Action 1", exact: true }).getByRole("button", { name: "Use", exact: true }).click();
+  await panel.getByRole("article", { name: "Action 2", exact: true }).getByRole("button", { name: "Edit", exact: true }).click();
+  await panel.getByLabel("Edit action 2").fill("Check the user's target account before granting the approved role.");
+  await panel.getByRole("article", { name: "Action 3", exact: true }).getByRole("button", { name: "Not applicable" }).click();
+  await panel.getByLabel("Actual action and outcome").fill("Asked for the target account. No access change was performed.");
+  const downloadStarted = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download handoff" }).click();
+  const download = await downloadStarted;
+  expect(download.suggestedFilename()).toBe("RESOLVE-1-handoff.md");
+  const text = await readFile((await download.path())!, "utf8");
+  expect(text).toContain("Suggested team: Access Operations");
+  expect(text).toContain("Assignee: not assigned by this workflow");
+  expect(text).toContain("A1 · use");
+  expect(text).toContain("A2 · edit");
+  expect(text).toContain("A3 · not applicable");
+  expect(text).toContain("Check the user's target account");
+  expect(text).toContain("Actual action and outcome — analyst-entered");
+  expect(text).toContain("No access change was performed");
+  expect(text).toContain("Reply draft — not sent");
+  expect(text).toContain("Original candidates retained: 50");
+  await page.getByRole("button", { name: /Service continuity/ }).click();
+  const submitted = page.waitForRequest("**/tickets/process");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  expect((await submitted).postDataJSON().triage).toEqual(generated.triage);
+});
+
+test("handoff is available without Resolve and cannot carry a previous ticket's suggestions", async ({ page }) => {
+  await openTicket(page);
+  const downloadStarted = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download handoff" }).click();
+  const text = await readFile((await (await downloadStarted).path())!, "utf8");
+  expect(text).toContain("No resolution proposal is available");
+  expect(text).toContain("Not recorded.");
+  expect(text).toContain("Selected historical evidence");
+  await page.getByRole("button", { name: /RESOLVE-2/ }).first().click();
+  await expect(page.getByRole("region", { name: "Handoff package" })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "Priority and routing suggestions" })).toHaveCount(0);
+});
+
+test("service disagreement holds priority and routing and clipboard failure leaves download available", async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(navigator, "clipboard", { value: { writeText: async () => { throw new Error("Unavailable"); } } }));
+  await openTicket(page);
+  await page.route("**/tickets/analyze", (route) => route.fulfill({ json: { ...analysis(), triage: triage(true) } }));
+  await page.getByRole("button", { name: "Clean & filter", exact: true }).click();
+  const assessment = page.getByRole("region", { name: "Priority and routing suggestions" });
+  await expect(assessment).toContainText("Review disagreement");
+  await expect(assessment).toContainText("Needs ownership review");
+  await expect(assessment).not.toContainText("Access Operations");
+  await page.getByRole("button", { name: "Copy handoff" }).click();
+  await expect(page.getByRole("region", { name: "Handoff package" })).toContainText("Clipboard unavailable");
+  await expect(page.getByRole("button", { name: "Download handoff" })).toBeEnabled();
 });

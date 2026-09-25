@@ -13,6 +13,8 @@ action cards, a critical question and a reply draft. See the
 Filter's existing call also produces cited current observations and prerequisite
 states. Resolve uses these alongside the original facts. See
 [ticket signals](../docs/TICKET_SIGNALS.md); no additional call or index rebuild is needed.
+Analysis responses also include `triage.priority` and `triage.routing`, computed
+without another model call. See [triage and handoff](../docs/TRIAGE_HANDOFF.md).
 
 ## Quick start (from the repository root)
 
@@ -182,6 +184,9 @@ or `/feedback` routes from the older frontend API scaffold.
 Optional `resolution` feedback stores the original proposal, one decision per card,
 the edited reply draft and the actual outcome. The latter must match `real_solution`.
 See the [feedback contract](../docs/RESOLUTION_HANDOFF.md#feedback-contract).
+Optional `triage` preserves the displayed suggestions separately from the actual
+outcome. It is a client-submitted review snapshot, not a confirmed assignment or
+server attestation. The handoff Markdown is a local copy/download, not an API send.
 
 ## Verification
 
@@ -195,12 +200,14 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The twelve browser tests use a mocked API to check Top-50 display, feedback provenance,
+The fifteen browser tests use a mocked API to check Top-50 display, feedback provenance,
 field corrections, independent comment selection, correction-preview export,
 late-response isolation after ticket switching, action choices, source conditions,
 reply edits, separate actual outcomes, clarification-only proposals and error handling.
 They also check known prerequisites, exact current quotations, historical verification,
 context snapshots in feedback and the distinction between missing evidence and unavailable filtering.
+Priority/routing checks and handoff downloads cover held suggestions, edited/rejected
+actions, actual outcomes, stale ticket isolation and clipboard failure fallback.
 
 Tests use a deterministic fake encoder to exercise grouping, ranking, provenance,
 artifact validation, query errors, HTTP defaults and feedback persistence without

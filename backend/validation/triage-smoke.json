@@ -1,0 +1,295 @@
+{
+  "date": "2026-09-25",
+  "protocol": {
+    "model": "gpt-5.5-2026-04-23",
+    "reasoning_effort": "none",
+    "cases": [
+      4,
+      7,
+      13,
+      14,
+      16,
+      19
+    ],
+    "index_version": "afa533f71d666da9f11d",
+    "code_sha256": {
+      "__init__.py": "92bc3f5fc6abaea87bb7212fa67b782793c303d5675a6a8af0628a4c7e9e7768",
+      "evidence.py": "8811ea2e853ad6e9dbec51da093f86f0d80e72f0cfefb8ff213981dbab134e1b",
+      "prompts.py": "d053713fac51ab810784d1c5840a280a25585f6728d2d07d92740f1e1392f8d1",
+      "contracts.py": "1e98a44111a110192f3e33f027bad51dab68030831be3796b29a0aa1c5b1e7cf",
+      "pipeline.py": "673e8ff64224123d0f20f0a063f8b04e1508590581186af0569c288d27fa6b42",
+      "resolution.py": "cfdedac8d6afac35e5807333c63e7225b5a5bc07fb6b1ecbeea097d78f2beb60",
+      "triage.py": "86069c70dc2418ba64cf7234670ffb0abaf9c200d8e56f10a4691cf7801272db"
+    },
+    "data_sha256": "71df79d9228b78e8f4a140d66bb519f582146e74aaeb77d4b41527ad5b7c258d",
+    "concurrency": 2,
+    "fresh_stages": [
+      "clean",
+      "retrieval",
+      "filter",
+      "resolve"
+    ],
+    "evaluation": "Six-case development smoke; no GT accuracy claim; model loading excluded."
+  },
+  "additional_runtime_source_sha256": {
+    "backend/src/service_desk/retrieval/retriever.py": "cf3351621bec62da4e72419f184bfbf2616c818e6c57814e07de5e2f7fcb0307"
+  },
+  "method": "Six selected public development cases, numbered by 1-based position in the 20-case source. Only current narrative/comments and imported service/work type enter TicketInput; no expected-answer fields are model inputs. Each case used a fresh analysis and Resolve; no pipeline cache hits or retries. Cases ran at concurrency two after the first case; model loading excluded. Local ignored raw outputs are under artifacts/triage/smoke-20260925.",
+  "summary": {
+    "cases": 6,
+    "ready": 5,
+    "partial": 1,
+    "provider_calls": 18,
+    "validated_provider_calls": 17,
+    "reasoning_tokens": 0,
+    "input_tokens": 45500,
+    "output_tokens": 5078,
+    "median_full_workflow_ms": 8529.5,
+    "min_full_workflow_ms": 7083.7,
+    "max_full_workflow_ms": 9847.8
+  },
+  "checked_invariants": [
+    "Every case retained 50 unique candidate documents and original ranks 1\u201350 through filtering.",
+    "Every returned priority matched the pinned matrix for its cited dimensions; absent dimensions kept priority unknown.",
+    "Materialized priority quotations matched the original current-fact text.",
+    "Each proposed historical contributor had an active reference/conditional comment in the supported service and matching original row provenance.",
+    "All assignees remained null, with assignment_authorized=false.",
+    "The failed Filter case withheld routing and gave current-fact diagnostic actions only.",
+    "Each case used exactly three provider calls; triage and handoff added no inference calls."
+  ],
+  "cases": [
+    {
+      "case": 4,
+      "status": "partial",
+      "elapsed_ms": 9847.8,
+      "stages": {
+        "clean": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "filter": {
+          "ok": false,
+          "error": {
+            "type": "ValidationFailed"
+          },
+          "calls": 1,
+          "validation_errors": [
+            "Primary G10 does not match the supported service"
+          ]
+        },
+        "resolve": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        }
+      },
+      "urgency": null,
+      "impact": "Significant / Large",
+      "priority": null,
+      "priority_status": "needs_information",
+      "routing_status": "unavailable",
+      "team": null,
+      "historical_contributor_count": 0,
+      "retained_candidates": 50,
+      "actions": 2,
+      "observation": "Filter validation rejected a primary group outside the supported service. All 50 candidates remained available, routing withheld team/contributors, and Resolve returned current-fact diagnostics only. Urgency and priority were unknown. This is a recorded failure, not a successful filter result."
+    },
+    {
+      "case": 7,
+      "status": "ready",
+      "elapsed_ms": 7568.6,
+      "stages": {
+        "clean": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "filter": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "resolve": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        }
+      },
+      "urgency": "High",
+      "impact": null,
+      "priority": null,
+      "priority_status": "needs_information",
+      "routing_status": "suggested",
+      "team": "Treasury & Cash",
+      "historical_contributor_count": 0,
+      "retained_candidates": 50,
+      "actions": 1,
+      "observation": "The vague margin-sweep request suggested Treasury & Cash but left impact and priority unknown. Urgency was High based on ASAP/quickly wording; this interpretation is weakly supported and needs analyst review rather than an accuracy claim. No applicable historical contributor was proposed."
+    },
+    {
+      "case": 13,
+      "status": "ready",
+      "elapsed_ms": 8711.2,
+      "stages": {
+        "clean": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "filter": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "resolve": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        }
+      },
+      "urgency": "High",
+      "impact": "Significant / Large",
+      "priority": "High",
+      "priority_status": "suggested",
+      "routing_status": "suggested",
+      "team": "Risk & Controls",
+      "historical_contributor_count": 0,
+      "retained_candidates": 50,
+      "actions": 2,
+      "observation": "The model cited the manual workaround and repeated escalations for High urgency, classified partial critical-service degradation as Significant / Large impact, and the matrix returned High. It did not claim a complete outage. Whether the workaround warrants High versus Medium urgency is not resolved by this smoke."
+    },
+    {
+      "case": 14,
+      "status": "ready",
+      "elapsed_ms": 8347.9,
+      "stages": {
+        "clean": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "filter": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "resolve": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        }
+      },
+      "urgency": "Low",
+      "impact": "Minor / Localized",
+      "priority": "Low",
+      "priority_status": "suggested",
+      "routing_status": "suggested",
+      "team": "Client Services",
+      "historical_contributor_count": 0,
+      "retained_candidates": 50,
+      "actions": 2,
+      "observation": "A standard approved CRM access request produced Low priority and the historical Client Services mapping. Resolve asked for the target identity and retained the already-recorded approval. No historical contributor was fabricated."
+    },
+    {
+      "case": 16,
+      "status": "ready",
+      "elapsed_ms": 7083.7,
+      "stages": {
+        "clean": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "filter": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "resolve": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        }
+      },
+      "urgency": "Low",
+      "impact": "No direct impact / Information",
+      "priority": "Lowest",
+      "priority_status": "suggested",
+      "routing_status": "suggested",
+      "team": "Enterprise Applications",
+      "historical_contributor_count": 1,
+      "retained_candidates": 50,
+      "actions": 1,
+      "observation": "The misleading production-outage title was outweighed by explicit no-disruption statements. Low urgency plus No direct impact / Information gave Lowest priority. The historical team was Enterprise Applications; one author was linked only through active reference evidence."
+    },
+    {
+      "case": 19,
+      "status": "ready",
+      "elapsed_ms": 9764.9,
+      "stages": {
+        "clean": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "filter": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        },
+        "resolve": {
+          "ok": true,
+          "error": null,
+          "calls": 1,
+          "validation_errors": []
+        }
+      },
+      "urgency": "High",
+      "impact": "Significant / Large",
+      "priority": "High",
+      "priority_status": "suggested",
+      "routing_status": "suggested",
+      "team": "Securities Operations",
+      "historical_contributor_count": 1,
+      "retained_candidates": 50,
+      "actions": 3,
+      "observation": "A settlement acknowledgement backlog produced High priority and Securities Operations. One historical contributor was sourced from active settlement comments. Listener restart/replay remained conditional on checking for a stalled consumer, with no assignment or execution."
+    }
+  ],
+  "limitations": [
+    "Development smoke, not held-out or GT accuracy; no claim of priority/routing improvement over a baseline.",
+    "One of six Filter responses failed semantic validation. It was not retried or replaced in this report.",
+    "Citation existence and matrix consistency do not establish correct urgency/impact interpretation. Cases 7 and 13 show judgments needing review.",
+    "Historical service/team mapping and comment authors do not prove current ownership, availability or permission to act.",
+    "Timing is for the full Clean/FAISS/Filter/Resolve workflow and excludes encoder initialization; six cases do not establish production latency. Browser copy/export is verified separately by tests.",
+    "The priority policy is pinned challenge guidance, not verified current production policy."
+  ],
+  "browser_replay": {
+    "case": 19,
+    "input": "Recorded real provider output replayed through the frontend API routes; no additional inference.",
+    "checks": [
+      "Priority/routing and expanded provenance visually inspected.",
+      "Markdown downloaded with selected action, manual outcome, source ranks and all-50 candidate count.",
+      "No browser page errors."
+    ],
+    "analyst_data": "Action selection and outcome text are synthetic UI test input, not actual operational work.",
+    "artifacts": "Ignored local screenshots and demo-handoff.md under artifacts/triage/smoke-20260925."
+  }
+}

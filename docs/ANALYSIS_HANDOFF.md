@@ -59,6 +59,7 @@ Response fields:
 | `filter.active_comment_ids` | Only `reference` or `conditional` comments; uncertain comments stay in reserve. |
 | `filter.signals` | Bounded current observations and prerequisite states, with Q IDs and exact current quotations. |
 | `filter.evidence_support` | Server-derived coverage of this candidate pool, recomputed after conflict reconciliation. |
+| `triage` | Matrix-based priority and advisory routing, with evidence and unknown/conflict states. See [TRIAGE_HANDOFF.md](TRIAGE_HANDOFF.md). |
 | `conflicts` | Independent clean/filter service disagreements. |
 | `cache_hit`, `elapsed_ms`, `compute_ms`, `timings` | Current Python request time, original compute time and branch measurements. |
 | `stage_status` | Per-model-stage success/error type. Raw provider output is omitted from HTTP responses. |
@@ -337,7 +338,8 @@ combined = await pipeline.analyze_and_resolve(ticket)
 
 `POST /tickets/resolve` exposes the combined workflow using the same ticket body as
 `/tickets/analyze`. See [RESOLUTION_HANDOFF.md](RESOLUTION_HANDOFF.md) for action
-cards, source checks, feedback and failure handling. Routing remains future work.
+cards, source checks, feedback and failure handling. Advisory routing is implemented
+in [TRIAGE_HANDOFF.md](TRIAGE_HANDOFF.md); automatic assignment remains future work.
 Other consumers can select supported evidence from an analysis response:
 
 ```python
@@ -375,7 +377,7 @@ npm run test:e2e
 Tests cover concurrent branch start, literal provenance, rejected-parent comment
 survival, in-flight deduplication, cache invalidation, deadlines/partial outputs,
 disagreement holds, stale frontend responses and copy-only preview export.
-The integration passed 43 backend tests, twelve browser tests, type checking, lint
+The integration passed 48 backend tests, fifteen browser tests, type checking, lint
 and the production frontend build. A real `/tickets/analyze` call using the earlier
 low-reasoning default returned HTTP 200, corrected the mailbox-request title, and preserved all
 50 candidates, with the selected analogue retaining original rank 9.

@@ -1,1 +1,0 @@
-"""Service desk application modules."""

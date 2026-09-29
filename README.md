@@ -1,195 +1,116 @@
-> **FAISS retrieval is implemented on this branch.** Start with [backend/README.md](backend/README.md) for install/build/API/Python usage. It returns **Top-50 distinct evidence groups with rank**, independently of routing. AI coding agents should read [AGENTS.md](AGENTS.md) and the [integration handoff](docs/RETRIEVAL_HANDOFF.md). The older frontend prototype description below predates this backend.
+# Service Desk AI Copilot 🚀
 
-# Service Desk Copilot
+AI-powered Copilot for IT Service Desk teams. It uses **RAG**, deterministic triage rules, and **Azure OpenAI** to help analysts classify tickets, retrieve relevant historical cases, and draft solutions while keeping the human in control.
 
-Aplicación frontend para revisar tickets de soporte con asistencia de IA. La interfaz permite comparar el ticket original con una propuesta generada por IA, evaluar la recomendación y registrar la decisión del analista humano.
+Built for the **Swiss{ai}Weeks Hackathon**.
 
-## Descripción del proyecto
+## 🧠 Architecturea
 
-Este proyecto simula un panel de trabajo para un equipo de soporte/IT Service Desk. La idea principal es separar tres capas:
+### Backend — Python / FastAPI
 
-1. El ticket original (fuente de verdad)
-2. La propuesta sugerida por IA
-3. La decisión final del analista (aprobar, editar o rechazar)
+- **RAG pipeline** using FAISS/ChromaDB + MiniLM embeddings to retrieve relevant historical tickets.
+- **Deterministic priority calculation** based on Urgency × Impact.
+- **Azure OpenAI** for solution generation, affected business areas, and AI Auto-complete.
+- Main endpoints: `/triage`, `/solution/autocomplete`, `/feedback`.
 
-La app muestra:
+### Frontend — React / TypeScript / Vite
 
-- una cola de tickets con búsqueda y filtro,
-- el detalle del ticket y sus comentarios,
-- la comparación entre datos reales y propuesta de IA,
-- el borrador de respuesta,
-- las fuentes utilizadas por la IA,
-- y la revisión humana final.
+- Upload raw Jira / Service Desk ticket JSON.
+- View AI triage and compare it with benchmark data.
+- Review retrieved historical evidence and AI solutions.
+- **Human-in-the-Loop:** analysts can validate, modify, or replace AI suggestions and submit feedback.
 
-## Stack tecnológico
+## ⚙️ Requirements
 
-- React 19
-- TypeScript
-- Vite
-- Tailwind CSS
-- Lucide React
+- Python 3.9+
+- Node.js 18+
+- npm 9+
+- Azure OpenAI resource and deployment
 
-## Requisitos previos
+## 🛠️ Setup
 
-Asegúrate de tener instalado:
-
-- Node.js 18 o superior
-- npm 9 o superior
-
-Puedes verificarlo con:
+### Backend
 
 ```bash
-node -v
-npm -v
+cd backend
+python3 -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-## Estructura del proyecto
+Create `backend/.env`:
 
-```text
-SwissAITest-AI-Support-Agent/
-├── README.md
-├── frontend/
-│   ├── package.json
-│   ├── vite.config.ts
-│   ├── tsconfig.json
-│   ├── index.html
-│   ├── eslint.config.js
-│   └── src/
-│       ├── App.tsx
-│       ├── components/
-│       ├── data/
-│       ├── features/
-│       ├── lib/
-│       ├── services/
-│       ├── types/
-│       ├── index.css
-│       └── main.tsx
-└── .gitignore
+```env
+AZURE_OPENAI_API_KEY="your_api_key"
+AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+AZURE_OPENAI_DEPLOYMENT_NAME="your_deployment_name"
+AZURE_OPENAI_API_VERSION="2024-02-15-preview"
 ```
 
-## Instalación
+Start the API:
 
-Desde la raíz del proyecto:
+```bash
+python3 -m uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+API: `http://localhost:8000`  
+Docs: `http://localhost:8000/docs`
+
+### Frontend
 
 ```bash
 cd frontend
 npm install
 ```
 
-## Ejecución local
-
-Inicia el servidor de desarrollo:
-
-```bash
-cd frontend
-npm run dev
-```
-
-Luego abre la URL que indique Vite, normalmente algo como:
-
-```text
-http://localhost:5173
-```
-
-## Build de producción
-
-Para compilar la aplicación para producción:
-
-```bash
-cd frontend
-npm run build
-```
-
-El resultado se generará en la carpeta:
-
-```text
-frontend/dist/
-```
-
-## Variables de entorno
-
-La aplicación intenta usar una API si está configurada. Por defecto, el cliente usa:
-
-```text
-http://localhost:8000
-```
-
-Puedes definir una variable de entorno en un archivo `.env` dentro de `frontend`:
+Create `frontend/.env`:
 
 ```env
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
-Si no existe backend, la app sigue funcionando con datos mock dentro del frontend.
-
-## Datos actuales del proyecto
-
-La aplicación usa datos de ejemplo en:
-
-- [frontend/src/data/mockTickets.ts](frontend/src/data/mockTickets.ts)
-- [frontend/src/data/mockAiProposals.ts](frontend/src/data/mockAiProposals.ts)
-
-Esto permite ejecutar la interfaz sin depender de una base de datos o servicio real.
-
-## Flujo funcional principal
-
-1. El usuario selecciona un ticket desde la cola.
-2. Se muestra el detalle original del ticket.
-3. La IA propone valores para campos como prioridad, equipo de servicio, tipo de solicitud, etc.
-4. El analista puede:
-   - aprobar,
-   - corregir manualmente,
-   - o rechazar la propuesta.
-5. La decisión se guarda en el estado local de la interfaz.
-
-## Puntos importantes para replicar o adaptar
-
-- La lógica principal vive en [frontend/src/App.tsx](frontend/src/App.tsx)
-- Los componentes de IU se agrupan por dominio en [frontend/src/features](frontend/src/features)
-- Los tipos están en [frontend/src/types](frontend/src/types)
-- La integración con API está pensada en [frontend/src/services/api.ts](frontend/src/services/api.ts)
-
-## Nota sobre backend
-
-Este repositorio actualmente contiene una interfaz frontend funcional con mocks, pero no incluye un backend real ni una base de datos. Si se quiere conectar con un servicio real, se debe implementar una API que exponga endpoints tipo:
-
-- `GET /tickets`
-- `GET /tickets/:issueId`
-- `POST /tickets/:issueId/assist`
-- `POST /feedback`
-
-La interfaz ya está preparada para consumir esos endpoints a través del servicio `api.ts`.
-
-## Comandos útiles
+Start the app:
 
 ```bash
-cd frontend
-npm install
-npm run dev
-npm run build
-npm run lint
-```
-
-## Resumen
-
-Este proyecto es un prototipo de panel para revisión asistida por IA en soporte técnico, pensado para validar propuestas de clasificación y respuesta antes de aplicarlas. Está listo para ejecutarse localmente con datos mock y puede evolucionar hacia una integración real con un backend y una API de IA.
-
-## Recomendación para IA o colaboradores
-
-Si vas a reutilizar este proyecto con una IA o con un agente, usa este flujo:
-
-```bash
-cd frontend
-npm install
 npm run dev
 ```
 
-Y luego revisa:
+Frontend: `http://localhost:5173`
 
-- [frontend/src/App.tsx](frontend/src/App.tsx)
-- [frontend/src/features/tickets/TicketDetail.tsx](frontend/src/features/tickets/TicketDetail.tsx)
-- [frontend/src/features/ai/AiProposalPanel.tsx](frontend/src/features/ai/AiProposalPanel.tsx)
-- [frontend/src/services/api.ts](frontend/src/services/api.ts)
+## 🚀 Usage
 
-Eso te permitirá entender rápidamente cómo funciona el flujo de tickets, la IA y la revisión humana.
+1. Upload a JSON file with Service Desk / Jira tickets.
+2. Let the backend perform the initial AI triage.
+3. Open a ticket to review RAG evidence and recommended solutions.
+4. Validate or edit the suggested resolution, using **AI Auto-complete** when useful.
+5. Select the affected business area and submit feedback.
 
+## 📁 Project Structure
+
+```text
+backend/
+├── api/
+│   └── main.py
+├── rag/
+├── llm/
+└── requirements.txt
+
+frontend/
+├── src/
+│   ├── components/
+│   ├── services/
+│   │   └── api.ts
+│   ├── types/
+│   │   └── triage.ts
+│   └── App.tsx
+└── package.json
+```
+
+## 🤝 Developer Notes
+
+- RAG changes → `backend/rag/`
+- LLM / prompting → `backend/llm/`
+- API changes → `backend/api/main.py` + `frontend/src/services/api.ts`
+- Triage types → `frontend/src/types/triage.ts`
+
+Never commit `.env`, API keys, `venv/`, or `node_modules/`.

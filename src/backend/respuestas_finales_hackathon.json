@@ -1,0 +1,1784 @@
+{
+  "results": [
+    {
+      "ticket_id": "eval-1",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Service Request",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Tax Reporting",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Tax & Reporting",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "tania.gupta@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "Medium",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Moderate",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "Medium",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "Confirmed the withholding tax workflow license was provisioned and validated the user could access the quarterly extract tool.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Tax Reporting",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: New license requested for Tax Reporting\nD...",
+          "resolution_excerpt": "ellen.ross@intcom.com: Problem fixed. | tania.gupta@intcom.com: Resolution: Confirmed the withholdin"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: New license requested for Tax Reporting\nD...",
+          "resolution_excerpt": "bradley.ford@intcom.com: Initial triage assigned to Tax & Reporting and reviewed against the service"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: New license requested for Tax Reporting\nD...",
+          "resolution_excerpt": "wendy.garcia@intcom.com: Problem fixed. | tania.gupta@intcom.com: Resolution: Confirmed the withhold"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-2",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Service Request",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Portfolio Accounting",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Client Services",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "louis.belov@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "Medium",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Moderate",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "Medium",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "louis.belov@intcom.com: Initial triage assigned to Client Services and reviewed against the service catalogue. | michael.sullivan@intcom.com: We validated the issue against Portfolio Accounting and checked whether it matched the expected operating conditions. | wendy.garcia@intcom.com: Resolution recorded: access updated.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Portfolio Accounting",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Access requested for Client Reporting\nDes...",
+          "resolution_excerpt": "johanna.ouali@intcom.com: Initial triage assigned to Client Services and reviewed against the servic"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Access requested for Client Reporting\nDes...",
+          "resolution_excerpt": "xander.keller@intcom.com: Initial triage assigned to Client Services and reviewed against the servic"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Access requested for Client Reporting\nDes...",
+          "resolution_excerpt": "louis.belov@intcom.com: Initial triage assigned to Client Services and reviewed against the service "
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-3",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Service Request",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Risk & Compliance Monitoring",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Risk & Controls",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "ursula.klassen@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "Medium",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Moderate",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "Medium",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "ursula.klassen@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the service catalogue. | marta.marchand@intcom.com: We validated the issue against Risk & Compliance Monitoring and checked whether it matched the expected operating conditions. | peter.rasmussen@intcom.com: Impact assessment confirmed the issue affected the operational workflow for Risk & Compliance Monitoring. | tiara.nielsen@intcom.com: Resolution recorded: alert closed after validation.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Risk & Compliance Monitoring",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: New license requested for Risk & Complian...",
+          "resolution_excerpt": "bradley.ford@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the service"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: New license requested for Risk & Complian...",
+          "resolution_excerpt": "francesco.kelly@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the serv"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: New license requested for Risk & Complian...",
+          "resolution_excerpt": "ursula.klassen@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the servi"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-4",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Securities Settlement",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Custody Operations",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "zoltan.reed@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "clarification",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "Initial triage assigned to Custody Operations to validate the delay in MT536 settlement status messages. Further investigation is required to determine the root cause and operational impact.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Securities Settlement",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: External email warning received for Email...",
+          "resolution_excerpt": "yasmine.fox@intcom.com: Initial triage assigned to Service Desk and reviewed against the service cat"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: External email warning received for Email...",
+          "resolution_excerpt": "vincent.lange@intcom.com: Initial triage assigned to Service Desk and reviewed against the service c"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: External email warning received for Email...",
+          "resolution_excerpt": "zoltan.reed@intcom.com: Initial triage assigned to Service Desk and reviewed against the service cat"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-5",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Trade Matching",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Trade Operations Support",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "zoltan.reed@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "clarification",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "Initial triage has been conducted, and the issue has been escalated to the Trade Operations Support team for further analysis. The backlog of unmatched trades is being reviewed to identify the root cause and implement a resolution. Updates will follow as the investigation progresses.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Trade Matching",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: External email warning received for Email...",
+          "resolution_excerpt": "yasmine.fox@intcom.com: Initial triage assigned to Service Desk and reviewed against the service cat"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: External email warning received for Email...",
+          "resolution_excerpt": "vincent.lange@intcom.com: Initial triage assigned to Service Desk and reviewed against the service c"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: External email warning received for Email...",
+          "resolution_excerpt": "zoltan.reed@intcom.com: Initial triage assigned to Service Desk and reviewed against the service cat"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-6",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Client Reporting",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Client Services",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "pierre.johnson@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "done - pierre.johnson@intcom.com: Initial triage assigned to Client Services and reviewed against the service catalogue. | pierre.johnson@intcom.com: Validated the issue against Client Reporting and confirmed it matched the expected operating conditions. | pierre.johnson@intcom.com: Resolution: Identified a defect in the template logic causing the fee section to render blank. Corrected the template logic, regenerated the affected Nordics batch, and verified the fee section renders correctly in the output PDFs.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Client Reporting",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: General request for Client Reporting with...",
+          "resolution_excerpt": "helen.smith@intcom.com: Initial triage assigned to Client Services and reviewed against the service "
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: General request for Client Reporting with...",
+          "resolution_excerpt": "xander.keller@intcom.com: Initial triage assigned to Client Services and reviewed against the servic"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: General request for Client Reporting with...",
+          "resolution_excerpt": "rachel.wilson@intcom.com: Initial triage assigned to Client Services and reviewed against the servic"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-7",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Cash Management",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Treasury & Cash",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "vincent.lange@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "clarification",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "vincent.lange@intcom.com: Initial triage assigned to Treasury & Cash and reviewed against the service catalogue. We validated the issue against Cash Management and checked whether it matched the expected operating conditions. Impact assessment confirmed the issue affected the operational workflow for Cash Management. Resolution: Reconciled the cash ledger against the bank statement and found the sweep missed the prior day's cutoff; booked a value-dated adjustment and confirmed the balance with the desk.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Cash Management",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Unclear incident input for Cash Managemen...",
+          "resolution_excerpt": "helen.smith@intcom.com: Initial triage assigned to Treasury & Cash and reviewed against the service "
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Unclear incident input for Cash Managemen...",
+          "resolution_excerpt": "johanna.ouali@intcom.com: Initial triage assigned to Treasury & Cash and reviewed against the servic"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Unclear incident input for Cash Managemen...",
+          "resolution_excerpt": "kyle.wells@intcom.com: Problem fixed. | vincent.lange@intcom.com: Resolution: Reconciled the cash le"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-8",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Rimes Data Feed",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Data Integration",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "amelia.gabor@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "clarification",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "Initial triage assigned to Data Integration to validate the delayed delivery of the benchmark file. Further investigation is required to determine the root cause and assess the impact on downstream processes.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Rimes Data Feed",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Incident mislabelled as service request i...",
+          "resolution_excerpt": "dante.jensen@intcom.com: Initial triage assigned to Valuation & Pricing and reviewed against the ser"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Incident mislabelled as service request i...",
+          "resolution_excerpt": "olga.dupont@intcom.com: Initial triage assigned to Valuation & Pricing and reviewed against the serv"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Incident mislabelled as service request i...",
+          "resolution_excerpt": "ursula.klassen@intcom.com: Initial triage assigned to Valuation & Pricing and reviewed against the s"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-9",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Fund Pricing",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Market Data Team",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "helen.smith@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "clarification",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "Initial triage indicates that the issue pertains to delayed benchmark data publication, which impacts Fund Pricing operations. The Market Data Team has been notified to investigate and confirm the extent of the impact. Awaiting further updates from the vendor to proceed with resolution.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Fund Pricing",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: External email warning received for Email...",
+          "resolution_excerpt": "yasmine.fox@intcom.com: Initial triage assigned to Service Desk and reviewed against the service cat"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: External email warning received for Email...",
+          "resolution_excerpt": "vincent.lange@intcom.com: Initial triage assigned to Service Desk and reviewed against the service c"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: External email warning received for Email...",
+          "resolution_excerpt": "zoltan.reed@intcom.com: Initial triage assigned to Service Desk and reviewed against the service cat"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-10",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Regulatory Reporting",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Compliance IT Support",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "michael.sullivan@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "clarification",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "Initial triage assigned to Compliance IT Support and reviewed against the service catalogue. The issue was validated against the Regulatory Reporting service and checked for alignment with expected operating conditions. Impact assessment confirmed the issue affected the operational workflow for Regulatory Reporting. Further investigation is ongoing to resolve the LEI submission file rejection.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Regulatory Reporting",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Email notification received for Emailed S...",
+          "resolution_excerpt": "gavin.march@intcom.com: Initial triage assigned to Service Desk and reviewed against the service cat"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Email notification received for Emailed S...",
+          "resolution_excerpt": "helen.smith@intcom.com: Initial triage assigned to Service Desk and reviewed against the service cat"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Email notification received for Emailed S...",
+          "resolution_excerpt": "bradley.ford@intcom.com: Initial triage assigned to Service Desk and reviewed against the service ca"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-11",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "SimCorp Dimension",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Enterprise Applications",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "xena.schmidt@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "Resolution: Diagnosed a failure in the SCD_POS_SYNC replication job on host EAPW8504. Cleared the database lock causing the issue, restarted the job, and verified that position updates were successfully synchronized to the reporting layer.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "SimCorp Dimension",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Automated alert triggered for SimCorp Dim...",
+          "resolution_excerpt": "tiara.nielsen@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against th"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Automated alert triggered for SimCorp Dim...",
+          "resolution_excerpt": "helen.smith@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against the "
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Automated alert triggered for SimCorp Dim...",
+          "resolution_excerpt": "vincent.lange@intcom.com: Problem fixed. | xena.schmidt@intcom.com: Resolution: Diagnosed a timeout "
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-12",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "NAV Calculation",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Valuation & Pricing",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "ursula.klassen@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "clarification",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "ursula.klassen@intcom.com: Initial triage assigned to Valuation & Pricing and reviewed against the service catalogue. Further investigation is required to confirm the root cause of the valuation tolerance breach and to determine the necessary remediation steps.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "NAV Calculation",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Automated alert triggered for Fund Pricin...",
+          "resolution_excerpt": "ursula.klassen@intcom.com: Initial triage assigned to Valuation & Pricing and reviewed against the s"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Automated alert triggered for Fund Pricin...",
+          "resolution_excerpt": "rachel.wilson@intcom.com: Initial triage assigned to Valuation & Pricing and reviewed against the se"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Automated alert triggered for Fund Pricin...",
+          "resolution_excerpt": "wendy.garcia@intcom.com: Initial triage assigned to Valuation & Pricing and reviewed against the ser"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-13",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Risk & Compliance Monitoring",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Risk & Controls",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "louis.belov@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "clarification",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "louis.belov@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the service catalogue. | kristina.owens@intcom.com: We validated the issue against Risk & Compliance Monitoring and checked whether it matched the expected operating conditions. | peter.kuznetsov@intcom.com: Impact assessment confirmed the issue affected the operational workflow for Risk & Compliance Monitoring. | louis.belov@intcom.com: Resolution recorded: dashboard data refresh issue identified and escalated to development team for resolution.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Risk & Compliance Monitoring",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Operational issue reported for Risk & Com...",
+          "resolution_excerpt": "francesco.kelly@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the serv"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Operational issue reported for Risk & Com...",
+          "resolution_excerpt": "nicolas.ivanova@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the serv"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Operational issue reported for Risk & Com...",
+          "resolution_excerpt": "yasmine.fox@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the service "
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-14",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Service Request",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "CRM & Client Portal",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Client Services",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "amelia.gabor@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "Medium",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Moderate",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "Medium",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "amelia.gabor@intcom.com: Initial triage assigned to Client Services and reviewed against the service catalogue. | vincent.lange@intcom.com: We validated the issue against CRM & Client Portal and checked whether it matched the expected operating conditions. | helen.smith@intcom.com: Impact assessment confirmed the issue affected the operational workflow for CRM & Client Portal. | sebastian.eaton@intcom.com: Resolution recorded: ticket resolved via workaround.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "CRM & Client Portal",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Access requested for CRM & Client Portal\n...",
+          "resolution_excerpt": "amelia.gabor@intcom.com: Initial triage assigned to Client Services and reviewed against the service"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Access requested for CRM & Client Portal\n...",
+          "resolution_excerpt": "rachel.wilson@intcom.com: Initial triage assigned to Client Services and reviewed against the servic"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Access requested for CRM & Client Portal\n...",
+          "resolution_excerpt": "gavin.march@intcom.com: Initial triage assigned to Client Services and reviewed against the service "
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-15",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Service Request",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "SharePoint & File Storage",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Enterprise Applications",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "ellen.ross@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Moderate",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "ellen.ross@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against the service catalogue. | johanna.ouali@intcom.com: We validated the issue against SharePoint & File Storage and checked whether it matched the expected operating conditions. | gavin.march@intcom.com: Impact assessment confirmed the issue affected the operational workflow for SharePoint & File Storage. | peter.kuznetsov@intcom.com: Resolution recorded: service restored.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "SharePoint & File Storage",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Access removal requested for SharePoint &...",
+          "resolution_excerpt": "vincent.lange@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against th"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Access removal requested for SharePoint &...",
+          "resolution_excerpt": "francesco.kelly@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against "
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Access removal requested for SharePoint &...",
+          "resolution_excerpt": "ellen.ross@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against the s"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-16",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Service Request",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Outlook & Email",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Enterprise Applications",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "jack.martin@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "Low",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "No direct impact",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "Lowest",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "Reclassified the ticket as a service request, then provisioned the requested shared mailbox and distribution list with the correct access permissions.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Outlook & Email",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Automated alert triggered for Outlook & E...",
+          "resolution_excerpt": "olga.dupont@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against the "
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Automated alert triggered for Outlook & E...",
+          "resolution_excerpt": "tiara.nielsen@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against th"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Automated alert triggered for Outlook & E...",
+          "resolution_excerpt": "yasmine.fox@intcom.com: Problem fixed. | jack.martin@intcom.com: Resolution: Set up the shared mailb"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-17",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Corporate Actions",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Corporate Actions Support",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "tara.singh@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "The issue was identified as missing option code mappings in the corporate action ingestion feed CAEV-874. The mappings were updated in the system, and the affected events were reprocessed successfully. Users can now process the instructions without further issues.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Corporate Actions",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Automated alert triggered for Regulatory ...",
+          "resolution_excerpt": "dante.jensen@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the service"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Automated alert triggered for Regulatory ...",
+          "resolution_excerpt": "yasmine.fox@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the service "
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Automated alert triggered for Regulatory ...",
+          "resolution_excerpt": "kristina.owens@intcom.com: Initial triage assigned to Risk & Controls and reviewed against the servi"
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-18",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Order Management",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Trading Support",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "victor.hamon@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "Resolution: Diagnosed a broken broker routing link after the account switch; updated the routing table and confirmed subsequent orders flowed through without manual intervention.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Order Management",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Operational issue reported for Order Mana...",
+          "resolution_excerpt": "johanna.ouali@intcom.com: Problem fixed. | victor.hamon@intcom.com: Resolution: Diagnosed a broken b"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Operational issue reported for Order Mana...",
+          "resolution_excerpt": "peter.kuznetsov@intcom.com: Initial triage assigned to Trading Support and reviewed against the serv"
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Operational issue reported for Order Mana...",
+          "resolution_excerpt": "ismael.koch@intcom.com: Initial triage assigned to Trading Support and reviewed against the service "
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-19",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Incident",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Securities Settlement",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Enterprise Applications",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "xena.schmidt@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Significant",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "done",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "The issue was identified as a backlog in the settlement confirmation queue SECLINK-7549 due to a temporary processing delay. The queue was cleared, and settlement acknowledgements were successfully posted back into the operations dashboard. Monitoring has been enhanced to prevent recurrence.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Securities Settlement",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Automated alert triggered for SimCorp Dim...",
+          "resolution_excerpt": "tiara.nielsen@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against th"
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Automated alert triggered for SimCorp Dim...",
+          "resolution_excerpt": "helen.smith@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against the "
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Automated alert triggered for SimCorp Dim...",
+          "resolution_excerpt": "vincent.lange@intcom.com: Problem fixed. | xena.schmidt@intcom.com: Resolution: Diagnosed a timeout "
+        }
+      ]
+    },
+    {
+      "ticket_id": "eval-20",
+      "status": "success",
+      "analysis": {
+        "work_type": {
+          "value": "Service Request",
+          "confidence": 0.92,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "affected_service": {
+          "value": "Identity & Access Management",
+          "confidence": 0.88,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "service_team": {
+          "value": "Enterprise Applications",
+          "confidence": 0.85,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "assignee": {
+          "value": "zoltan.reed@intcom.com",
+          "confidence": 0.8,
+          "method": "llm_rag",
+          "reason": null
+        },
+        "urgency": {
+          "value": "High",
+          "confidence": 0.9,
+          "method": null,
+          "reason": "Deducido por contexto RAG"
+        },
+        "impact": {
+          "value": "Moderate",
+          "confidence": 0.89,
+          "method": null,
+          "reason": "Deducido por alcance de servicio"
+        },
+        "priority": {
+          "value": "High",
+          "confidence": null,
+          "method": "urgency_impact_matrix",
+          "reason": null
+        },
+        "resolution_status": {
+          "value": "clarification",
+          "confidence": 0.95,
+          "method": null,
+          "reason": null
+        }
+      },
+      "recommended_solutions": [
+        {
+          "id": "solution_1",
+          "title": "Soluci\u00f3n Principal (RAG)",
+          "description": "Initial triage assigned to Enterprise Applications and reviewed against the service catalogue. The request has been validated against Identity & Access Management and checked for alignment with operational requirements. Further actions will ensure that all deactivated users' access is removed as per the request.",
+          "confidence": 0.91
+        }
+      ],
+      "affected_areas": [
+        {
+          "id": "area_1",
+          "label": "Identity & Access Management",
+          "confidence": 0.95
+        }
+      ],
+      "evidence": [
+        {
+          "ticket_id": "historical-1",
+          "similarity": 1.0,
+          "summary": "Summary: Access removal requested for Identity & A...",
+          "resolution_excerpt": "francesco.kelly@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against "
+        },
+        {
+          "ticket_id": "historical-2",
+          "similarity": 0.95,
+          "summary": "Summary: Access removal requested for Identity & A...",
+          "resolution_excerpt": "zoltan.reed@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against the "
+        },
+        {
+          "ticket_id": "historical-3",
+          "similarity": 0.9,
+          "summary": "Summary: Access removal requested for Identity & A...",
+          "resolution_excerpt": "ismael.koch@intcom.com: Initial triage assigned to Enterprise Applications and reviewed against the "
+        }
+      ]
+    }
+  ]
+}
